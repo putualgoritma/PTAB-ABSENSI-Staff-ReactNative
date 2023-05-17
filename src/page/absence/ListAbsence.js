@@ -36,7 +36,7 @@ const ListAbsence = ({navigation, route}) => {
 
   useEffect(() => {
     //Geolocation.getCurrentPosition(info => console.log('getCurrentPosition',info));
-    //Alert.alert('OS', Platform.OS);
+    Alert.alert('OS', Platform.OS);
     Geolocation.getCurrentPosition(
       (position) => {
         //Alert.alert('GPS', 'GPS Hidup');
