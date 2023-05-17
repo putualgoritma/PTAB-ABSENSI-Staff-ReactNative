@@ -9,6 +9,7 @@ import {
   Image,
   Alert,
   RefreshControl,
+  Platform,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import MapView, {Callout, Marker, Circle} from 'react-native-maps';
@@ -23,6 +24,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {launchCamera} from 'react-native-image-picker';
 import ScreenLoading from '../loading/ScreenLoading';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
 const Absence = ({navigation, route}) => {
   const TOKEN = useSelector(state => state.TokenReducer);
@@ -38,13 +40,12 @@ const Absence = ({navigation, route}) => {
     console.log(route.params);
     setLoading(true);
     // console.log(route.params.data.duty)
-    reactNativeAndroidLocationServicesDialogBox
-      .checkLocationServicesIsEnabled({
-        message:
-          "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
-        ok: 'YES',
-        cancel: 'NO',
-      })
+    Geolocation.getCurrentPosition({
+      message:
+        "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
+      ok: 'YES',
+      cancel: 'NO',
+    })
       .then(function (success) {
         if (success) {
           Promise.all([requestLocationPermission()])
@@ -292,15 +293,18 @@ const Absence = ({navigation, route}) => {
   const requestLocationPermission = async () => {
     let info = '';
     try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      const granted = await request(
+        Platform.select({
+          android: PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+        }),
         {
           title: 'Location Permission',
           message: 'MyMapApp needs access to your location',
         },
       );
 
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      if (granted === RESULTS.GRANTED) {
         //   setEnableLocation(true)
       } else {
         //   setEnableLocation(false)
@@ -327,13 +331,12 @@ const Absence = ({navigation, route}) => {
         }
       });
     // console.log(route.params.data.duty)
-    reactNativeAndroidLocationServicesDialogBox
-      .checkLocationServicesIsEnabled({
-        message:
-          "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
-        ok: 'YES',
-        cancel: 'NO',
-      })
+    Geolocation.getCurrentPosition({
+      message:
+        "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
+      ok: 'YES',
+      cancel: 'NO',
+    })
       .then(function (success) {
         if (success) {
           Promise.all([requestLocationPermission()])
@@ -424,17 +427,17 @@ const Absence = ({navigation, route}) => {
 
   const requestCameraPermission = async () => {
     try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
+      const granted = await request(
+        Platform.select({
+          android: PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+        }),
         {
-          title: 'Camera Permission',
-          message: 'App need to use camera access to take an Image',
-          //   buttonNeutral: "Ask Me Later",
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
+          title: 'Location Permission',
+          message: 'MyMapApp needs access to your location',
         },
       );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      if (granted === RESULTS.GRANTED) {
         console.log('You can use the camera');
       } else {
         console.log('Camera permission denied');
@@ -451,13 +454,12 @@ const Absence = ({navigation, route}) => {
     };
     setLoading(true);
 
-    reactNativeAndroidLocationServicesDialogBox
-      .checkLocationServicesIsEnabled({
-        message:
-          "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
-        ok: 'YES',
-        cancel: 'NO',
-      })
+    Geolocation.getCurrentPosition({
+      message:
+        "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
+      ok: 'YES',
+      cancel: 'NO',
+    })
       .then(function (success) {
         if (success) {
           Promise.all([requestLocationPermission()])
