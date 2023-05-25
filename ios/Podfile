@@ -24,6 +24,21 @@ end
 target 'TestPlugins' do
   config = use_native_modules!
 
+  # pod 'react-native-camera', path: '../node_modules/react-native-camera', subspecs: [
+  # 'FaceDetectorMLKit'
+  # ]
+  # pod 'react-native-camera', path: '../node_modules/react-native-camera', subspecs: [
+  #   'TextDetector'
+  # ]
+  # pod 'react-native-camera', path: '../node_modules/react-native-camera', subspecs: [
+  #   'BarcodeDetectorMLKit'
+  # ]
+  # pod 'react-native-camera', path: '../node_modules/react-native-camera', subspecs: [
+  #   'TextDetector',
+  #   'FaceDetectorMLKit',
+  #   'BarcodeDetectorMLKit'
+  # ]
+
   # Flags change depending on the env values.
   flags = get_default_flags()
 
@@ -69,6 +84,30 @@ pod 'react-native-camera', path: '../node_modules/react-native-camera', subspecs
       # necessary for Mac Catalyst builds
       :mac_catalyst_enabled => false
     )
+
+    # # NOTE: Change IPHONEOS_DEPLOYMENT_TARGET to 12.4.
+    # installer.pods_project.targets.each do |target|
+    #   target.build_configurations.each do |config|
+    #     config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.4'
+    #   end
+    # end
+
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
+
+    # installer.pods_project.targets.each do |target|
+    #   # Make it build with XCode 14
+    #   # if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
+    #   #   target.build_configurations.each do |config|
+    #   #       config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+    #   #   end
+    #   # end
+    #   # Make it work with GoogleDataTransport
+    #   if target.name.start_with? "GoogleDataTransport"
+    #     target.build_configurations.each do |config|
+    #       config.build_settings['CLANG_WARN_STRICT_PROTOTYPES'] = 'NO' 
+    #     end
+    #   end
+    # end
+
   end
 end

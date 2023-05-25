@@ -18,7 +18,7 @@ import { useEffect } from 'react';
 import ScreenLoading from '../loading/ScreenLoading';
 import { useSelector } from 'react-redux';
 import Select2 from 'react-native-select-two';
-
+import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 const Permission = ({navigation}) => { 
 
@@ -67,6 +67,46 @@ const [imagePng, set_imagePng] = useState({
   width: 0,
   from :'api'
 });
+
+const [cameraGranted, setCameraGranted] = useState(false);
+  const handleCameraPermission = async () => {
+    setLoading(true);
+    try {
+      const res = await check(
+        Platform.select({
+          android: PERMISSIONS.ANDROID.CAMERA,
+          ios: PERMISSIONS.IOS.CAMERA,
+        })
+      );
+      if (res === RESULTS.GRANTED) {
+        setCameraGranted(true);
+        console.log('CameraGranted check', 'Yes');
+        setLoading(false);
+        return true;
+      } else if (res === RESULTS.DENIED) {
+        const res2 = await request(
+          Platform.select({
+            android: PERMISSIONS.ANDROID.CAMERA,
+            ios: PERMISSIONS.IOS.CAMERA,
+          })
+        );
+        if (res2 === RESULTS.GRANTED) {
+          setCameraGranted(true);
+          console.log('CameraGranted request', 'Yes');
+          setLoading(false);
+          return true;
+        } else {
+          setCameraGranted(false);
+          console.log('CameraGranted request', 'No');
+          setLoading(false);
+          return false;
+        }
+      }
+    } catch (err) {
+      setLoading(false);
+      return false;
+    }
+  };
 
 const requestCameraPermission = async () => {
   try {
@@ -255,7 +295,7 @@ const handleAction = ()=>{
     // if(isFocused){
       getStaffList()
     console.log('test')
-    requestCameraPermission();
+    handleCameraPermission();
     setLoading(false)
     //    }
   }, [])
