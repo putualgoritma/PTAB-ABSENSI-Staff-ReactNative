@@ -9,21 +9,20 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import MapView, {Callout, Marker, Circle} from 'react-native-maps';
-import reactNativeAndroidLocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
-import Geolocation from '@react-native-community/geolocation';
-import {useSelector} from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import MapView, { Callout, Marker, Circle } from 'react-native-maps';
+import { useSelector } from 'react-redux';
 import API from '../../service';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
 import RNFetchBlob from 'rn-fetch-blob';
-import {getDistance} from 'geolib';
+import { getDistance } from 'geolib';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {launchCamera} from 'react-native-image-picker';
+import { launchCamera } from 'react-native-image-picker';
 import ScreenLoading from '../loading/ScreenLoading';
 import Textarea from 'react-native-textarea';
+import myFunctions from '../../functions';
 
-const AbsenceCreateExtra = ({navigation, route}) => {
+const AbsenceCreateExtra = ({ navigation, route }) => {
   const TOKEN = useSelector(state => state.TokenReducer);
   const USER = useSelector(state => state.UserReducer);
   const USER_ID = useSelector(state => state.UserReducer.id);
@@ -40,47 +39,11 @@ const AbsenceCreateExtra = ({navigation, route}) => {
     width: 0,
     from: 'api',
   });
-
-  const authCurrent = () => {
-    FingerprintScanner.authenticate({title: 'Verifikasi Bahwa Ini Benar Anda'})
-      .then(() => {
-        handleAction();
-        // navigation.navigate('Test1')
-        FingerprintScanner.release();
-      })
-      .catch(error => {
-        if (error.name == 'DeviceLocked') {
-          // handleActionErr()
-          // if(timeD > 0){
-          //   alert('Tunggu beberapa saat dan klik ulang tombol absen')
-          // }
-          // else{
-          alert('Tunggu kurang lebih 30 detik dan klik ulang tombol absen');
-          // }
-
-          // setTimeD(30);
-        } else if (error.name == 'DeviceLockedPermanent') {
-          alert('Kunci HP Anda dan masuk dengan sandi anda');
-        } else if (error.name == 'DeviceLockedPermanent') {
-          alert('Kunci HP Anda dan masuk dengan sandi anda');
-        } else if (error.name == 'FingerprintScannerNotEnrolled') {
-          alert(
-            'Aktifkan Fingerprint anda, masuk ke setting/sandi&keamanan pilih sidik jari',
-          );
-        } else {
-          // alert('Aktifkan Fingerprint anda, masuk ke setting/sandi&keamanan pilih sidik jari')
-          // test
-          alert(error.name);
-        }
-        FingerprintScanner.release();
-      });
-  };
-
   const [isMounted, setIsMounted] = useState(true);
   const [courseDetails, setCourseDetails] = useState();
   const [jarak, setJarak] = useState('');
   const [test, setTest] = useState('');
-  const {width, height} = Dimensions.get('window');
+  const { width, height } = Dimensions.get('window');
   const ASPECT_RATIO = width / height;
   const LATITUDE_DELTA = 0.4922;
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
@@ -98,25 +61,90 @@ const AbsenceCreateExtra = ({navigation, route}) => {
   });
   const [loading, setLoading] = useState(true);
 
-  const requestLocationPermission = async () => {
-    let info = '';
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Location Permission',
-          message: 'MyMapApp needs access to your location',
-        },
-      );
+  useEffect(() => {
+    console.log(route.params);
+    setLoading(true);
 
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        //   setEnableLocation(true)
-      } else {
-        //   setEnableLocation(false)
-      }
-    } catch (err) {
-      info = 1;
-    }
+    Promise.all([myFunctions.checkFingerprint(), myFunctions.permissionCamera(), myFunctions.permissionLocation()])
+      .then(res => {
+        setLoading(true);
+        //if fingerprint off
+        if (!res[0]) {
+          setFinger('OFF');
+        }
+        //if perrmission loc
+        if (res[2]) {
+          //check gps
+          myFunctions.checkGps(false).then(function (gps) {
+            if (!gps.status) {
+              console.log('checkGps useeffect', 'false');
+            } else {
+              console.log(
+                'posisiisii ',
+                gps.data.latitude,
+                gps.data.longitude,
+              );
+              setForm({
+                ...form,
+                lat: gps.data.latitude,
+                lng: gps.data.longitude,
+                accuracy: gps.data.accuracy,
+              });
+              setLoading(false);
+            }
+          })
+            .catch(error => {
+              console.log('err checkGps useeffect', error.message);
+              setLoading(false);
+            });
+        } else {
+          Alert.alert('Location Permission', 'Location Permission tidak diizinkan.');
+        }
+        setLoading(false);
+      })
+      .catch(e => {
+        console.log('err promise all', e);
+        setLoading(false);
+      });
+
+    setLoading(false);
+  }, []);
+
+  const authCurrent = () => {
+    FingerprintScanner.authenticate({ title: 'Verifikasi Bahwa Ini Benar Anda' })
+      .then(() => {
+        setLoading(true);
+        handleAction();
+        // navigation.navigate('Test1')
+        FingerprintScanner.release();
+      })
+      .catch(error => {
+        setLoading(false);
+        if (error.name == 'DeviceLocked') {
+          // handleActionErr()
+          // if(timeD > 0){
+          //   Alert.alert('Tunggu beberapa saat dan klik ulang tombol absen')
+          // }
+          // else{
+          Alert.alert('Tunggu kurang lebih 30 detik dan klik ulang tombol absen');
+          // }
+
+          // setTimeD(30);
+        } else if (error.name == 'DeviceLockedPermanent') {
+          Alert.alert('Kunci HP Anda dan masuk dengan sandi anda');
+        } else if (error.name == 'DeviceLockedPermanent') {
+          Alert.alert('Kunci HP Anda dan masuk dengan sandi anda');
+        } else if (error.name == 'FingerprintScannerNotEnrolled') {
+          Alert.alert(
+            'Aktifkan Fingerprint anda, masuk ke setting/sandi&keamanan pilih sidik jari',
+          );
+        } else {
+          // Alert.alert('Aktifkan Fingerprint anda, masuk ke setting/sandi&keamanan pilih sidik jari')
+          // test
+          Alert.alert(error.name);
+        }
+        FingerprintScanner.release();
+      });
   };
 
   const sendDataNoImg = () => {
@@ -131,15 +159,15 @@ const AbsenceCreateExtra = ({navigation, route}) => {
         'Content-Type': 'multipart/form-data',
       },
       [
-        {name: 'staff_id', data: STAFF_ID.toString()},
+        { name: 'staff_id', data: STAFF_ID.toString() },
         {
           name: 'absence_request_id',
           data: route.params.absence_request_id.toString(),
         },
-        {name: 'lat', data: form.lat.toString()},
-        {name: 'lng', data: form.lng.toString()},
-        {name: 'accuracy', data: form.accuracy.toString()},
-        {name: 'distance', data: form.distance.toString()},
+        { name: 'lat', data: form.lat.toString() },
+        { name: 'lng', data: form.lng.toString() },
+        { name: 'accuracy', data: form.accuracy.toString() },
+        { name: 'distance', data: form.distance.toString() },
       ],
     )
       .then(result => {
@@ -149,10 +177,10 @@ const AbsenceCreateExtra = ({navigation, route}) => {
           setLoading(false);
           navigation.goBack();
 
-          alert(data.message);
+          Alert.alert(data.message);
         } else {
           setLoading(false);
-          alert(data.message);
+          Alert.alert(data.message);
         }
         // navigation.navigate('Action')
       })
@@ -179,15 +207,15 @@ const AbsenceCreateExtra = ({navigation, route}) => {
           filename: route.params.image.filename,
           data: route.params.image.base64,
         },
-        {name: 'staff_id', data: STAFF_ID.toString()},
+        { name: 'staff_id', data: STAFF_ID.toString() },
         {
           name: 'absence_request_id',
           data: route.params.absence_request_id.toString(),
         },
-        {name: 'lat', data: form.lat.toString()},
-        {name: 'lng', data: form.lng.toString()},
-        {name: 'accuracy', data: form.accuracy.toString()},
-        {name: 'distance', data: form.distance.toString()},
+        { name: 'lat', data: form.lat.toString() },
+        { name: 'lng', data: form.lng.toString() },
+        { name: 'accuracy', data: form.accuracy.toString() },
+        { name: 'distance', data: form.distance.toString() },
       ],
     )
       .then(result => {
@@ -197,10 +225,10 @@ const AbsenceCreateExtra = ({navigation, route}) => {
           setLoading(false);
           navigation.goBack();
 
-          alert(data.message);
+          Alert.alert(data.message);
         } else {
           setLoading(false);
-          alert(data.message);
+          Alert.alert(data.message);
         }
 
         // navigation.navigate('Action')
@@ -209,118 +237,6 @@ const AbsenceCreateExtra = ({navigation, route}) => {
         // console.log(e);
         setLoading(false);
       });
-  };
-
-  useEffect(() => {
-    console.log(route.params);
-    setLoading(true);
-    FingerprintScanner.isSensorAvailable()
-      .then(biometryType => {})
-      .catch(error => {
-        if (error.name == 'PasscodeNotSet') {
-          alert(
-            'Aktifkan Fingerprint anda, masuk ke setting/sandi&keamanan pilih sidik jari',
-          );
-          // test
-          // alert(error.name)
-        } else if (error.name == 'FingerprintScannerNotSupported') {
-          setFinger('OFF');
-        }
-      });
-    // console.log(route.params.data.duty)
-    reactNativeAndroidLocationServicesDialogBox
-      .checkLocationServicesIsEnabled({
-        message:
-          "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
-        ok: 'YES',
-        cancel: 'NO',
-      })
-      .then(function (success) {
-        if (success) {
-          Promise.all([requestLocationPermission()])
-            .then(res => {
-              // console.log('corrrrrr',res);
-              Geolocation.getCurrentPosition(
-                position => {
-                  // Working with W3C Geolocation API
-
-                  // console.log(
-                  //     'You are ',
-                  //     getDistance(position.coords, {
-                  //            latitude:  parseFloat(route.params.lat),
-                  //     longitude:  parseFloat(route.params.lng),
-                  //     }),
-                  //     'meters away from 51.525, 7.4575'
-                  // );
-
-                  // console.log('posisi',position);
-                  // defaultLoc = {
-                  //     latitude: position.coords.latitude,
-                  //     longitude: position.coords.longitude,
-                  // }
-                  // positionNew = position
-                  console.log(
-                    'posisiisii ',
-                    position.coords.latitude,
-                    position.coords.longitude,
-                  );
-                  setForm({
-                    ...form,
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                    accuracy: position.coords.accuracy,
-                  });
-                  setLoading(false);
-                  // alert(position.coords.latitude);
-                  // handleData(position)
-                },
-                error => {
-                  console.log(error);
-                  setLoading(false);
-                },
-                {
-                  enableHighAccuracy: false,
-                  timeout: 120000,
-                  maximumAge: 1000,
-                  accuracy: 'high',
-                },
-              );
-            })
-            .catch(e => {
-              console.log(e);
-              setLoading(false);
-            });
-        }
-      })
-      .catch(error => {
-        console.log(error.message); // error.message => "disabled"
-        //   navigation.navigate('Register')
-        // setStatusGps(error.message)
-        setLoading(false);
-      });
-    requestCameraPermission();
-  }, []);
-
-  const requestCameraPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        {
-          title: 'Camera Permission',
-          message: 'App need to use camera access to take an Image',
-          //   buttonNeutral: "Ask Me Later",
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('You can use the camera');
-      } else {
-        console.log('Camera permission denied');
-      }
-    } catch (err) {
-      console.warn(err);
-    }
   };
 
   const handleAction = () => {
@@ -333,7 +249,7 @@ const AbsenceCreateExtra = ({navigation, route}) => {
     if (route.params.selfie == 'OFF') {
       sendDataNoImg();
     } else if (route.params.image == null) {
-      alert('Pilih Gambar Terlebih dahulu');
+      Alert.alert('Pilih Gambar Terlebih dahulu');
       setLoading(false);
     } else if (
       form.lat != '' &&
@@ -343,25 +259,25 @@ const AbsenceCreateExtra = ({navigation, route}) => {
     ) {
       sendData();
     } else {
-      alert('Lengkapi data terlebih dahulu');
+      Alert.alert('Lengkapi data terlebih dahulu');
     }
   };
 
   if (!loading) {
     return (
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         <ScrollView>
-          <View style={{alignItems: 'center'}}>
+          <View style={{ alignItems: 'center' }}>
             <Text
               style={[
-                {marginVertical: windowHeight * 0.01},
-                jarak == '1' ? {color: '#ff0000'} : '',
+                { marginVertical: windowHeight * 0.01 },
+                jarak == '1' ? { color: '#ff0000' } : '',
               ]}>
               anda berada di{' '}
               {jarak == '1' ? 'Diluar Jangkauan' : 'Dalam Jangkauan'}, {test}
             </Text>
 
-            <Text style={[{marginVertical: windowHeight * 0.05, fontSize: 24}]}>
+            <Text style={[{ marginVertical: windowHeight * 0.05, fontSize: 24 }]}>
               Absen
             </Text>
 
@@ -400,8 +316,8 @@ const AbsenceCreateExtra = ({navigation, route}) => {
                   ) : (
                     <Image
                       style={styles.image}
-                      source={{uri: route.params.image.uri}}
-                      // source={image.uri=='' || image.uri==null ? require('../../../assets/img/ImageFoto.png'): {uri: image.from=='local' ? image.uri : `https://simpletabadmin.ptab-vps.com/` + `${String(image.uri).replace('public/', '')}?time="${new Date()}`}}
+                      source={{ uri: route.params.image.uri }}
+                    // source={image.uri=='' || image.uri==null ? require('../../../assets/img/ImageFoto.png'): {uri: image.from=='local' ? image.uri : `https://simpletabadmin.ptab-vps.com/` + `${String(image.uri).replace('public/', '')}?time="${new Date()}`}}
                     />
                   )}
                 </TouchableOpacity>
@@ -419,7 +335,7 @@ const AbsenceCreateExtra = ({navigation, route}) => {
               maxLength={255}
               value={form.description}
               onChangeText={value =>
-                setForm({...form, description: value})
+                setForm({ ...form, description: value })
               }></Textarea>
           </View>
         </ScrollView>
@@ -429,7 +345,7 @@ const AbsenceCreateExtra = ({navigation, route}) => {
             onPress={() => {
               authCurrent();
             }}>
-            <Text style={{color: '#FFFFFF', fontSize: 24, fontWeight: 'bold'}}>
+            <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' }}>
               Absen
             </Text>
           </TouchableOpacity>
@@ -441,7 +357,7 @@ const AbsenceCreateExtra = ({navigation, route}) => {
             onPress={() => {
               handleAction();
             }}>
-            <Text style={{color: '#FFFFFF', fontSize: 24, fontWeight: 'bold'}}>
+            <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' }}>
               Absen
             </Text>
           </TouchableOpacity>
@@ -453,7 +369,7 @@ const AbsenceCreateExtra = ({navigation, route}) => {
             onPress={() => {
               handleAction();
             }}>
-            <Text style={{color: '#FFFFFF', fontSize: 24, fontWeight: 'bold'}}>
+            <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' }}>
               Absen
             </Text>
           </TouchableOpacity>

@@ -13,18 +13,15 @@ import {
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import MapView, { Callout, Marker, Circle } from 'react-native-maps';
-import reactNativeAndroidLocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
-import Geolocation from '@react-native-community/geolocation';
 import { useSelector } from 'react-redux';
 import API from '../../service';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
 import RNFetchBlob from 'rn-fetch-blob';
 import { getDistance } from 'geolib';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { launchCamera } from 'react-native-image-picker';
 import ScreenLoading from '../loading/ScreenLoading';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import myFunctions from '../../functions';
 
 const Absence = ({ navigation, route }) => {
   const TOKEN = useSelector(state => state.TokenReducer);
@@ -63,12 +60,18 @@ const Absence = ({ navigation, route }) => {
     console.log('route.params', route.params);
     setLoading(true);
 
-    Promise.all([handleCameraPermission(), handleLocationPermission()])
+    Promise.all([myFunctions.checkFingerprint(), myFunctions.permissionCamera(), myFunctions.permissionLocation()])
       .then(res => {
+        console.log('rpromise all', res);
         setLoading(true);
-        if (res[1]) {
+        //if fingerprint off
+        if (!res[0]) {
+          setFinger('OFF');
+        }
+        //if perrmission loc
+        if (res[2]) {
           //check gps
-          checkGps().then(function (gps) {
+          myFunctions.checkGps(route.params.highAccuracy).then(function (gps) {
             if (!gps.status) {
               console.log('checkGps useeffect', 'false');
             } else {
@@ -125,216 +128,79 @@ const Absence = ({ navigation, route }) => {
         setLoading(false);
       });
 
-    //*
-    FingerprintScanner.isSensorAvailable()
-      .then(biometryType => { console.log('biometryType', biometryType);})
-      .catch(error => {
-        if (error.name == 'PasscodeNotSet') {
-          Alert.alert(
-            'Aktifkan Fingerprint anda, masuk ke setting/sandi&keamanan pilih sidik jari',
-          );
-          //test
-          //Alert.alert(error.name)
-        } else if (error.name == 'FingerprintScannerNotSupported') {
-          Alert.alert(
-            'Fingerprint Off',
-          );
-          setFinger('OFF');
-        }else{
-          Alert.alert(
-            'Fingerprint tidak jalan: '+error.message,
-          );
-        }
-      });
-      //*/
-
-      setLoading(false);
+    setLoading(false);
   }, []);
-
-  const [cameraGranted, setCameraGranted] = useState(false);
-  const handleCameraPermission = async () => {
-    setLoading(true);
-    try {
-      const res = await check(
-        Platform.select({
-          android: PERMISSIONS.ANDROID.CAMERA,
-          ios: PERMISSIONS.IOS.CAMERA,
-        })
-      );
-      if (res === RESULTS.GRANTED) {
-        setCameraGranted(true);
-        console.log('CameraGranted check', 'Yes');
-        setLoading(false);
-        return true;
-      } else if (res === RESULTS.DENIED) {
-        const res2 = await request(
-          Platform.select({
-            android: PERMISSIONS.ANDROID.CAMERA,
-            ios: PERMISSIONS.IOS.CAMERA,
-          })
-        );
-        if (res2 === RESULTS.GRANTED) {
-          setCameraGranted(true);
-          console.log('CameraGranted request', 'Yes');
-          setLoading(false);
-          return true;
-        } else {
-          setCameraGranted(false);
-          console.log('CameraGranted request', 'No');
-          setLoading(false);
-          return false;
-        }
-      }
-    } catch (err) {
-      setLoading(false);
-      return false;
-    }
-  };
-
-  const [locationGranted, setLocationGranted] = useState(false);
-  const handleLocationPermission = async () => {
-    setLoading(true);
-    try {
-      const res = await check(
-        Platform.select({
-          android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-          ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-        })
-      );
-      if (res === RESULTS.GRANTED) {
-        setLocationGranted(true);
-        console.log('LocationGranted check', 'Yes');
-        setLoading(false);
-        return true;
-      } else if (res === RESULTS.DENIED) {
-        const res2 = await request(
-          Platform.select({
-            android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-            ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-          })
-        );
-        if (res2 === RESULTS.GRANTED) {
-          setLocationGranted(true);
-          console.log('LocationGranted request', 'Yes');
-          setLoading(false);
-          return true;
-        } else {
-          setLocationGranted(false);
-          console.log('LocationGranted request', 'No');
-          setLoading(false);
-          return false;
-        }
-      }
-    } catch (err) {
-      setLoading(false);
-      return false;
-    }
-  };
-
-  // function to check permissions and get Location
-  const [position, setPosition] = useState(null);
-  const checkGps = async () => {
-    setLoading(true);
-    const opt = {
-      enableHighAccuracy: true,
-      timeout: 15000,
-      maximumAge: 10000,
-    };
-    const getCurrentPosition = () => new Promise((resolve, error) => Geolocation.getCurrentPosition(resolve, error, opt));
-    try {
-      const position = await getCurrentPosition();
-      setPosition(position.coords);
-      setLoading(false);
-      return { status: true, data: position.coords };
-    } catch (err) {
-      Alert.alert('GPS', 'GPS mati, tolong hidupkan GPS!');
-      setLoading(false);
-      return { status: false, data: null };
-    }
-  };
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     console.log(route.params);
     setLoading(true);
-    // console.log(route.params.data.duty)
-    Geolocation.getCurrentPosition({
-      message:
-        "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
-      ok: 'YES',
-      cancel: 'NO',
-    })
-      .then(function (success) {
-        if (success) {
-          Promise.all([requestLocationPermission()])
-            .then(res => {
-              // console.log('corrrrrr',res);
-              Geolocation.getCurrentPosition(
-                position => {
-                  // Working with W3C Geolocation API
-
-                  console.log(
-                    'You are ',
-                    getDistance(position.coords, {
-                      latitude: parseFloat(latref),
-                      longitude: parseFloat(lngref),
-                    }),
-                    'meters away from 51.525, 7.4575',
+    Promise.all([myFunctions.checkFingerprint(), myFunctions.permissionCamera(), myFunctions.permissionLocation()])
+      .then(res => {
+        setLoading(true);
+        //if fingerprint off
+        if (!res[0]) {
+          setFinger('OFF');
+        }
+        //if perrmission loc
+        if (res[2]) {
+          //check gps
+          myFunctions.checkGps(route.params.highAccuracy).then(function (gps) {
+            if (!gps.status) {
+              console.log('checkGps useeffect', 'false');
+            } else {
+              console.log('position', gps.data);
+              //get distance
+              const j = getDistance(gps.data, {
+                latitude: parseFloat(latref),
+                longitude: parseFloat(lngref),
+              });
+              console.log('distance', j);
+              setTest(j);
+              if (j > route.params.radius) {
+                setJarak('1');
+                setJ1(j);
+                if (gps.data.accuracy > 40) {
+                  Alert.alert(
+                    'Peringatan',
+                    'Anda berada di luar jangkauan, akurasi GPS: ' +
+                    gps.data.accuracy +
+                    ', tolong kalibrasi GPS atau pakai Internet yang lebih kuat.',
                   );
+                }
+              } else {
+                setJarak('2');
+              }
 
-                  // tesss1
-
-                  const j = getDistance(position.coords, {
-                    latitude: parseFloat(latref),
-                    longitude: parseFloat(lngref),
-                  });
-                  // Working with W3C Geolocation API
-
-                  setTest(j);
-                  if (j > route.params.radius) {
-                    setJarak('1');
-                    setJ1(j);
-                  } else {
-                    setJarak('2');
-                  }
-                  console.log(
-                    'posisiisii ',
-                    position.coords.latitude,
-                    position.coords.longitude,
-                  );
-                  setForm({
-                    ...form,
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                  });
-                  setLoading(false);
-                  // Alert.alert(position.coords.latitude);
-                  // handleData(position)
-                },
-                error => {
-                  console.log(error);
-                  setLoading(false);
-                },
-                {
-                  enableHighAccuracy: route.params.highAccuracy,
-                  timeout: 120000,
-                  maximumAge: 1000,
-                  accuracy: 'high',
-                },
+              // positionNew = position
+              console.log(
+                'posisiisii ',
+                gps.data.latitude,
+                gps.data.longitude,
               );
-            })
-            .catch(e => {
-              console.log(e);
+              setForm({
+                ...form,
+                lat: gps.data.latitude,
+                lng: gps.data.longitude,
+              });
+              setLoading(false);
+            }
+          })
+            .catch(error => {
+              console.log('err checkGps useeffect', error.message);
               setLoading(false);
             });
+        } else {
+          Alert.alert('Location Permission', 'Location Permission tidak diizinkan.');
         }
+        setLoading(false);
       })
-      .catch(error => {
-        console.log(error.message); // error.message => "disabled"
-        //   navigation.navigate('Register')
-        // setStatusGps(error.message)
+      .catch(e => {
+        console.log('err promise all', e);
         setLoading(false);
       });
+
+    setLoading(false);
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -353,7 +219,7 @@ const Absence = ({ navigation, route }) => {
   });
 
   const sendDataNoImg = position => {
-    console.log('sendDataNoImg','3');
+    console.log('sendDataNoImg', '3');
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
@@ -400,7 +266,7 @@ const Absence = ({ navigation, route }) => {
   };
 
   const sendData = position => {
-    console.log('senddata','3');
+    console.log('senddata', '3');
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
@@ -453,11 +319,13 @@ const Absence = ({ navigation, route }) => {
   const authCurrent = () => {
     FingerprintScanner.authenticate({ title: 'Verifikasi Bahwa Ini Benar Anda' })
       .then(() => {
+        setLoading(true);
         handleAction();
         // navigation.navigate('Test1')
         FingerprintScanner.release();
       })
       .catch(error => {
+        setLoading(false);
         if (error.name == 'DeviceLocked') {
           // if(timeD > 0){
           //   Alert.alert('Tunggu beberapa saat dan klik ulang tombol absen')
@@ -485,30 +353,6 @@ const Absence = ({ navigation, route }) => {
       });
   };
 
-  const requestLocationPermission = async () => {
-    let info = '';
-    try {
-      const granted = await request(
-        Platform.select({
-          android: PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-        }),
-        {
-          title: 'Location Permission',
-          message: 'MyMapApp needs access to your location',
-        },
-      );
-
-      if (granted === RESULTS.GRANTED) {
-        //   setEnableLocation(true)
-      } else {
-        //   setEnableLocation(false)
-      }
-    } catch (err) {
-      info = 1;
-    }
-  };
-
   const handleAction = () => {
     const data = {
       lat: form.lat,
@@ -516,12 +360,12 @@ const Absence = ({ navigation, route }) => {
     };
     setLoading(true);
 
-    Promise.all([handleCameraPermission(), handleLocationPermission()])
+    Promise.all([myFunctions.permissionCamera(), myFunctions.permissionLocation()])
       .then(res => {
         setLoading(true);
         if (res[1]) {
           //check gps
-          checkGps().then(function (gps) {
+          myFunctions.checkGps(route.params.highAccuracy).then(function (gps) {
             if (!gps.status) {
               console.log('checkGps useeffect', 'false');
             } else {
@@ -605,112 +449,6 @@ const Absence = ({ navigation, route }) => {
         console.log('err promise all', e);
         setLoading(false);
       });
-
-    /*
-    Geolocation.getCurrentPosition({
-      message:
-        "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
-      ok: 'YES',
-      cancel: 'NO',
-    })
-      .then(function (success) {
-        if (success) {
-          Promise.all([requestLocationPermission()])
-            .then(res => {
-              // console.log('corrrrrr',res);
-              Geolocation.getCurrentPosition(
-                position => {
-                  // Working with W3C Geolocation API
-
-                  console.log(
-                    'You are ',
-                    getDistance(position.coords, {
-                      latitude: parseFloat(latref),
-                      longitude: parseFloat(lngref),
-                    }),
-                    'meters away from 51.525, 7.4575',
-                  );
-
-                  // tesss1
-
-                  // start input
-                  const j = getDistance(position.coords, {
-                    latitude: parseFloat(latref),
-                    longitude: parseFloat(lngref),
-                  });
-                  // Working with W3C Geolocation API
-                  console.log('j = ', j);
-                  setTest(j);
-                  if (j > route.params.radius) {
-                    console.log('1');
-
-                    if (j - j1 < 20) {
-                      if (route.params.selfie == 'OFF') {
-                        sendDataNoImg(position);
-                      } else if (route.params.image == null) {
-                        Alert.alert('Pilih Gambar Terlebih dahulu');
-                        setLoading(false);
-                      } else if (
-                        form.lat != '' &&
-                        form.lng != '' &&
-                        route.params.image.filename != null &&
-                        route.params.image.filename != ''
-                      ) {
-                        sendData(position);
-                      } else {
-                        Alert.alert('Lengkapi data terlebih dahulu');
-                        setLoading(false);
-                      }
-                    } else {
-                      setJarak('1');
-                      Alert.alert('diluar area');
-                    }
-                  } else {
-                    setJarak('2');
-                    setLoading(true);
-                    if (route.params.selfie == 'OFF') {
-                      sendDataNoImg(position);
-                    } else if (route.params.image == null) {
-                      Alert.alert('Pilih Gambar Terlebih dahulu');
-                      setLoading(false);
-                    } else if (
-                      form.lat != '' &&
-                      form.lng != '' &&
-                      route.params.image.filename != null &&
-                      route.params.image.filename != ''
-                    ) {
-                      sendData(position);
-                    } else {
-                      Alert.alert('Lengkapi data terlebih dahulu');
-                      setLoading(false);
-                    }
-                  }
-                  // end input
-                },
-                error => {
-                  console.log(error);
-                  setLoading(false);
-                  Alert.alert('lokasi tidak ditemukan');
-                },
-                {
-                  enableHighAccuracy: route.params.highAccuracy,
-                  timeout: 120000,
-                  maximumAge: 1000,
-                  accuracy: 'high',
-                },
-              );
-            })
-            .catch(e => {
-              console.log(e);
-              setLoading(false);
-            });
-        }
-      })
-      .catch(error => {
-        console.log(error.message);
-        setLoading(false);
-      });
-      */
   };
 
   if (!loading && jarak != '') {

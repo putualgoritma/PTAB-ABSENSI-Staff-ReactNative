@@ -1,12 +1,14 @@
-import {     StyleSheet,
+import {
+  StyleSheet,
   View,
   ScrollView,
   TextInput,
   Text,
   Image,
-  TouchableOpacity, 
+  TouchableOpacity,
   Dimensions,
-  Alert} from 'react-native'
+  Alert
+} from 'react-native'
 import React from 'react'
 import { useState } from 'react';
 import Textarea from 'react-native-textarea';
@@ -20,9 +22,9 @@ import RNFetchBlob from 'rn-fetch-blob';
 import ScreenLoading from '../loading/ScreenLoading';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import myFunctions from '../../functions';
 
-
-const Duty = ({navigation}) => { 
+const Duty = ({ navigation }) => {
 
   const Cdate = new Date();
   const TOKEN = useSelector((state) => state.TokenReducer);
@@ -35,144 +37,121 @@ const Duty = ({navigation}) => {
   const [time, setTime] = useState("00:00");
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
-  const [type, setType] =useState('start');
+  const [type, setType] = useState('start');
   const [memo, setMemo] = useState("");
   const [mode, setMode] = useState('date');
   const [loading, setLoading] = useState(true)
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isDatePickerVisible2, setDatePickerVisibility2] = useState(false);
   const [form, setForm] = useState({
-    staff_id : STAFF_ID,
-    description : '',
-    start : '',
-    end : '',
-    type : 'other',
-    time : '',
-    status : 'pending',
-    category : 'visit'
-})
+    staff_id: STAFF_ID,
+    description: '',
+    start: '',
+    end: '',
+    type: 'other',
+    time: '',
+    status: 'pending',
+    category: 'visit'
+  })
 
-const [imageP, set_imageP] = useState({
-  base64: "",
-  fileName: "",
-  fileSize: 0,
-  height: 0,
-  type: "",
-  uri: "",
-  width: 0,
-  from :'api'
-});
+  const [imageP, set_imageP] = useState({
+    base64: "",
+    fileName: "",
+    fileSize: 0,
+    height: 0,
+    type: "",
+    uri: "",
+    width: 0,
+    from: 'api'
+  });
 
-const [imagePng, set_imagePng] = useState({
-  base64: "",
-  fileName: "",
-  fileSize: 0,
-  height: 0,
-  type: "",
-  uri: "",
-  width: 0,
-  from :'api'
-});
+  const [imagePng, set_imagePng] = useState({
+    base64: "",
+    fileName: "",
+    fileSize: 0,
+    height: 0,
+    type: "",
+    uri: "",
+    width: 0,
+    from: 'api'
+  });
 
-const requestCameraPermission = async () => {
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.CAMERA,
-      {
-        'title': 'Camera Permission',
-        'message':
-          'App need to use camera access to take an Image',
-      //   buttonNeutral: "Ask Me Later",
-        buttonNegative: "Cancel",
-        buttonPositive: "OK"
+  useEffect(() => {
+    // if(isFocused){
+    console.log('test')
+    myFunctions.permissionCamera()
+    setLoading(false)
+    //    }
+  }, [])
+
+
+
+  // Api start
+  const handleAction = () => {
+    if (form.start != "" && form.time != "") {
+      setLoading(true)
+      const data = {
+        lat: form.lat,
+        lng: form.lng,
+
       }
-    );
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log("You can use the camera");
-    } else {
-      console.log("Camera permission denied");
+      console.log(form.lat, form.lng)
+      RNFetchBlob.fetch(
+        'POST',
+        'https://simpletabadmin.ptab-vps.com/api/close/absence/requests/store',
+        {
+          // Authorization: `Bearer ${TOKEN}`,
+          // otherHeader: 'foo',
+          'Accept': 'application/json',
+          'Content-Type': 'multipart/form-data',
+        },
+        [
+          {
+            'name': 'imagePng',
+            'filename': imagePng.fileName,
+            'data': imagePng.base64,
+          }, {
+            'name': 'imageP',
+            'filename': imageP.fileName,
+            'data': imageP.base64,
+          },
+          { 'name': 'form', 'data': JSON.stringify(form) },
+        ],).then((result) => {
+          let data = JSON.parse(result.data);
+          console.log(result);
+          navigation.pop(2)
+          alert(data.message)
+          setLoading(false)
+          // navigation.navigate('Action')
+        }).catch((e) => {
+          // console.log(e);
+          setLoading(false)
+        })
     }
-  } catch (err) {
-    console.warn(err);
-  }
-};
-
-useEffect(() => {
-  // if(isFocused){
-  console.log('test')
-  requestCameraPermission();
-  setLoading(false)
-  //    }
-}, [])
-
-
-
-// Api start
-const handleAction = ()=>{
-  if(form.start != "" && form.time != ""){
-  setLoading(true)
-  const data={
-       lat : form.lat,
-       lng : form.lng,
+    else {
+      Alert.alert('Gagal', 'mohon lengkapi data')
+    }
 
   }
-  console.log(form.lat,form.lng)
-  RNFetchBlob.fetch(
-   'POST',
-   'https://simpletabadmin.ptab-vps.com/api/close/absence/requests/store',
-   {
-     // Authorization: `Bearer ${TOKEN}`,
-     // otherHeader: 'foo',
-     'Accept' : 'application/json' ,
-     'Content-Type': 'multipart/form-data',
-   },
-      [
-      {
-   'name' : 'imagePng' ,
-   'filename' : imagePng.fileName,
-   'data' : imagePng.base64,
-},     {
-  'name' : 'imageP' ,
-  'filename' : imageP.fileName,
-  'data' : imageP.base64,
-},
-{ 'name' : 'form','data' :  JSON.stringify(form)},
-],).then((result) => {
-   let data = JSON.parse(result.data);
-   console.log(result);
-   navigation.pop(2)
-   alert(data.message)
-   setLoading(false)
-   // navigation.navigate('Action')
-}).catch((e) => {
-   // console.log(e);
-   setLoading(false)
-})
-  }
-  else{
-    Alert.alert('Gagal','mohon lengkapi data')
-  }
-
- }
-// Api end
+  // Api end
 
   const onChangeStart = (event, selectedDate) => {
     const currentDate = selectedDate || date1;
-     setShow(Platform.OS === 'ios');
-     let hours = currentDate.getHours();
-     let minutes = currentDate.getMinutes();
-     
-     let time = `${hours} : ${minutes}`
-     setTime(time);
-     setForm({...form, time : currentDate.getHours()+":"+currentDate.getMinutes()+":00"})
-     console.log(time);
-     setDate1(currentDate);
-   };
-   const showMode = (currentMode) => {
+    setShow(Platform.OS === 'ios');
+    let hours = currentDate.getHours();
+    let minutes = currentDate.getMinutes();
+
+    let time = `${hours} : ${minutes}`
+    setTime(time);
+    setForm({ ...form, time: currentDate.getHours() + ":" + currentDate.getMinutes() + ":00" })
+    console.log(time);
+    setDate1(currentDate);
+  };
+  const showMode = (currentMode) => {
     setShow(true);
     setMode(currentMode);
   };
-   const showTimepicker = () => {
+  const showTimepicker = () => {
     showMode('time');
   };
 
@@ -186,25 +165,25 @@ const handleAction = ()=>{
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
- const handleConfirm = (date) => {
+  const handleConfirm = (date) => {
     // setLoading(true);
     console.log(date, Cdate)
     // if(Cdate > date){
-     
+
     //   alert('tanggal pengajuan harus lebih besar dari tanggal saat ini')
-   
+
     // }
     // else{
 
-      const dated = date.getFullYear() + "-" + ('0' + (date.getMonth()+1)).slice(-2) + "-" + ('0' + (date.getDate())).slice(-2);
-      console.log('ssssssaa',dated)
-      setForm({...form, start : dated})
-      setDate(dated);
-      
+    const dated = date.getFullYear() + "-" + ('0' + (date.getMonth() + 1)).slice(-2) + "-" + ('0' + (date.getDate())).slice(-2);
+    console.log('ssssssaa', dated)
+    setForm({ ...form, start: dated })
+    setDate(dated);
+
     // }
     hideDatePicker();
-   
-  
+
+
   };
 
 
@@ -215,33 +194,33 @@ const handleAction = ()=>{
   const hideDatePicker2 = () => {
     setDatePickerVisibility2(false);
   };
- const handleConfirm2 = (date) => {
+  const handleConfirm2 = (date) => {
     // setLoading(true);
-    const dated = date.getFullYear() + "-" + ('0' + (date.getMonth()+1)).slice(-2) + "-" + ('0' + (date.getDate())).slice(-2);
-    console.log('ssssssaa',dated)
-    setForm({...form, end : dated})
+    const dated = date.getFullYear() + "-" + ('0' + (date.getMonth() + 1)).slice(-2) + "-" + ('0' + (date.getDate())).slice(-2);
+    console.log('ssssssaa', dated)
+    setForm({ ...form, end: dated })
     setDate2(dated);
     hideDatePicker2();
-  
+
   };
 
   // tanggal end
-if(!loading){
-  return (
-    <View style={{flex : 1}}>
-      <ScrollView>
-        <Text style={{ marginVertical : windowHeight*0.01, marginRight : 'auto', marginLeft : 'auto', fontWeight : 'bold', fontSize : 20, color : '#000000' }}>
-          Input Data Dinas(Dalam Kota)
-        </Text>
-      <Text style={styles.title}>Tanggal Mulai<Text style={{ color : '#ff0000' }}>*</Text></Text>
- <TouchableOpacity style={styles.input} onPress={showDatePicker} ><Text style={styles.text}>{date}</Text></TouchableOpacity>
-                    <DateTimePickerModal
-                      isVisible={isDatePickerVisible}
-                      mode="date"
-                      onConfirm={handleConfirm}
-                      onCancel={hideDatePicker}
-                    />
-{/* <Text style={styles.title}>Tanggal Berakhir</Text>
+  if (!loading) {
+    return (
+      <View style={{ flex: 1 }}>
+        <ScrollView>
+          <Text style={{ marginVertical: windowHeight * 0.01, marginRight: 'auto', marginLeft: 'auto', fontWeight: 'bold', fontSize: 20, color: '#000000' }}>
+            Input Data Dinas(Dalam Kota)
+          </Text>
+          <Text style={styles.title}>Tanggal Mulai<Text style={{ color: '#ff0000' }}>*</Text></Text>
+          <TouchableOpacity style={styles.input} onPress={showDatePicker} ><Text style={styles.text}>{date}</Text></TouchableOpacity>
+          <DateTimePickerModal
+            isVisible={isDatePickerVisible}
+            mode="date"
+            onConfirm={handleConfirm}
+            onCancel={hideDatePicker}
+          />
+          {/* <Text style={styles.title}>Tanggal Berakhir</Text>
 <TouchableOpacity style={styles.input} onPress={showDatePicker2} ><Text style={styles.text}>{date2}</Text></TouchableOpacity>
                     <DateTimePickerModal
                       isVisible={isDatePickerVisible2}
@@ -251,41 +230,41 @@ if(!loading){
                     /> */}
 
 
-<Text style={styles.title}>Jam Mulai<Text style={{ color : '#ff0000' }}>*</Text></Text>
-<TouchableOpacity style={styles.input} onPress={() => {showTimepicker(); setType('start')}} title="Mulai Pukul">
-                              <View style={{flexDirection:'row'}}>
-                                  {/* <FontAwesomeIcon icon={faClock} style={{color:'#FFFFFF'}} size={ 20 } /> */}
-                                  {/* <Distance distanceH={5}/> */}
-                                  <Text style={styles.text}>{time}</Text>
-                              </View>
-                          </TouchableOpacity>
+          <Text>Jam Mulai<Text style={{ color: '#ff0000' }}>*</Text></Text>
+          <TouchableOpacity style={styles.input} onPress={() => { showTimepicker(); setType('start') }} title="Mulai Pukul">
+            <View style={{ flexDirection: 'row' }}>
+              {/* <FontAwesomeIcon icon={faClock} style={{color:'#FFFFFF'}} size={ 20 } /> */}
+              {/* <Distance distanceH={5}/> */}
+              <Text style={styles.text}>{time}</Text>
+            </View>
+          </TouchableOpacity>
 
-                          <Text style={styles.title}>Memo</Text>
-                          <Textarea
-   containerStyle={styles.textareaContainer}
-   style={styles.textarea}
-     placeholder="Isi Memo"
-     editable={true}
-     maxLength={255}
-     value={form.description}
-     onChangeText ={(value)=>  setForm({...form, description : value})}
- ></Textarea>
-
-                          
-
-{show && (
-                            <DateTimePicker
-                            testID="dateTimePicker"
-                            value={date1}
-                            mode={mode}
-                            display="spinner"
-                            is24Hour={true}
-                            onChange={type == 'end' ? onChangeEnd : onChangeStart}
-                            />
-                            )}
+          <Text style={styles.title}>Memo</Text>
+          <Textarea
+            containerStyle={styles.textareaContainer}
+            style={styles.textarea}
+            placeholder="Isi Memo"
+            editable={true}
+            maxLength={255}
+            value={form.description}
+            onChangeText={(value) => setForm({ ...form, description: value })}
+          ></Textarea>
 
 
-{/* <Text style={styles.title}>Bukti Pengajuan</Text>
+
+          {show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date1}
+              mode={mode}
+              display="spinner"
+              is24Hour={true}
+              onChange={type == 'end' ? onChangeEnd : onChangeStart}
+            />
+          )}
+
+
+          {/* <Text style={styles.title}>Bukti Pengajuan</Text>
 <TouchableOpacity onPress={
 () => 
           launchCamera(
@@ -367,84 +346,84 @@ if(!loading){
  }
 </TouchableOpacity> */}
 
-</ScrollView>
+        </ScrollView>
 
 
-<TouchableOpacity style={styles.btn} onPress={()=>{handleAction()}}>
-    <Text style={{ color : '#FFFFFF', fontSize : 24, fontWeight : 'bold' }}>
-      Ajukan
-      </Text>
-    </TouchableOpacity>
-    </View>
-  )
-}
-else{
-  return(
-    <View>
-      <ScreenLoading/>
-    </View>
-  )
-}
- 
+        <TouchableOpacity style={styles.btn} onPress={() => { handleAction() }}>
+          <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' }}>
+            Ajukan
+          </Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+  else {
+    return (
+      <View>
+        <ScreenLoading />
+      </View>
+    )
+  }
+
 }
 
 export default Duty
 
-const windowWidht =Dimensions.get('window').width;
-const windowHeight =Dimensions.get('window').height;
+const windowWidht = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
-  input : {
-    width : windowWidht*0.7,
-    height : windowHeight*0.043,
-    borderWidth : 1,
-    backgroundColor : '#FFFFFF',
-    marginRight : 'auto',
-    marginLeft : 'auto',
-    marginVertical : windowHeight*0.01,
+  input: {
+    width: windowWidht * 0.7,
+    height: windowHeight * 0.043,
+    borderWidth: 1,
+    backgroundColor: '#FFFFFF',
+    marginRight: 'auto',
+    marginLeft: 'auto',
+    marginVertical: windowHeight * 0.01,
   },
-   text :{
-    fontSize : 14,
+  text: {
+    fontSize: 14,
     paddingTop: 10,
-    paddingLeft : 10
-   },
-   textareaContainer: {
-    width : windowWidht*0.7,
+    paddingLeft: 10
+  },
+  textareaContainer: {
+    width: windowWidht * 0.7,
     height: 120,
-    borderRadius:10,
+    borderRadius: 10,
     padding: 5,
     backgroundColor: '#FFFFFF',
-    borderWidth:1,
-    marginRight : 'auto',
-    marginLeft : 'auto',
-},
-textarea: {
-    textAlignVertical: 'top', 
+    borderWidth: 1,
+    marginRight: 'auto',
+    marginLeft: 'auto',
+  },
+  textarea: {
+    textAlignVertical: 'top',
     fontSize: 14,
     color: '#696969',
-},
-title: {
-  marginLeft : windowWidht*0.02,
-  fontWeight : 'bold',
-  color : '#000000',
-},
-btn : {
-  width : windowWidht*0.76,
-   height : windowHeight*0.07,
- backgroundColor : '#00B2FF',
- marginLeft : 'auto',
- marginRight : 'auto',
- alignItems : 'center',
- justifyContent : 'center',
-},
-image : {
-  marginVertical : windowHeight*0.01,
-  marginLeft :'auto',
-  marginRight : 'auto',
-  alignItems : 'center',
-  justifyContent : 'center',
-    width : windowWidht*0.70,
-    height : windowHeight*0.3233,
-    backgroundColor : '#00000010',
-},
+  },
+  title: {
+    marginLeft: windowWidht * 0.02,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+  btn: {
+    width: windowWidht * 0.76,
+    height: windowHeight * 0.07,
+    backgroundColor: '#00B2FF',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  image: {
+    marginVertical: windowHeight * 0.01,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: windowWidht * 0.70,
+    height: windowHeight * 0.3233,
+    backgroundColor: '#00000010',
+  },
 })

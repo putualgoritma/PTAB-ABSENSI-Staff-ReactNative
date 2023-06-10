@@ -136,7 +136,7 @@ const handleAction = () => {
     </View>
     </View>
   
-  <Text style={styles.title}>Jam Mulai<Text style={{ color : '#ff0000' }}>*</Text></Text>
+  <Text>Jam Mulai<Text style={{ color : '#ff0000' }}>*</Text></Text>
   <TouchableOpacity style={styles.input} onPress={() => {showTimepicker(); setType('start')}} title="Mulai Pukul">
                                 <View style={{flexDirection:'row'}}>
                                     {/* <FontAwesomeIcon icon={faClock} style={{color:'#FFFFFF'}} size={ 20 } /> */}

@@ -53,6 +53,21 @@ import { useSelector } from 'react-redux';
     shift_change_id : '1',
 })
   const [todos, setTodos] = useState([])
+  //test
+  const [datatest, setDatatest]  = useState([
+    { id: 1, name: "React Native Developer", checked: true }, // set default checked for render option item
+    { id: 2, name: "Android Developer" },
+    { id: 3, name: "iOS Developer" }
+  ])
+  const getStaffListnew = () => {
+ 
+    setDatatest([
+      {id: 1, name: 'React Native Developer', checked: true}, // set default checked for render option item
+      {id: 2, name: 'Android Developer'},
+      {id: 3, name: 'iOS Developer'},
+    ]);
+
+  };
   
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -196,13 +211,14 @@ import { useSelector } from 'react-redux';
                                         popupTitle='Pilih Status'
                                         data={todos}
                                         onSelect={data => {
-                                           getStaffList(form.date,data)
+                                            //getStaffListnew() 
+                                            getStaffList(form.date,data)
                                             setForm({...form, shift_id : data.toString()})
                                             console.log(todos)
                                         }}
                                         onRemoveItem={data => {
-                                          getStaffList(form.date,data)
-                                           setForm({...form, shift_id : data.toString()})
+                                            getStaffList(form.date,data)
+                                            setForm({...form, shift_id : data.toString()})
                                         }} 
                                         selectButtonText ='Simpan'
                                         cancelButtonText='Batal'

@@ -11,20 +11,18 @@ import {
   Platform,
 } from 'react-native';
 import React from 'react';
-import reactNativeAndroidLocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 import API from '../../service';
-import {useSelector} from 'react-redux';
-import {useState} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useIsFocused} from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useIsFocused } from '@react-navigation/native';
 import ScreenLoading from '../loading/ScreenLoading';
-import {RadioButton} from 'react-native-paper';
-import Geolocation from '@react-native-community/geolocation';
+import { RadioButton } from 'react-native-paper';
 import getDistance from 'geolib/es/getPreciseDistance';
-import {request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import myFunctions from '../../functions';
 
-const ListAbsence = ({navigation, route}) => {
+const ListAbsence = ({ navigation, route }) => {
   const USER_ID = useSelector(state => state.UserReducer.id);
   const STAFF_ID = useSelector(state => state.UserReducer.staff_id);
   const [data, setData] = useState([]);
@@ -35,59 +33,16 @@ const ListAbsence = ({navigation, route}) => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    //Geolocation.getCurrentPosition(info => console.log('getCurrentPosition',info));
-    Alert.alert('OS', Platform.OS);
-    Geolocation.getCurrentPosition(
-      (position) => {
-        //Alert.alert('GPS', 'GPS Hidup');
-      },
-      (error) => {
+    myFunctions.checkGps(false)
+      .then(res => {
+        Alert.alert('GPS', 'GPS Hidup');
+      })
+      .catch(e => {
         Alert.alert('GPS', 'GPS Mati');
-      },
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
-    );
+      });
+
   }, []);
 
-  const requestLocationPermission = async () => {
-    // alert('5');
-    let info = '';
-    try {
-      const granted = await request(
-        Platform.select({
-          android: PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-        }),
-        {
-          title: 'Location Permission',
-          message: 'MyMapApp needs access to your location',
-        },
-      );
-      
-      // const granted = await request(
-      //   PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
-      //   {
-      //     title: 'Location Permission',
-      //     message: 'MyMapApp needs access to your location',
-      //   },
-      // );
-
-      if (granted === RESULTS.GRANTED) {
-        //   setEnableLocation(true)
-        // alert('6.1');
-        return 'berhasil';
-        console.log('You can use the lokasi');
-      } else {
-        //   setEnableLocation(false)
-        // alert('6.2');
-        return 'gagal';
-
-        console.log('You gagal lokasi');
-      }
-    } catch (err) {
-      info = 1;
-      // alert('6.3');
-    }
-  };
   // Api start
   const handleAction = id => {
     Alert.alert('Yakin ?', `mengakhiri Izin`, [
@@ -104,10 +59,10 @@ const ListAbsence = ({navigation, route}) => {
                 console.log(result);
                 // navigation.pop(2)
                 getMenu();
-                alert(result.message);
+                Alert.alert(result.message);
                 setLoading(false);
               } else {
-                alert(result.message);
+                Alert.alert(result.message);
                 getMenu();
                 setLoading(false);
               }
@@ -135,19 +90,8 @@ const ListAbsence = ({navigation, route}) => {
   // start api
   console.log('sss', STAFF_ID);
 
-  // const functionDistance = async (position, result) => {
-  //   const j = await getDistance(position.coords, {
-  //     latitude: parseFloat(result.lat),
-  //     longitude: parseFloat(result.lng),
-  //   });
-
-  //   return j;
-  // };
-
   const getMenu = () => {
     setLoading(true);
-    // alert('1');
-    // alert('staff : ' + STAFF_ID);
     API.absence(STAFF_ID).then(result => {
       // alert('2');
       if (result) {
@@ -155,88 +99,52 @@ const ListAbsence = ({navigation, route}) => {
         console.log(result);
         setData(result);
         console.log(result.lat);
+        myFunctions.permissionLocation()
+          .then(res => {
+            if (res) {
+              myFunctions.checkGps(false).then(function (gps) {
+                if (!gps.status) {
+                  console.log('checkGps useeffect', 'false');
+                } else {
+                  console.log(
+                    'You are ',
+                    getDistance(gps.data, {
+                      latitude: parseFloat(result.lat),
+                      longitude: parseFloat(result.lng),
+                    }),
+                    'meters away from 51.525, 7.4575',
+                  );
+                  const j = getDistance(gps.data, {
+                    latitude: parseFloat(result.lat),
+                    longitude: parseFloat(result.lng),
+                  });
 
-        Geolocation.getCurrentPosition({
-            message:
-              "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
-            ok: 'YES',
-            cancel: 'NO',
-          })
-          .then(function (success) {
-            if (success) {
-              // alert('4');
-              requestLocationPermission()
-                .then(res => {
-                  if (res) {
-                    Geolocation.getCurrentPosition(
-                      position => {
-                        // Working with W3C Geolocation API
-
-                        console.log(
-                          'You are ',
-                          getDistance(position.coords, {
-                            latitude: parseFloat(result.lat),
-                            longitude: parseFloat(result.lng),
-                          }),
-                          'meters away from 51.525, 7.4575',
-                        );
-
-                        // tesss1
-
-                        // Working with W3C Geolocation API
-                        // functionDistance(position, result).then(res => {
-                        //   const j = res;
-                        // });
-                        const j = getDistance(position.coords, {
-                          latitude: parseFloat(result.lat),
-                          longitude: parseFloat(result.lng),
-                        });
-
-                        // setTest(j);
-                        if (j > result.radius) {
-                          setForm(true);
-                          // alert('true' + j + ' ' + position.coords.latitude);
-                          console.log('true');
-                          setLoading(false);
-                        } else {
-                          setForm(false);
-                          // alert('true' + j + ' ' + position.coords.latitude);
-                          console.log('false');
-                          setLoading(false);
-                        }
-
-                        // alert(position.coords.latitude);
-                        // handleData(position)
-                      },
-                      error => {
-                        console.log(error);
-                        // alert('8');
-                        setLoading(false);
-                      },
-                      {
-                        enableHighAccuracy: false,
-                        timeout: 12000,
-                        accuracy: 'high',
-                      },
-                    );
-
-                    // alert('7');
+                  // setTest(j);
+                  if (j > result.radius) {
+                    setForm(true);
+                    // alert('true' + j + ' ' + gps.data.latitude);
+                    console.log('true');
+                    setLoading(false);
+                  } else {
+                    setForm(false);
+                    // alert('true' + j + ' ' + gps.data.latitude);
+                    console.log('false');
+                    setLoading(false);
                   }
-                })
-                .catch(e => {
-                  console.log(e);
+                }
+              })
+                .catch(error => {
+                  console.log('err checkGps useeffect', error.message);
                   setLoading(false);
                 });
             }
           })
-          .catch(error => {
-            console.log(error.message);
+          .catch(e => {
+            console.log(e);
             setLoading(false);
           });
-
-        // setLoading(false)
       } else {
-        alert(result.message);
+        Alert.alert(result.message);
       }
     });
   };
@@ -252,9 +160,9 @@ const ListAbsence = ({navigation, route}) => {
   console.log(route.params);
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       <ScrollView
-        scrollEnabled={false}
+        scrollEnabled={true}
         contentContainerStyle={styles.scrollView}
         nestedScrollEnabled={true}
         refreshControl={
@@ -296,9 +204,9 @@ const ListAbsence = ({navigation, route}) => {
          <Text style={{ marginTop : 10 }}>Jika GPS Kuat (lebih lama dan akurat)</Text>
     </View> */}
             {(data.menu.menuVisit == 'ON' && data.absenceOut != null) ||
-            (data.menu.menuBreak == 'ON' && data.absenceOut != null) ||
-            (data.menu.menuExcuse == 'ON' && data.absenceOut != null) ||
-            (data.menu.menuReguler == 'OFF' && data.absenceOut != null) ? (
+              (data.menu.menuBreak == 'ON' && data.absenceOut != null) ||
+              (data.menu.menuExcuse == 'ON' && data.absenceOut != null) ||
+              (data.menu.menuReguler == 'OFF' && data.absenceOut != null) ? (
               <View style={styles.message}>
                 <Text style={styles.messageText}>Absen Out Pada Jam :</Text>
                 <Text style={styles.messageText}>
@@ -313,35 +221,35 @@ const ListAbsence = ({navigation, route}) => {
               data.menu.menuBreak != 'ON' &&
               data.menu.menuExcuse != 'ON' && (
                 <TouchableOpacity
-                  style={[styles.listMenu, {backgroundColor: '#044cd0'}]}
+                  style={[styles.listMenu, { backgroundColor: '#044cd0' }]}
                   onPress={() => {
                     data.menu.geolocationOff != 'ON'
                       ? navigation.navigate('Absence', {
-                          highAccuracy: form,
-                          fingerfrint: data.fingerfrint,
-                          selfie: data.selfie,
-                          lat: data.lat,
-                          lng: data.lng,
-                          radius: data.radius,
-                          id: data.reguler.id,
-                          queue: data.reguler.queue,
-                          absence_id: data.reguler.absence_id,
-                          type: data.reguler.type,
-                          image: null,
-                        })
+                        highAccuracy: form,
+                        fingerfrint: data.fingerfrint,
+                        selfie: data.selfie,
+                        lat: data.lat,
+                        lng: data.lng,
+                        radius: data.radius,
+                        id: data.reguler.id,
+                        queue: data.reguler.queue,
+                        absence_id: data.reguler.absence_id,
+                        type: data.reguler.type,
+                        image: null,
+                      })
                       : navigation.navigate('AbsenceOff', {
-                          highAccuracy: form,
-                          fingerfrint: data.fingerfrint,
-                          selfie: data.selfie,
-                          lat: data.lat,
-                          lng: data.lng,
-                          radius: data.radius,
-                          id: data.reguler.id,
-                          queue: data.reguler.queue,
-                          absence_id: data.reguler.absence_id,
-                          type: data.reguler.type,
-                          image: null,
-                        });
+                        highAccuracy: form,
+                        fingerfrint: data.fingerfrint,
+                        selfie: data.selfie,
+                        lat: data.lat,
+                        lng: data.lng,
+                        radius: data.radius,
+                        id: data.reguler.id,
+                        queue: data.reguler.queue,
+                        absence_id: data.reguler.absence_id,
+                        type: data.reguler.type,
+                        image: null,
+                      });
                   }}>
                   {data.reguler.queue == 1 && (
                     <Text style={styles.btnText}>Absen Masuk</Text>
@@ -356,34 +264,34 @@ const ListAbsence = ({navigation, route}) => {
               data.break.queue == 2 &&
               data.menu.menuVisit != 'ON' && (
                 <TouchableOpacity
-                  style={[styles.listMenu, {backgroundColor: '#09aeae'}]}
+                  style={[styles.listMenu, { backgroundColor: '#09aeae' }]}
                   onPress={() => {
                     data.menu.geolocationOff != 'ON'
                       ? navigation.navigate('Absence', {
-                          highAccuracy: form,
-                          fingerfrint: data.fingerfrint,
-                          selfie: data.selfie,
-                          lat: data.lat,
-                          lng: data.lng,
-                          radius: data.radius,
-                          id: data.break.id,
-                          queue: data.break.queue,
-                          absence_id: data.break.absence_id,
-                          type: data.break.type,
-                        })
+                        highAccuracy: form,
+                        fingerfrint: data.fingerfrint,
+                        selfie: data.selfie,
+                        lat: data.lat,
+                        lng: data.lng,
+                        radius: data.radius,
+                        id: data.break.id,
+                        queue: data.break.queue,
+                        absence_id: data.break.absence_id,
+                        type: data.break.type,
+                      })
                       : navigation.navigate('AbsenceOff', {
-                          highAccuracy: form,
-                          fingerfrint: data.fingerfrint,
-                          selfie: data.selfie,
-                          lat: data.lat,
-                          lng: data.lng,
-                          radius: data.radius,
-                          id: data.break.id,
-                          queue: data.break.queue,
-                          absence_id: data.break.absence_id,
-                          type: data.break.type,
-                          image: null,
-                        });
+                        highAccuracy: form,
+                        fingerfrint: data.fingerfrint,
+                        selfie: data.selfie,
+                        lat: data.lat,
+                        lng: data.lng,
+                        radius: data.radius,
+                        id: data.break.id,
+                        queue: data.break.queue,
+                        absence_id: data.break.absence_id,
+                        type: data.break.type,
+                        image: null,
+                      });
                   }}>
                   <Text style={styles.btnText}>Absen Istirahat Selesai</Text>
                 </TouchableOpacity>
@@ -392,34 +300,34 @@ const ListAbsence = ({navigation, route}) => {
               data.break.queue == 1 &&
               data.menu.menuVisit != 'ON' && (
                 <TouchableOpacity
-                  style={[styles.listMenu, {backgroundColor: '#09aeae'}]}
+                  style={[styles.listMenu, { backgroundColor: '#09aeae' }]}
                   onPress={() => {
                     data.menu.geolocationOff != 'ON'
                       ? navigation.navigate('Absence', {
-                          highAccuracy: form,
-                          fingerfrint: data.fingerfrint,
-                          selfie: data.selfie,
-                          lat: data.lat,
-                          lng: data.lng,
-                          radius: data.radius,
-                          id: data.break.id,
-                          queue: data.break.queue,
-                          absence_id: data.break.absence_id,
-                          type: data.break.type,
-                        })
+                        highAccuracy: form,
+                        fingerfrint: data.fingerfrint,
+                        selfie: data.selfie,
+                        lat: data.lat,
+                        lng: data.lng,
+                        radius: data.radius,
+                        id: data.break.id,
+                        queue: data.break.queue,
+                        absence_id: data.break.absence_id,
+                        type: data.break.type,
+                      })
                       : navigation.navigate('AbsenceOff', {
-                          highAccuracy: form,
-                          fingerfrint: data.fingerfrint,
-                          selfie: data.selfie,
-                          lat: data.lat,
-                          lng: data.lng,
-                          radius: data.radius,
-                          id: data.break.id,
-                          queue: data.break.queue,
-                          absence_id: data.break.absence_id,
-                          type: data.break.type,
-                          image: null,
-                        });
+                        highAccuracy: form,
+                        fingerfrint: data.fingerfrint,
+                        selfie: data.selfie,
+                        lat: data.lat,
+                        lng: data.lng,
+                        radius: data.radius,
+                        id: data.break.id,
+                        queue: data.break.queue,
+                        absence_id: data.break.absence_id,
+                        type: data.break.type,
+                        image: null,
+                      });
                   }}>
                   <Text style={styles.btnText}>Absen Istirahat</Text>
                 </TouchableOpacity>
@@ -429,7 +337,7 @@ const ListAbsence = ({navigation, route}) => {
               data.break.queue == 2 &&
               data.menu.menuVisit == 'ON' && (
                 <TouchableOpacity
-                  style={[styles.listMenu, {backgroundColor: '#09aeae'}]}
+                  style={[styles.listMenu, { backgroundColor: '#09aeae' }]}
                   onPress={() => {
                     navigation.navigate('AbsenceOff', {
                       highAccuracy: form,
@@ -452,7 +360,7 @@ const ListAbsence = ({navigation, route}) => {
               data.break.queue == 1 &&
               data.menu.menuVisit == 'ON' && (
                 <TouchableOpacity
-                  style={[styles.listMenu, {backgroundColor: '#09aeae'}]}
+                  style={[styles.listMenu, { backgroundColor: '#09aeae' }]}
                   onPress={() => {
                     navigation.navigate('AbsenceOff', {
                       highAccuracy: form,
@@ -474,73 +382,73 @@ const ListAbsence = ({navigation, route}) => {
 
             {data.menu.menuExcuse == 'ON' && data.excuse != null && (
               <TouchableOpacity
-                style={[styles.listMenu, {backgroundColor: '#e6bc15'}]}
+                style={[styles.listMenu, { backgroundColor: '#e6bc15' }]}
                 onPress={() => {
                   data.menu.geolocationOff != 'ON'
                     ? navigation.navigate('AbsenceEnd', {
-                        highAccuracy: form,
-                        fingerfrint: data.fingerfrint,
-                        selfie: data.selfie,
-                        lat: data.lat,
-                        lng: data.lng,
-                        radius: data.radius,
-                        id: data.excuse.id,
-                        queue: data.excuse.queue,
-                        absence_id: data.excuse.absence_id,
-                        absence_request_id: data.excuse.absence_request_id,
-                        type: data.excuse.absence_category_type,
-                        image: null,
-                      })
+                      highAccuracy: form,
+                      fingerfrint: data.fingerfrint,
+                      selfie: data.selfie,
+                      lat: data.lat,
+                      lng: data.lng,
+                      radius: data.radius,
+                      id: data.excuse.id,
+                      queue: data.excuse.queue,
+                      absence_id: data.excuse.absence_id,
+                      absence_request_id: data.excuse.absence_request_id,
+                      type: data.excuse.absence_category_type,
+                      image: null,
+                    })
                     : navigation.navigate('AbsenceOffEnd', {
-                        highAccuracy: form,
-                        fingerfrint: data.fingerfrint,
-                        selfie: data.selfie,
-                        lat: data.lat,
-                        lng: data.lng,
-                        radius: data.radius,
-                        id: data.excuse.id,
-                        queue: data.excuse.queue,
-                        absence_id: data.excuse.absence_id,
-                        type: data.excuse.absence_category_type,
-                        image: null,
-                      });
+                      highAccuracy: form,
+                      fingerfrint: data.fingerfrint,
+                      selfie: data.selfie,
+                      lat: data.lat,
+                      lng: data.lng,
+                      radius: data.radius,
+                      id: data.excuse.id,
+                      queue: data.excuse.queue,
+                      absence_id: data.excuse.absence_id,
+                      type: data.excuse.absence_category_type,
+                      image: null,
+                    });
                 }}>
                 <Text style={styles.btnText}>Absen Permisi Selesai</Text>
               </TouchableOpacity>
             )}
             {data.menu.menuExcuse == 'ON' && data.excuse == null && (
               <TouchableOpacity
-                style={[styles.listMenu, {backgroundColor: '#e6bc15'}]}
+                style={[styles.listMenu, { backgroundColor: '#e6bc15' }]}
                 onPress={() => {
                   data.menu.geolocationOff != 'ON'
                     ? navigation.navigate('AbsenceCreate', {
-                        highAccuracy: form,
-                        fingerfrint: data.fingerfrint,
-                        selfie: data.selfie,
-                        lat: data.lat,
-                        lng: data.lng,
-                        radius: data.radius,
-                        absence_id: data.absenceOut.absence_id,
-                        expired_date: data.absenceOut.expired_date,
-                        absence_category_id: data.excuseC[0].id,
-                        absence_category_id_end: data.excuseC[1].id,
-                        absence_request_id: data.request_excuse.id,
-                        image: null,
-                      })
+                      highAccuracy: form,
+                      fingerfrint: data.fingerfrint,
+                      selfie: data.selfie,
+                      lat: data.lat,
+                      lng: data.lng,
+                      radius: data.radius,
+                      absence_id: data.absenceOut.absence_id,
+                      expired_date: data.absenceOut.expired_date,
+                      absence_category_id: data.excuseC[0].id,
+                      absence_category_id_end: data.excuseC[1].id,
+                      absence_request_id: data.request_excuse.id,
+                      image: null,
+                    })
                     : navigation.navigate('AbsenceCreateOff', {
-                        highAccuracy: form,
-                        fingerfrint: data.fingerfrint,
-                        selfie: data.selfie,
-                        lat: data.lat,
-                        lng: data.lng,
-                        radius: data.radius,
-                        absence_id: data.absenceOut.absence_id,
-                        expired_date: data.absenceOut.expired_date,
-                        absence_category_id: data.excuseC[0].id,
-                        absence_category_id_end: data.excuseC[1].id,
-                        absence_request_id: data.request_excuse.id,
-                        image: null,
-                      });
+                      highAccuracy: form,
+                      fingerfrint: data.fingerfrint,
+                      selfie: data.selfie,
+                      lat: data.lat,
+                      lng: data.lng,
+                      radius: data.radius,
+                      absence_id: data.absenceOut.absence_id,
+                      expired_date: data.absenceOut.expired_date,
+                      absence_category_id: data.excuseC[0].id,
+                      absence_category_id_end: data.excuseC[1].id,
+                      absence_request_id: data.request_excuse.id,
+                      image: null,
+                    });
                 }}>
                 <Text style={styles.btnText}>Absen Permisi</Text>
               </TouchableOpacity>
@@ -548,74 +456,74 @@ const ListAbsence = ({navigation, route}) => {
 
             {data.menu.menuVisit == 'ON' && data.visit != null && (
               <TouchableOpacity
-                style={[styles.listMenu, {backgroundColor: '#1fae51'}]}
+                style={[styles.listMenu, { backgroundColor: '#1fae51' }]}
                 onPress={() => {
                   data.menu.geolocationOff != 'ON'
                     ? navigation.navigate('AbsenceEnd', {
-                        highAccuracy: form,
-                        fingerfrint: data.fingerfrint,
-                        selfie: data.selfie,
-                        lat: data.lat,
-                        lng: data.lng,
-                        radius: data.radius,
-                        absence_request_id: data.visit.absence_request_id,
-                        id: data.visit.id,
-                        queue: data.visit.queue,
-                        absence_id: data.visit.absence_id,
-                        type: data.visit.absence_category_type,
-                        image: null,
-                      })
+                      highAccuracy: form,
+                      fingerfrint: data.fingerfrint,
+                      selfie: data.selfie,
+                      lat: data.lat,
+                      lng: data.lng,
+                      radius: data.radius,
+                      absence_request_id: data.visit.absence_request_id,
+                      id: data.visit.id,
+                      queue: data.visit.queue,
+                      absence_id: data.visit.absence_id,
+                      type: data.visit.absence_category_type,
+                      image: null,
+                    })
                     : navigation.navigate('AbsenceOffEnd', {
-                        highAccuracy: form,
-                        fingerfrint: data.fingerfrint,
-                        selfie: data.selfie,
-                        lat: data.lat,
-                        lng: data.lng,
-                        radius: data.radius,
-                        absence_request_id: data.visit.absence_request_id,
-                        id: data.visit.id,
-                        queue: data.visit.queue,
-                        absence_id: data.visit.absence_id,
-                        type: data.visit.absence_category_type,
-                        image: null,
-                      });
+                      highAccuracy: form,
+                      fingerfrint: data.fingerfrint,
+                      selfie: data.selfie,
+                      lat: data.lat,
+                      lng: data.lng,
+                      radius: data.radius,
+                      absence_request_id: data.visit.absence_request_id,
+                      id: data.visit.id,
+                      queue: data.visit.queue,
+                      absence_id: data.visit.absence_id,
+                      type: data.visit.absence_category_type,
+                      image: null,
+                    });
                 }}>
                 <Text style={styles.btnText}>Absen Dinas Selesai</Text>
               </TouchableOpacity>
             )}
             {data.menu.menuVisit == 'ON' && data.visit == null && (
               <TouchableOpacity
-                style={[styles.listMenu, {backgroundColor: '#1fae51'}]}
+                style={[styles.listMenu, { backgroundColor: '#1fae51' }]}
                 onPress={() => {
                   data.menu.geolocationOff != 'ON'
                     ? navigation.navigate('AbsenceCreate', {
-                        highAccuracy: form,
-                        fingerfrint: data.fingerfrint,
-                        selfie: data.selfie,
-                        lat: data.lat,
-                        lng: data.lng,
-                        radius: data.radius,
-                        absence_id: data.absenceOut.absence_id,
-                        expired_date: data.absenceOut.expired_date,
-                        absence_category_id: data.visitC[0].id,
-                        absence_category_id_end: data.visitC[1].id,
-                        absence_request_id: data.request_visit.id,
-                        image: null,
-                      })
+                      highAccuracy: form,
+                      fingerfrint: data.fingerfrint,
+                      selfie: data.selfie,
+                      lat: data.lat,
+                      lng: data.lng,
+                      radius: data.radius,
+                      absence_id: data.absenceOut.absence_id,
+                      expired_date: data.absenceOut.expired_date,
+                      absence_category_id: data.visitC[0].id,
+                      absence_category_id_end: data.visitC[1].id,
+                      absence_request_id: data.request_visit.id,
+                      image: null,
+                    })
                     : navigation.navigate('AbsenceCreateOff', {
-                        highAccuracy: form,
-                        fingerfrint: data.fingerfrint,
-                        selfie: data.selfie,
-                        lat: data.lat,
-                        lng: data.lng,
-                        radius: data.radius,
-                        absence_id: data.absenceOut.absence_id,
-                        expired_date: data.absenceOut.expired_date,
-                        absence_category_id: data.visitC[0].id,
-                        absence_category_id_end: data.visitC[1].id,
-                        absence_request_id: data.request_visit.id,
-                        image: null,
-                      });
+                      highAccuracy: form,
+                      fingerfrint: data.fingerfrint,
+                      selfie: data.selfie,
+                      lat: data.lat,
+                      lng: data.lng,
+                      radius: data.radius,
+                      absence_id: data.absenceOut.absence_id,
+                      expired_date: data.absenceOut.expired_date,
+                      absence_category_id: data.visitC[0].id,
+                      absence_category_id_end: data.visitC[1].id,
+                      absence_request_id: data.request_visit.id,
+                      image: null,
+                    });
                 }}>
                 <Text style={styles.btnText}>Absen Dinas</Text>
               </TouchableOpacity>
@@ -623,35 +531,35 @@ const ListAbsence = ({navigation, route}) => {
 
             {data.menu.menuExtra == 'ON' && data.extra != null && (
               <TouchableOpacity
-                style={[styles.listMenu, {backgroundColor: '#7a8793'}]}
+                style={[styles.listMenu, { backgroundColor: '#7a8793' }]}
                 onPress={() => {
                   data.menu.geolocationOff != 'ON'
                     ? navigation.navigate('AbsenceExtra', {
-                        highAccuracy: form,
-                        fingerfrint: data.fingerfrint,
-                        selfie: data.selfie,
-                        lat: data.lat,
-                        lng: data.lng,
-                        radius: data.radius,
-                        id: data.extra.id,
-                        queue: data.extra.queue,
-                        absence_id: data.extra.absence_id,
-                        type: data.extra.absence_category_type,
-                        image: null,
-                      })
+                      highAccuracy: form,
+                      fingerfrint: data.fingerfrint,
+                      selfie: data.selfie,
+                      lat: data.lat,
+                      lng: data.lng,
+                      radius: data.radius,
+                      id: data.extra.id,
+                      queue: data.extra.queue,
+                      absence_id: data.extra.absence_id,
+                      type: data.extra.absence_category_type,
+                      image: null,
+                    })
                     : navigation.navigate('AbsenceExtraOff', {
-                        highAccuracy: form,
-                        fingerfrint: data.fingerfrint,
-                        selfie: data.selfie,
-                        lat: data.lat,
-                        lng: data.lng,
-                        radius: data.radius,
-                        id: data.extra.id,
-                        queue: data.extra.queue,
-                        absence_id: data.extra.absence_id,
-                        type: data.extra.absence_category_type,
-                        image: null,
-                      });
+                      highAccuracy: form,
+                      fingerfrint: data.fingerfrint,
+                      selfie: data.selfie,
+                      lat: data.lat,
+                      lng: data.lng,
+                      radius: data.radius,
+                      id: data.extra.id,
+                      queue: data.extra.queue,
+                      absence_id: data.extra.absence_id,
+                      type: data.extra.absence_category_type,
+                      image: null,
+                    });
                 }}>
                 <Text style={styles.btnText}>Absen Lembur Selesai</Text>
               </TouchableOpacity>
@@ -660,33 +568,33 @@ const ListAbsence = ({navigation, route}) => {
             {console.log('sss', data)}
             {data.menu.menuExtra == 'ON' && data.extra == null && (
               <TouchableOpacity
-                style={[styles.listMenu, {backgroundColor: '#7a8793'}]}
+                style={[styles.listMenu, { backgroundColor: '#7a8793' }]}
                 onPress={() => {
                   data.menu.geolocationOff != 'ON'
                     ? navigation.navigate('AbsenceCreateExtra', {
-                        highAccuracy: form,
-                        fingerfrint: data.fingerfrint,
-                        selfie: data.selfie,
-                        lat: data.lat,
-                        lng: data.lng,
-                        radius: data.radius,
-                        absence_category_id: data.extraC[0].id,
-                        absence_category_id_end: data.extraC[1].id,
-                        absence_request_id: data.request_extra.id,
-                        image: null,
-                      })
+                      highAccuracy: form,
+                      fingerfrint: data.fingerfrint,
+                      selfie: data.selfie,
+                      lat: data.lat,
+                      lng: data.lng,
+                      radius: data.radius,
+                      absence_category_id: data.extraC[0].id,
+                      absence_category_id_end: data.extraC[1].id,
+                      absence_request_id: data.request_extra.id,
+                      image: null,
+                    })
                     : navigation.navigate('AbsenceCreateExtraOff', {
-                        highAccuracy: form,
-                        fingerfrint: data.fingerfrint,
-                        selfie: data.selfie,
-                        lat: data.lat,
-                        lng: data.lng,
-                        radius: data.radius,
-                        absence_category_id: data.extraC[0].id,
-                        absence_category_id_end: data.extraC[1].id,
-                        absence_request_id: data.request_extra.id,
-                        image: null,
-                      });
+                      highAccuracy: form,
+                      fingerfrint: data.fingerfrint,
+                      selfie: data.selfie,
+                      lat: data.lat,
+                      lng: data.lng,
+                      radius: data.radius,
+                      absence_category_id: data.extraC[0].id,
+                      absence_category_id_end: data.extraC[1].id,
+                      absence_request_id: data.request_extra.id,
+                      image: null,
+                    });
                 }}>
                 <Text style={styles.btnText}>Absen Lembur</Text>
               </TouchableOpacity>
@@ -694,7 +602,7 @@ const ListAbsence = ({navigation, route}) => {
 
             {data.menu.menuDuty == 'ON' && data.AbsenceRequestLogs != null && (
               <TouchableOpacity
-                style={[styles.listMenu, {backgroundColor: '#7a8793'}]}
+                style={[styles.listMenu, { backgroundColor: '#7a8793' }]}
                 onPress={() => {
                   navigation.navigate('AbsenceCreateDuty', {
                     highAccuracy: form,
@@ -711,7 +619,7 @@ const ListAbsence = ({navigation, route}) => {
             {console.log('sss', data)}
             {data.menu.menuDuty == 'ON' && data.AbsenceRequestLogs == null && (
               <TouchableOpacity
-                style={[styles.listMenu, {backgroundColor: '#7a8793'}]}
+                style={[styles.listMenu, { backgroundColor: '#7a8793' }]}
                 onPress={() => {
                   navigation.navigate('AbsenceCreateDuty', {
                     highAccuracy: form,
@@ -728,7 +636,7 @@ const ListAbsence = ({navigation, route}) => {
             {data.menu.menuLeave == 'ON' && (
               // <TouchableOpacity style={[styles.listMenu,{backgroundColor: '#7a8793'}]} onPress={()=>{handleAction(data.leave.id)}}>
               <TouchableOpacity
-                style={[styles.listMenu, {backgroundColor: '#7a8793'}]}
+                style={[styles.listMenu, { backgroundColor: '#7a8793' }]}
                 disabled={true}>
                 <Text style={styles.btnText}>
                   {/* Akhiri Cuti */}
@@ -740,7 +648,7 @@ const ListAbsence = ({navigation, route}) => {
             {data.menu.menuPermission == 'ON' && (
               <View>
                 <TouchableOpacity
-                  style={[styles.listMenu, {backgroundColor: '#7a8793'}]}
+                  style={[styles.listMenu, { backgroundColor: '#7a8793' }]}
                   onPress={() => {
                     handleAction(data.permission.id);
                   }}>
@@ -748,9 +656,9 @@ const ListAbsence = ({navigation, route}) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={[styles.listMenu, {backgroundColor: '#e6bc15'}]}
+                  style={[styles.listMenu, { backgroundColor: '#e6bc15' }]}
                   onPress={() => {
-                    navigation.navigate('EndSick', {id: data.permission.id});
+                    navigation.navigate('EndSick', { id: data.permission.id });
                   }}>
                   <Text style={styles.btnText}>Tambah Tanggal Sakit</Text>
                 </TouchableOpacity>
