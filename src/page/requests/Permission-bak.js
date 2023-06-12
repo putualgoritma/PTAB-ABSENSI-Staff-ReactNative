@@ -22,7 +22,6 @@ import { useSelector } from 'react-redux';
 import Select2 from 'react-native-select-two';
 import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import myFunctions from '../../functions';
-import SelectDropdown from 'react-native-select-dropdown';
 
 const Permission = ({ navigation }) => {
 
@@ -50,16 +49,6 @@ const Permission = ({ navigation }) => {
     category: 'permission'
   })
 
-  const countries = [
-    { title: 'Egypt', id: 1 },
-    { title: 'Canada', id: 2 },
-    { title: 'Australia', id: 3 },
-    { title: 'Ireland', id: 4 },
-    { title: 'Brazil', id: 5 },
-    { title: 'England', id: 6 },
-    { title: 'Dubai', id: 7 },
-  ];
-
   const [imageP, set_imageP] = useState({
     base64: "",
     fileName: "",
@@ -86,7 +75,6 @@ const Permission = ({ navigation }) => {
   const handleAction = () => {
     console.log(form)
 
-    //*
     if (form.start != "" && form.end != "" && form.type != "") {
       setLoading(true)
       const data = {
@@ -132,7 +120,7 @@ const Permission = ({ navigation }) => {
     else {
       Alert.alert('Gagal', 'mohon lengkapi data')
     }
-    //*/
+
   }
   // Api end
   // tanggal
@@ -220,43 +208,37 @@ const Permission = ({ navigation }) => {
           </Text>
 
           <Text style={styles.title}>Pilih Keterangan<Text style={{ color: '#ff0000' }}>*</Text></Text>
+          <Select2
 
-          <View style={styles.inputselect}>
-            <SelectDropdown
-              data={todos}
-              onSelect={(selectedItem, index) => {
-                console.log('todos: ', todos);
-                console.log('selectedItem', selectedItem);
-                setForm({ ...form, type: selectedItem.id.toString() });
-              }}
-              defaultButtonText={'Cari Status'}
-              buttonTextAfterSelection={(selectedItem, index) => {
-                //setForm({ ...form, type: selectedItem.id.toString() })
-                return selectedItem.name;
-              }}
-              rowTextForSelection={(item, index) => {
-                //setForm({ ...form, type: item.id.toString() })
-                return item.name;
-              }}
-              buttonStyle={styles.dropdown1BtnStyle}
-              buttonTextStyle={styles.dropdown1BtnTxtStyle}
-              renderDropdownIcon={isOpened => {
-                return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#444'} size={18} />;
-              }}
-              dropdownIconPosition={'right'}
-              dropdownStyle={styles.dropdown1DropdownStyle}
-              rowStyle={styles.dropdown1RowStyle}
-              rowTextStyle={styles.dropdown1RowTxtStyle}
-              selectedRowStyle={styles.dropdown1SelectedRowStyle}
-              search
-              searchInputStyle={styles.dropdown1searchInputStyleStyle}
-              searchPlaceHolder={'Pilih Status'}
-              searchPlaceHolderColor={'darkgrey'}
-              renderSearchInputLeftIcon={() => {
-                return <Icon name={'search'} color={'#444'} size={18} />;
-              }}
-            />
-          </View>
+            searchPlaceHolderText='Cari Status'
+            title='Status'
+            listEmptyTitle="Data Kosong"
+            isSelectSingle
+            style={styles.input}
+            buttonStyle={{
+              backgroundColor: '#0C5CBF',
+              height: 45,
+              borderRadius: 0
+            }}
+            buttonTextStyle={{
+              color: '#FFFFFF'
+            }}
+            colorTheme={'#0C5CBF'}
+            popupTitle='Pilih Status'
+            data={todos}
+            onSelect={data => {
+
+              setForm({ ...form, type: data.toString() })
+              console.log(todos)
+            }}
+            onRemoveItem={data => {
+
+              setForm({ ...form, type: data.toString() })
+            }}
+            selectButtonText='Simpan'
+            cancelButtonText='Batal'
+
+          />
 
           <Text style={styles.title}>Tanggal Mulai<Text style={{ color: '#ff0000' }}>*</Text></Text>
           <TouchableOpacity style={styles.input} onPress={showDatePicker} ><Text style={styles.text}>{date}</Text></TouchableOpacity>
@@ -362,10 +344,6 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
     marginVertical: windowHeight * 0.01,
   },
-  inputselect: {
-    alignItems: 'center',
-    marginBottom: 10,
-  },
   text: {
     fontSize: 14,
     paddingTop: 10,
@@ -409,103 +387,5 @@ const styles = StyleSheet.create({
     width: windowWidht * 0.70,
     height: windowHeight * 0.3233,
     backgroundColor: '#00000010',
-  },
-  dropdown1BtnStyle: {
-    width: windowWidht * 0.7,
-    height: windowHeight * 0.043,
-    backgroundColor: '#FFF',
-    borderRadius: 0,
-    borderWidth: 1,
-    borderColor: '#444',
-  },
-  dropdown1BtnTxtStyle: { color: '#444', textAlign: 'left' },
-  dropdown1DropdownStyle: { backgroundColor: '#EFEFEF' },
-  dropdown1RowStyle: { backgroundColor: '#EFEFEF', borderBottomColor: '#C5C5C5' },
-  dropdown1RowTxtStyle: { color: '#444', textAlign: 'left' },
-  dropdown1SelectedRowStyle: { backgroundColor: 'rgba(0,0,0,0.1)' },
-  dropdown1searchInputStyleStyle: {
-    backgroundColor: '#EFEFEF',
-    borderRadius: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#444',
-  },
-
-  dropdown2BtnStyle: {
-    width: '80%',
-    height: 50,
-    backgroundColor: '#444',
-    borderRadius: 8,
-  },
-  dropdown2BtnTxtStyle: {
-    color: '#FFF',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  dropdown2DropdownStyle: {
-    backgroundColor: '#444',
-    borderRadius: 12,
-  },
-  dropdown2RowStyle: { backgroundColor: '#444', borderBottomColor: '#C5C5C5' },
-  dropdown2RowTxtStyle: {
-    color: '#FFF',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  dropdown2SelectedRowStyle: { backgroundColor: 'rgba(255,255,255,0.2)' },
-  dropdown2searchInputStyleStyle: {
-    backgroundColor: '#444',
-    borderBottomWidth: 1,
-    borderBottomColor: '#FFF',
-  },
-
-  dropdown3BtnStyle: {
-    width: '80%',
-    height: 50,
-    backgroundColor: '#FFF',
-    paddingHorizontal: 0,
-    borderWidth: 1,
-    borderRadius: 8,
-    borderColor: '#444',
-  },
-  dropdown3BtnChildStyle: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 18,
-  },
-  dropdown3BtnImage: { width: 45, height: 45, resizeMode: 'cover' },
-  dropdown3BtnTxt: {
-    color: '#444',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 24,
-    marginHorizontal: 12,
-  },
-  dropdown3DropdownStyle: { backgroundColor: 'slategray' },
-  dropdown3RowStyle: {
-    backgroundColor: 'slategray',
-    borderBottomColor: '#444',
-    height: 50,
-  },
-  dropdown3RowChildStyle: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingHorizontal: 18,
-  },
-  dropdownRowImage: { width: 45, height: 45, resizeMode: 'cover' },
-  dropdown3RowTxt: {
-    color: '#F1F1F1',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 24,
-    marginHorizontal: 12,
-  },
-  dropdown3searchInputStyleStyle: {
-    backgroundColor: 'slategray',
-    borderBottomWidth: 1,
-    borderBottomColor: '#FFF',
   },
 })

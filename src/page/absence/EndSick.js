@@ -18,9 +18,6 @@ import {     StyleSheet,
   import { useEffect } from 'react';
   import ScreenLoading from '../loading/ScreenLoading';
   import { useSelector } from 'react-redux';
-  import Select2 from 'react-native-select-two';
-
-
 
 const EndSick = ({navigation, route}) => {
 

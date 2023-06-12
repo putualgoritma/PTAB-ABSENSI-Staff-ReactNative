@@ -19,7 +19,6 @@ import RNFetchBlob from 'rn-fetch-blob';
 import { useEffect } from 'react';
 import ScreenLoading from '../loading/ScreenLoading';
 import { useSelector } from 'react-redux';
-import Select2 from 'react-native-select-two';
 import myFunctions from '../../functions';
 
 const FileApprove = ({ navigation, route }) => {

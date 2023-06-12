@@ -23,6 +23,7 @@ import DeviceInfo from 'react-native-device-info';
 import { useIsFocused } from '@react-navigation/native';
 import ScreenLoading from '../loading/ScreenLoading';
 import myFunctions from '../../functions';
+import SelectDropdown from 'react-native-select-dropdown';
 
 const Home = ({ navigation }) => {
   const TOKEN = useSelector(state => state.TokenReducer);
@@ -108,6 +109,7 @@ const Home = ({ navigation }) => {
             }>
             {/* <Text>{data.staff.type}</Text> */}
             <View style={{ backgroundColor: '#16D5FF', width: windowWidht * 1 }}>
+              
               <View
                 style={{
                   flexDirection: 'row',
