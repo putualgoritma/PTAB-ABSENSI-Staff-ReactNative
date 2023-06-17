@@ -1,11 +1,11 @@
-import React from 'react'
-import { createStackNavigator } from '@react-navigation/stack'
+import React from 'react';
+import {createStackNavigator} from '@react-navigation/stack';
 
 import Home from '../page/home';
 import Test1 from '../Test1';
 import AbsenceOut from '../page/requests/AbsenceOut';
 import FileApprove from '../page/history/FileApprove';
-import Absence from '../page/absence'
+import Absence from '../page/absence';
 import AbsenceCreate from '../page/absence/absenceCreate';
 import AbsenceCreateExtra from '../page/absence/AbsenceCreateExtra';
 import AbsenceCreateExtraOff from '../page/absence/AbsenceCreateExtraOff';
@@ -20,8 +20,8 @@ import Check_Staff from '../page/check_staff';
 import HistoryExtra from '../page/history/HistoryExtra';
 
 import Leave from '../page/requests/Leave';
-import Schedule from '../page/schedule'
-import ScheduleShift from '../page/schedule/ShiftSchedule'
+import Schedule from '../page/schedule';
+import ScheduleShift from '../page/schedule/ShiftSchedule';
 import AbsenceCreateOff from '../page/absence/absenceCreateOff';
 
 import Request from '../page/requests';
@@ -36,15 +36,15 @@ import HistoryRequest from '../page/history/HistoryRequests';
 import Shift from '../page/shift';
 import ChangeShift from '../page/shift/ChangeShift';
 
-import changeShiftProposal from '../page/history/changeShiftProposal';
-import changeShift from '../page/history/changeShift';
+import changeShiftProposal from '../page/history/ChangeShiftProposal';
+import changeShift from '../page/history/ChangeShift';
 
-import message from '../page/message';
-import Holiday from '../page/holiday';
+import message from '../page/Message';
+import Holiday from '../page/Holiday';
 
 import ShiftStaff from '../page/shift/ShiftStaff';
 import Login from '../page/login/Login';
-import SplashScreen from '../page/SplashScreen'
+import SplashScreen from '../page/SplashScreen';
 import Permission from '../page/requests/Permission';
 import User from '../page/user';
 import HistoryCShift from '../page/shift/History';
@@ -55,423 +55,478 @@ import EndSick from '../page/absence/EndSick';
 
 const Stack = createStackNavigator();
 
-
 const Router = () => {
   return (
     <Stack.Navigator initialRouteName="SplashScreen">
-
-<Stack.Screen
+      <Stack.Screen
         name="CamDect"
         component={CamDect}
         options={{headerShown: false}}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="Login"
         component={Login}
         options={{headerShown: false}}
       />
-<Stack.Screen
+      <Stack.Screen
         name="User"
         component={User}
         options={{headerShown: false}}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="Home"
         component={Home}
         options={{headerShown: false}}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="ListAbsence"
         component={ListAbsence}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'List Absen'
+          },
+          title: 'List Absen',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="ListHistory"
         component={ListHistory}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'List Histori'
+          },
+          title: 'List Histori',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="ListFile"
         component={ListFile}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'List File'
+          },
+          title: 'List File',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="Check_Staff"
         component={Check_Staff}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Absen'
+          },
+          title: 'Absen',
         }}
       />
 
-
-<Stack.Screen
+      <Stack.Screen
         name="Absence"
         component={Absence}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Absen'
+          },
+          title: 'Absen',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="Leave"
         component={Leave}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Cuti'
+          },
+          title: 'Cuti',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="Schedule"
         component={Schedule}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Jadwal'
+          },
+          title: 'Jadwal',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="message"
         component={message}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Pesan'
+          },
+          title: 'Pesan',
         }}
       />
 
-
-<Stack.Screen
+      <Stack.Screen
         name="Holiday"
         component={Holiday}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Hari Libur'
+          },
+          title: 'Hari Libur',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="ScheduleShift"
         component={ScheduleShift}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Jadwal'
+          },
+          title: 'Jadwal',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="AbsenceEnd"
         component={AbsenceEnd}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Absen'
+          },
+          title: 'Absen',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="AbsenceOffEnd"
         component={AbsenceOffEnd}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Absen'
+          },
+          title: 'Absen',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="AbsenceCreate"
         component={AbsenceCreate}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Absen'
+          },
+          title: 'Absen',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="AbsenceCreateOff"
         component={AbsenceCreateOff}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Absen'
+          },
+          title: 'Absen',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="AbsenceCreateExtra"
         component={AbsenceCreateExtra}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Absen'
+          },
+          title: 'Absen',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="AbsenceCreateExtraOff"
         component={AbsenceCreateExtraOff}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Absen'
+          },
+          title: 'Absen',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="AbsenceCreateDuty"
         component={AbsenceCreateDuty}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Absen'
+          },
+          title: 'Absen',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="AbsenceOff"
         component={AbsenceOff}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Absen'
+          },
+          title: 'Absen',
         }}
       />
 
-
-<Stack.Screen
+      <Stack.Screen
         name="AbsenceExtraOff"
         component={AbsenceExtraOff}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Absen'
+          },
+          title: 'Absen',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="AbsenceExtra"
         component={AbsenceExtra}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Absen'
+          },
+          title: 'Absen',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="AbsenceOut"
         component={AbsenceOut}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Absen Diluar'
+          },
+          title: 'Absen Diluar',
         }}
       />
-<Stack.Screen
+      <Stack.Screen
         name="RDuty"
         component={RDuty}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Dinas Dalam Kota'
+          },
+          title: 'Dinas Dalam Kota',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="RDutyOut"
         component={RDutyOut}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Dinas Keluar'
+          },
+          title: 'Dinas Keluar',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="ROvertime"
         component={ROvertime}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Lembur'
+          },
+          title: 'Lembur',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="RPermit"
         component={RPermit}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Permisi'
+          },
+          title: 'Permisi',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="FileApprove"
         component={FileApprove}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Permisi'
+          },
+          title: 'Permisi',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="Request"
         component={Request}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Pilih Menu'
+          },
+          title: 'Pilih Menu',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="EndSick"
         component={EndSick}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Tambah Tanggal Sakit'
+          },
+          title: 'Tambah Tanggal Sakit',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="Test1"
         component={Test1}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Absen'
+          },
+          title: 'Absen',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="History"
         component={History}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Histori Absen'
+          },
+          title: 'Histori Absen',
         }}
       />
       <Stack.Screen
@@ -480,128 +535,140 @@ const Router = () => {
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Histori Lembur'
+          },
+          title: 'Histori Lembur',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="HistoryRequest"
         component={HistoryRequest}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'History Permohonan'
+          },
+          title: 'History Permohonan',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="changeShiftProposal"
         component={changeShiftProposal}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'History Tukar Shift'
+          },
+          title: 'History Tukar Shift',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="Shift"
         component={Shift}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Shift'
+          },
+          title: 'Shift',
         }}
       />
-<Stack.Screen
+      <Stack.Screen
         name="ChangeShift"
         component={ChangeShift}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Tukar Shift'
+          },
+          title: 'Tukar Shift',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="changeShift"
         component={changeShift}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Tukar Shift'
+          },
+          title: 'Tukar Shift',
         }}
       />
 
-
-<Stack.Screen
+      <Stack.Screen
         name="ShiftStaff"
         component={ShiftStaff}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'Shift'
+          },
+          title: 'Shift',
         }}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="SplashScreen"
         component={SplashScreen}
         options={{headerShown: false}}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="Permission"
         component={Permission}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'History Permohonan'
+          },
+          title: 'History Permohonan',
         }}
       />
-      
-<Stack.Screen
+
+      <Stack.Screen
         name="HistoryCShift"
         component={HistoryCShift}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',
-          }, headerTintColor: '#FFFFFF',
+          },
+          headerTintColor: '#FFFFFF',
           headerTitleStyle: {
             fontWeight: 'bold',
-          }, title: 'History Pertukaran Shift'
+          },
+          title: 'History Pertukaran Shift',
         }}
       />
-
-
     </Stack.Navigator>
-
-    
-  )
-
-}
-export default Router
+  );
+};
+export default Router;

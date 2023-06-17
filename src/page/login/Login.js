@@ -9,6 +9,7 @@ import {
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState} from 'react';
+import myFunctions from '../../functions';
 import {
   ScrollView,
   StyleSheet,
@@ -57,12 +58,21 @@ const Login = ({navigation}) => {
   });
   const [loading, setLoading] = useState(true);
 
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   useEffect(() => {
-    if (isFocused) {
-      // DeviceInfo.getDevice().then((device) => {
-      //   // "walleye"
-      //   setForm({...form, device : device})
-      // });
+    // DeviceInfo.getDevice().then((device) => {
+    //   // "walleye"
+    //   setForm({...form, device : device})
+    // });
+    myFunctions.permissionLocation(),
       signupOnesignal()
         .then(result => {
           // alert(result);
@@ -73,31 +83,54 @@ const Login = ({navigation}) => {
         .catch(e => {
           console.log(e);
           alert(e);
-          setLoading(false);
+          // setLoading(false);
+        });
+    DeviceInfo.getDeviceName().then(deviceName => {
+      console.log('nama hp 99', deviceName);
+      setForm({...form, device: deviceName});
+      // setLoading(false);
+    });
+
+    //  let model = DeviceInfo.getModel();
+    //  console.log('nama hp', model)
+
+    //  DeviceInfo.getFingerprint().then((fingerprint) => {
+    //    console.log('nama hp', fingerprint)
+    //  });
+    setTimeout(() => {
+      // setSpinner(false);
+      signupOnesignal()
+        .then(result => {
+          // alert(result);
+          console.log('update onesignal', result);
+          setForm({...form, _id_onesignal: result});
+          // setLoading(false)
+          console.log(result);
+        })
+        .catch(e => {
+          console.log(e);
+          alert(e);
+          // setLoading(false);
         });
       DeviceInfo.getDeviceName().then(deviceName => {
         console.log('nama hp 99', deviceName);
         setForm({...form, device: deviceName});
-        setLoading(false);
+        // setLoading(false);
       });
-      //  let model = DeviceInfo.getModel();
-      //  console.log('nama hp', model)
-
-      //  DeviceInfo.getFingerprint().then((fingerprint) => {
-      //    console.log('nama hp', fingerprint)
-      //  });
-    }
+      console.log('jalannnn');
+      setLoading(false);
+    }, 10000);
 
     return () => {
       setForm({
         password: null,
-        _id_onesignal: null,
+        // _id_onesignal: null,
         email: null,
         device: null,
       });
       console.log('dddd', form);
     };
-  }, [isFocused]);
+  }, []);
 
   const signupOnesignal = async () => {
     OneSignal.setAppId('282dff1a-c5b2-4c3d-81dd-9e0c2b82114b');
@@ -112,6 +145,7 @@ const Login = ({navigation}) => {
       // dispatch(token_api_one_signal(device['userId']))
       const device = await OneSignal.getDeviceState();
       console.log('test9 ', device);
+      console.log('log8', device.userId);
       return device.userId;
     } catch (e) {
       console.log(e);
@@ -189,6 +223,7 @@ const Login = ({navigation}) => {
   };
 
   const handleLogin = user => {
+    console.log('tesssss1');
     console.log(user);
     if (
       user.email != null &&

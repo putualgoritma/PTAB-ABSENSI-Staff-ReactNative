@@ -9,21 +9,25 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import MapView, { Callout, Marker, Circle } from 'react-native-maps';
+import React, {useEffect, useState} from 'react';
+import MapView, {Callout, Marker, Circle} from 'react-native-maps';
 import reactNativeAndroidLocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
 import Geolocation from '@react-native-community/geolocation';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import API from '../../service';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
 import RNFetchBlob from 'rn-fetch-blob';
-import { getDistance } from 'geolib';
+import {getDistance} from 'geolib';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { launchCamera } from 'react-native-image-picker';
+import {launchCamera} from 'react-native-image-picker';
 import ScreenLoading from '../loading/ScreenLoading';
 import myFunctions from '../../functions';
+import {
+  isMockingLocation,
+  MockLocationDetectorErrorCode,
+} from 'react-native-turbo-mock-location-detector';
 
-const AbsenceCreateExtraOff = ({ navigation, route }) => {
+const AbsenceCreateExtraOff = ({navigation, route}) => {
   const TOKEN = useSelector(state => state.TokenReducer);
   const USER = useSelector(state => state.UserReducer);
   const USER_ID = useSelector(state => state.UserReducer.id);
@@ -45,7 +49,7 @@ const AbsenceCreateExtraOff = ({ navigation, route }) => {
   const [courseDetails, setCourseDetails] = useState();
   const [jarak, setJarak] = useState('');
   const [test, setTest] = useState('');
-  const { width, height } = Dimensions.get('window');
+  const {width, height} = Dimensions.get('window');
   const ASPECT_RATIO = width / height;
   const LATITUDE_DELTA = 0.4922;
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
@@ -62,13 +66,75 @@ const AbsenceCreateExtraOff = ({ navigation, route }) => {
     todo: '',
   });
   const [loading, setLoading] = useState(true);
+  const [fakeGpsV, setfakeGpsV] = useState(0);
+
+  const fakeGps = async () => {
+    console.log('Fake GPS');
+    // return true;
+    await isMockingLocation()
+      .then(({isLocationMocked}) => {
+        if (isLocationMocked === true) {
+          // alert('gps falsu');
+          setfakeGpsV(2);
+          return (
+            <View>
+              <Text>
+                Anda Menggunakan Fake GPS Tolong Matikan Fake GPS dan restart HP
+                Anda Kembali
+              </Text>
+            </View>
+          );
+          // return true;
+        } else {
+          // alert('gps asli');
+          setfakeGpsV(3);
+          return (
+            <View>
+              <Text>
+                Anda Menggunakan Fake GPS Tolong Matikan Fake GPS dan restart HP
+                Anda Kembali
+              </Text>
+            </View>
+          );
+          // return true;
+        }
+
+        // isLocationMocked: boolean
+        // boolean result for Android and iOS >= 15.0
+      })
+      .catch(error => {
+        // error.message - descriptive message
+        switch (error.code) {
+          case MockLocationDetectorErrorCode.GPSNotEnabled: {
+            // user disabled GPS
+            console.log('fake 1');
+            return true;
+          }
+          case MockLocationDetectorErrorCode.NoLocationPermissionEnabled: {
+            // user has no permission to access location
+            console.log('fake 2');
+            return true;
+          }
+          case MockLocationDetectorErrorCode.CantDetermine: {
+            console.log('fake 3');
+            return true;
+            // always for iOS < 15.0
+            // for android and iOS if couldn't fetch GPS position
+          }
+        }
+      });
+  };
 
   useEffect(() => {
     // Alert.alert('camera'+route.params.selfie)
     console.log(route.params);
     setLoading(true);
-
-    Promise.all([myFunctions.checkFingerprint(), myFunctions.permissionCamera(), myFunctions.permissionLocation()])
+    fakeGps();
+    Promise.all([
+      myFunctions.checkFingerprint(),
+      myFunctions.permissionCamera(),
+      myFunctions.permissionLocation(),
+    ])
       .then(res => {
         setLoading(true);
         //if fingerprint off
@@ -78,46 +144,51 @@ const AbsenceCreateExtraOff = ({ navigation, route }) => {
         //if perrmission loc
         if (res[2]) {
           //check gps
-          myFunctions.checkGps(false).then(function (gps) {
-            if (!gps.status) {
-              console.log('checkGps useeffect', 'false');
-            } else {
-              console.log('position', gps.data);
-              console.log(
-                'You are ',
-                getDistance(gps.data, {
-                  latitude: parseFloat(route.params.lat),
-                  longitude: parseFloat(route.params.lng),
-                }),
-                'meters away from 51.525, 7.4575',
-              );
+          myFunctions
+            .checkGps(false)
+            .then(function (gps) {
+              if (!gps.status) {
+                console.log('checkGps useeffect', 'false');
+              } else {
+                console.log('position', gps.data);
+                console.log(
+                  'You are ',
+                  getDistance(gps.data, {
+                    latitude: parseFloat(route.params.lat),
+                    longitude: parseFloat(route.params.lng),
+                  }),
+                  'meters away from 51.525, 7.4575',
+                );
 
-              // console.log('posisi',position);
-              // defaultLoc = {
-              //     latitude: gps.data.latitude,
-              //     longitude: gps.data.longitude,
-              // }
-              // positionNew = position
-              console.log(
-                'posisiisii ',
-                gps.data.latitude,
-                gps.data.longitude,
-              );
-              setForm({
-                ...form,
-                lat: gps.data.latitude,
-                lng: gps.data.longitude,
-                accuracy: gps.data.accuracy,
-              });
-              setLoading(false);
-            }
-          })
+                // console.log('posisi',position);
+                // defaultLoc = {
+                //     latitude: gps.data.latitude,
+                //     longitude: gps.data.longitude,
+                // }
+                // positionNew = position
+                console.log(
+                  'posisiisii ',
+                  gps.data.latitude,
+                  gps.data.longitude,
+                );
+                setForm({
+                  ...form,
+                  lat: gps.data.latitude,
+                  lng: gps.data.longitude,
+                  accuracy: gps.data.accuracy,
+                });
+                setLoading(false);
+              }
+            })
             .catch(error => {
               console.log('err checkGps useeffect', error.message);
               setLoading(false);
             });
         } else {
-          Alert.alert('Location Permission', 'Location Permission tidak diizinkan.');
+          Alert.alert(
+            'Location Permission',
+            'Location Permission tidak diizinkan.',
+          );
         }
         setLoading(false);
       })
@@ -130,7 +201,7 @@ const AbsenceCreateExtraOff = ({ navigation, route }) => {
   }, []);
 
   const authCurrent = () => {
-    FingerprintScanner.authenticate({ title: 'Verifikasi Bahwa Ini Benar Anda' })
+    FingerprintScanner.authenticate({title: 'Verifikasi Bahwa Ini Benar Anda'})
       .then(() => {
         setLoading(true);
         handleAction();
@@ -145,7 +216,9 @@ const AbsenceCreateExtraOff = ({ navigation, route }) => {
           //   Alert.alert('Tunggu beberapa saat dan klik ulang tombol absen')
           // }
           // else{
-          Alert.alert('Tunggu kurang lebih 30 detik dan klik ulang tombol absen');
+          Alert.alert(
+            'Tunggu kurang lebih 30 detik dan klik ulang tombol absen',
+          );
           // }
 
           // setTimeD(30);
@@ -186,16 +259,16 @@ const AbsenceCreateExtraOff = ({ navigation, route }) => {
           name: 'absence_category_id_end',
           data: route.params.absence_category_id_end.toString(),
         },
-        { name: 'staff_id', data: STAFF_ID.toString() },
+        {name: 'staff_id', data: STAFF_ID.toString()},
         {
           name: 'absence_request_id',
           data: route.params.absence_request_id.toString(),
         },
-        { name: 'lat', data: form.lat.toString() },
-        { name: 'lng', data: form.lng.toString() },
-        { name: 'accuracy', data: form.accuracy.toString() },
-        { name: 'distance', data: form.distance.toString() },
-        { name: 'status', data: '0' },
+        {name: 'lat', data: form.lat.toString()},
+        {name: 'lng', data: form.lng.toString()},
+        {name: 'accuracy', data: form.accuracy.toString()},
+        {name: 'distance', data: form.distance.toString()},
+        {name: 'status', data: '0'},
       ],
     )
       .then(result => {
@@ -244,16 +317,16 @@ const AbsenceCreateExtraOff = ({ navigation, route }) => {
           name: 'absence_category_id_end',
           data: route.params.absence_category_id_end.toString(),
         },
-        { name: 'staff_id', data: STAFF_ID.toString() },
+        {name: 'staff_id', data: STAFF_ID.toString()},
         {
           name: 'absence_request_id',
           data: route.params.absence_request_id.toString(),
         },
-        { name: 'lat', data: form.lat.toString() },
-        { name: 'lng', data: form.lng.toString() },
-        { name: 'accuracy', data: form.accuracy.toString() },
-        { name: 'distance', data: form.distance.toString() },
-        { name: 'status', data: '0' },
+        {name: 'lat', data: form.lat.toString()},
+        {name: 'lng', data: form.lng.toString()},
+        {name: 'accuracy', data: form.accuracy.toString()},
+        {name: 'distance', data: form.distance.toString()},
+        {name: 'status', data: '0'},
       ],
     )
       .then(result => {
@@ -300,21 +373,30 @@ const AbsenceCreateExtraOff = ({ navigation, route }) => {
     }
   };
 
-  if (!loading) {
+  if (fakeGpsV === 2) {
     return (
-      <View style={{ flex: 1 }}>
+      <View>
+        <Text>
+          Anda Menggunakan Fake GPS Tolong Matikan Fake GPS dan restart HP Anda
+          Kembali
+        </Text>
+      </View>
+    );
+  } else if (!loading && fakeGpsV != 0) {
+    return (
+      <View style={{flex: 1}}>
         <ScrollView>
-          <View style={{ alignItems: 'center' }}>
+          <View style={{alignItems: 'center'}}>
             <Text
               style={[
-                { marginVertical: windowHeight * 0.01 },
-                jarak == '1' ? { color: '#ff0000' } : '',
+                {marginVertical: windowHeight * 0.01},
+                jarak == '1' ? {color: '#ff0000'} : '',
               ]}>
               {/* anda berada di {jarak == "1" ? 'Diluar Jangkauan':'Dalam Jangkauan'}, {test} */}
               anda bisa absen mengabaikan radius
             </Text>
 
-            <Text style={[{ marginVertical: windowHeight * 0.05, fontSize: 24 }]}>
+            <Text style={[{marginVertical: windowHeight * 0.05, fontSize: 24}]}>
               Absen
             </Text>
 
@@ -354,8 +436,8 @@ const AbsenceCreateExtraOff = ({ navigation, route }) => {
                   ) : (
                     <Image
                       style={styles.image}
-                      source={{ uri: route.params.image.uri }}
-                    // source={image.uri=='' || image.uri==null ? require('../../../assets/img/ImageFoto.png'): {uri: image.from=='local' ? image.uri : `https://simpletabadmin.ptab-vps.com/` + `${String(image.uri).replace('public/', '')}?time="${new Date()}`}}
+                      source={{uri: route.params.image.uri}}
+                      // source={image.uri=='' || image.uri==null ? require('../../../assets/img/ImageFoto.png'): {uri: image.from=='local' ? image.uri : `https://simpletabadmin.ptab-vps.com/` + `${String(image.uri).replace('public/', '')}?time="${new Date()}`}}
                     />
                   )}
                 </TouchableOpacity>
@@ -373,7 +455,7 @@ const AbsenceCreateExtraOff = ({ navigation, route }) => {
             onPress={() => {
               authCurrent();
             }}>
-            <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' }}>
+            <Text style={{color: '#FFFFFF', fontSize: 24, fontWeight: 'bold'}}>
               Absen
             </Text>
           </TouchableOpacity>
@@ -385,7 +467,7 @@ const AbsenceCreateExtraOff = ({ navigation, route }) => {
             onPress={() => {
               handleAction();
             }}>
-            <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' }}>
+            <Text style={{color: '#FFFFFF', fontSize: 24, fontWeight: 'bold'}}>
               Absen
             </Text>
           </TouchableOpacity>
@@ -397,7 +479,7 @@ const AbsenceCreateExtraOff = ({ navigation, route }) => {
             onPress={() => {
               handleAction();
             }}>
-            <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' }}>
+            <Text style={{color: '#FFFFFF', fontSize: 24, fontWeight: 'bold'}}>
               Absen
             </Text>
           </TouchableOpacity>

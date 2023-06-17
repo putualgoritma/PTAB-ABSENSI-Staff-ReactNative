@@ -5,71 +5,67 @@ import {
   TextInput,
   Text,
   TouchableOpacity,
-  Dimensions
-} from 'react-native'
-import React from 'react'
-import { useState } from 'react';
+  Dimensions,
+} from 'react-native';
+import React from 'react';
+import {useState} from 'react';
 import Textarea from 'react-native-textarea';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import API from '../../service';
-import { useEffect } from 'react';
+import {useEffect} from 'react';
 import ScreenLoading from '../loading/ScreenLoading';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import SelectDropdown from 'react-native-select-dropdown';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-
-const ChangeShift = ({ navigation, route }) => {
-
-  const TOKEN = useSelector((state) => state.TokenReducer);
-  const USER = useSelector((state) => state.UserReducer);
-  const USER_ID = useSelector((state) => state.UserReducer.id);
+const ChangeShift = ({navigation, route}) => {
+  const TOKEN = useSelector(state => state.TokenReducer);
+  const USER = useSelector(state => state.UserReducer);
+  const USER_ID = useSelector(state => state.UserReducer.id);
   const [date1, setDate1] = useState(new Date(1598051730000));
-  const [date, setDate] = useState("0000-00-00");
+  const [date, setDate] = useState('0000-00-00');
   const [staffList, setStaffList] = useState([]);
-  const [time, setTime] = useState("00:00");
+  const [time, setTime] = useState('00:00');
   const [show, setShow] = useState(false);
-  const [shift, setShift] = useState("");
+  const [shift, setShift] = useState('');
   const [type, setType] = useState('start');
-  const [memo, setMemo] = useState("");
+  const [memo, setMemo] = useState('');
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [mode, setMode] = useState('date');
-  const [loading, setLoading] = useState(true)
-  const [loadingList, setLoadingList] = useState(false)
+  const [loading, setLoading] = useState(true);
+  const [loadingList, setLoadingList] = useState(false);
   const [form, setForm] = useState({
-    staff_id: USER_ID,
+    staff_id: USER.staff_id,
     description: '',
     date: '',
     id: '',
     shift_id: '',
     shift_change_id: route.params.id,
-  })
+  });
 
   const [form1, setForm1] = useState({
-    staff_id: USER_ID.toString(),
+    staff_id: USER.staff_id,
     description: '1',
     date: '1',
     id: '1',
     shift_id: '1',
     shift_change_id: '1',
-  })
-  const [todos, setTodos] = useState([])
+  });
+  const [todos, setTodos] = useState([]);
   //test
   const [datatest, setDatatest] = useState([
-    { id: 1, name: "React Native Developer", checked: true }, // set default checked for render option item
-    { id: 2, name: "Android Developer" },
-    { id: 3, name: "iOS Developer" }
-  ])
+    {id: 1, name: 'React Native Developer', checked: true}, // set default checked for render option item
+    {id: 2, name: 'Android Developer'},
+    {id: 3, name: 'iOS Developer'},
+  ]);
   const getStaffListnew = () => {
-
     setDatatest([
-      { id: 1, name: 'React Native Developer', checked: true }, // set default checked for render option item
-      { id: 2, name: 'Android Developer' },
-      { id: 3, name: 'iOS Developer' },
+      {id: 1, name: 'React Native Developer', checked: true}, // set default checked for render option item
+      {id: 2, name: 'Android Developer'},
+      {id: 3, name: 'iOS Developer'},
     ]);
-
   };
 
   const showDatePicker = () => {
@@ -79,74 +75,73 @@ const ChangeShift = ({ navigation, route }) => {
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
-  const handleConfirm = (date) => {
+  const handleConfirm = date => {
     // setLoading(true);
-    const dated = date.getFullYear() + "-" + ('0' + (date.getMonth() + 1)).slice(-2) + "-" + ('0' + (date.getDate())).slice(-2);
-    console.log('ssssssaa', dated)
-    getStaffList(dated, form.shift_id.toString())
-    setForm({ ...form, date: dated })
+    const dated =
+      date.getFullYear() +
+      '-' +
+      ('0' + (date.getMonth() + 1)).slice(-2) +
+      '-' +
+      ('0' + date.getDate()).slice(-2);
+    console.log('ssssssaa', dated);
+    getStaffList(dated, form.shift_id.toString());
+    setForm({...form, date: dated});
     setDate(dated);
     hideDatePicker();
-
   };
 
   const getStaffList = (date, shift) => {
-    console.log('getStaffList',date, shift)
-    setLoadingList(true)
-    API.shift_staff(USER.id, date, shift).then((result) => {
+    console.log('getStaffList', date, shift);
+    setLoadingList(true);
+    API.shift_staff(USER.staff_id, date, shift).then(result => {
       if (result) {
-        console.log(result.data)
-        setStaffList(result.data)
+        console.log(result.data);
+        setStaffList(result.data);
         if (todos.length < 1) {
-          setTodos(result.data2)
+          setTodos(result.data2);
         }
 
-        setLoadingList(false)
-      }
-      else {
+        setLoadingList(false);
+      } else {
         alert(result.message);
       }
     });
-  }
+  };
 
   // Api start
   const handleAction = () => {
-    console.log('data', form)
-    // setLoading(true)
-    let dataUpload = []
-    dataUpload =
-      [
-        {
-          name: 'form',
-          data: JSON.stringify(form)
-        },
-      ];
+    console.log('data', form);
+    setLoading(true);
+    let dataUpload = [];
+    dataUpload = [
+      {
+        name: 'form',
+        data: JSON.stringify(form),
+      },
+    ];
 
     console.log(dataUpload);
-
 
     console.log('data', JSON.stringify(form));
     if (form.description != null) {
       API.shiftChangeStore({
-        form: JSON.stringify(form)
-      }).then((result) => {
+        form: JSON.stringify(form),
+      }).then(result => {
         if (result.message != 'failed') {
           console.log(result);
-          // navigation.goBack()
-          alert(result.message)
-          setLoading(false)
-
-
+          navigation.navigate('Home');
+          alert(result.message);
+          setLoading(false);
         } else {
-          alert("Tanggal Pengjuan Minimal Sehari Sebelum")
-          setLoading(false)
+          alert('Tanggal Pengjuan Minimal Sehari Sebelum');
+          setLoading(false);
         }
       });
     } else {
-      alert('mohon lengkapi data')
-      setLoading(false)
+      alert('mohon lengkapi data');
+      setLoading(false);
     }
-  }
+  };
   // Api end
 
   const onChangeStart = (event, selectedDate) => {
@@ -155,13 +150,16 @@ const ChangeShift = ({ navigation, route }) => {
     let hours = currentDate.getHours();
     let minutes = currentDate.getMinutes();
 
-    let time = `${hours}:${minutes}`
+    let time = `${hours}:${minutes}`;
     setTime(time);
-    setForm({ ...form, start: currentDate.getHours() + ":" + currentDate.getMinutes() + ":00" })
+    setForm({
+      ...form,
+      start: currentDate.getHours() + ':' + currentDate.getMinutes() + ':00',
+    });
     console.log(time);
     setDate1(currentDate);
   };
-  const showMode = (currentMode) => {
+  const showMode = currentMode => {
     setShow(true);
     setMode(currentMode);
   };
@@ -171,22 +169,32 @@ const ChangeShift = ({ navigation, route }) => {
 
   useEffect(() => {
     // if(isFocused){
-    getStaffList()
-    console.log('test')
-    setLoading(false)
+    getStaffList();
+    console.log('test');
+    setLoading(false);
     //    }
-  }, [])
+  }, []);
 
   if (!loading) {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{flex: 1}}>
         <ScrollView>
-          <Text style={{ marginVertical: windowHeight * 0.01, marginRight: 'auto', marginLeft: 'auto', fontWeight: 'bold', fontSize: 20, color: '#000000' }}>
+          <Text
+            style={{
+              marginVertical: windowHeight * 0.01,
+              marginRight: 'auto',
+              marginLeft: 'auto',
+              fontWeight: 'bold',
+              fontSize: 20,
+              color: '#000000',
+            }}>
             Tukar Shift
           </Text>
 
           <Text style={styles.title}>Tanggal</Text>
-          <TouchableOpacity style={styles.input} onPress={showDatePicker} ><Text style={styles.text}>{date}</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.input} onPress={showDatePicker}>
+            <Text style={styles.text}>{date}</Text>
+          </TouchableOpacity>
           <DateTimePickerModal
             isVisible={isDatePickerVisible}
             mode="date"
@@ -202,8 +210,8 @@ const ChangeShift = ({ navigation, route }) => {
               onSelect={(selectedItem, index) => {
                 console.log('todos: ', todos);
                 console.log('selectedItem', selectedItem);
-                getStaffList(form.date, selectedItem.id)
-                setForm({ ...form, shift_id: selectedItem.id.toString() })
+                getStaffList(form.date, selectedItem.id);
+                setForm({...form, shift_id: selectedItem.id.toString()});
               }}
               defaultButtonText={'Cari Status'}
               buttonTextAfterSelection={(selectedItem, index) => {
@@ -217,7 +225,13 @@ const ChangeShift = ({ navigation, route }) => {
               buttonStyle={styles.dropdown1BtnStyle}
               buttonTextStyle={styles.dropdown1BtnTxtStyle}
               renderDropdownIcon={isOpened => {
-                return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#444'} size={18} />;
+                return (
+                  <Icon
+                    name={isOpened ? 'chevron-up' : 'chevron-down'}
+                    color={'#444'}
+                    size={18}
+                  />
+                );
               }}
               dropdownIconPosition={'right'}
               dropdownStyle={styles.dropdown1DropdownStyle}
@@ -235,19 +249,19 @@ const ChangeShift = ({ navigation, route }) => {
           </View>
 
           <Text style={styles.title}>Pilih Staff</Text>
-          {loadingList &&
+          {loadingList && (
             <View style={styles.input}>
               <Text>Tunggu....</Text>
             </View>
-          }
+          )}
           <View style={styles.inputselect}>
-            {!loadingList &&
+            {!loadingList && (
               <SelectDropdown
                 data={staffList}
                 onSelect={(selectedItem, index) => {
                   console.log('staffList: ', staffList);
                   console.log('selectedItem', selectedItem);
-                  setForm({ ...form, id: selectedItem.id.toString() })
+                  setForm({...form, id: selectedItem.id.toString()});
                 }}
                 defaultButtonText={'Cari Status'}
                 buttonTextAfterSelection={(selectedItem, index) => {
@@ -261,7 +275,13 @@ const ChangeShift = ({ navigation, route }) => {
                 buttonStyle={styles.dropdown1BtnStyle}
                 buttonTextStyle={styles.dropdown1BtnTxtStyle}
                 renderDropdownIcon={isOpened => {
-                  return <Icon name={isOpened ? 'chevron-up' : 'chevron-down'} color={'#444'} size={18} />;
+                  return (
+                    <Icon
+                      name={isOpened ? 'chevron-up' : 'chevron-down'}
+                      color={'#444'}
+                      size={18}
+                    />
+                  );
                 }}
                 dropdownIconPosition={'right'}
                 dropdownStyle={styles.dropdown1DropdownStyle}
@@ -276,7 +296,7 @@ const ChangeShift = ({ navigation, route }) => {
                   return <Icon name={'search'} color={'#444'} size={18} />;
                 }}
               />
-            }
+            )}
           </View>
 
           {show && (
@@ -298,36 +318,32 @@ const ChangeShift = ({ navigation, route }) => {
             editable={true}
             maxLength={255}
             value={form.description}
-            onChangeText={(value) => setForm({ ...form, description: value })}
-          ></Textarea>
-
-
-
-
-
-
+            onChangeText={value =>
+              setForm({...form, description: value})
+            }></Textarea>
         </ScrollView>
 
-
-        <TouchableOpacity style={styles.btn} onPress={() => { handleAction() }}>
-          <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' }}>
-            Absen
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => {
+            handleAction();
+          }}>
+          <Text style={{color: '#FFFFFF', fontSize: 24, fontWeight: 'bold'}}>
+            Ajukan
           </Text>
         </TouchableOpacity>
       </View>
-    )
-  }
-  else {
+    );
+  } else {
     return (
       <View>
         <ScreenLoading />
       </View>
-    )
+    );
   }
+};
 
-}
-
-export default ChangeShift
+export default ChangeShift;
 
 const windowWidht = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -345,7 +361,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     paddingTop: 10,
-    paddingLeft: 10
+    paddingLeft: 10,
   },
   textareaContainer: {
     width: windowWidht * 0.7,
@@ -388,11 +404,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#444',
   },
-  dropdown1BtnTxtStyle: { color: '#444', textAlign: 'left' },
-  dropdown1DropdownStyle: { backgroundColor: '#EFEFEF' },
-  dropdown1RowStyle: { backgroundColor: '#EFEFEF', borderBottomColor: '#C5C5C5' },
-  dropdown1RowTxtStyle: { color: '#444', textAlign: 'left' },
-  dropdown1SelectedRowStyle: { backgroundColor: 'rgba(0,0,0,0.1)' },
+  dropdown1BtnTxtStyle: {color: '#444', textAlign: 'left'},
+  dropdown1DropdownStyle: {backgroundColor: '#EFEFEF'},
+  dropdown1RowStyle: {backgroundColor: '#EFEFEF', borderBottomColor: '#C5C5C5'},
+  dropdown1RowTxtStyle: {color: '#444', textAlign: 'left'},
+  dropdown1SelectedRowStyle: {backgroundColor: 'rgba(0,0,0,0.1)'},
   dropdown1searchInputStyleStyle: {
     backgroundColor: '#EFEFEF',
     borderRadius: 8,
@@ -414,13 +430,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#444',
     borderRadius: 12,
   },
-  dropdown2RowStyle: { backgroundColor: '#444', borderBottomColor: '#C5C5C5' },
+  dropdown2RowStyle: {backgroundColor: '#444', borderBottomColor: '#C5C5C5'},
   dropdown2RowTxtStyle: {
     color: '#FFF',
     textAlign: 'center',
     fontWeight: 'bold',
   },
-  dropdown2SelectedRowStyle: { backgroundColor: 'rgba(255,255,255,0.2)' },
+  dropdown2SelectedRowStyle: {backgroundColor: 'rgba(255,255,255,0.2)'},
   dropdown2searchInputStyleStyle: {
     backgroundColor: '#444',
     borderBottomWidth: 1,
@@ -443,7 +459,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 18,
   },
-  dropdown3BtnImage: { width: 45, height: 45, resizeMode: 'cover' },
+  dropdown3BtnImage: {width: 45, height: 45, resizeMode: 'cover'},
   dropdown3BtnTxt: {
     color: '#444',
     textAlign: 'center',
@@ -451,7 +467,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginHorizontal: 12,
   },
-  dropdown3DropdownStyle: { backgroundColor: 'slategray' },
+  dropdown3DropdownStyle: {backgroundColor: 'slategray'},
   dropdown3RowStyle: {
     backgroundColor: 'slategray',
     borderBottomColor: '#444',
@@ -464,7 +480,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 18,
   },
-  dropdownRowImage: { width: 45, height: 45, resizeMode: 'cover' },
+  dropdownRowImage: {width: 45, height: 45, resizeMode: 'cover'},
   dropdown3RowTxt: {
     color: '#F1F1F1',
     textAlign: 'center',
@@ -477,4 +493,4 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#FFF',
   },
-})
+});

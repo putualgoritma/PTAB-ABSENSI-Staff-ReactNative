@@ -12,23 +12,24 @@ import {
   Alert,
   Platform,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { MultyDevice } from '../../assets';
+import {MultyDevice} from '../../assets';
 import Footer from '../../component/Footer';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import API from '../../service';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import DeviceInfo from 'react-native-device-info';
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 import ScreenLoading from '../loading/ScreenLoading';
 import myFunctions from '../../functions';
 import SelectDropdown from 'react-native-select-dropdown';
+import JailMonkey from 'jail-monkey';
 
-const Home = ({ navigation }) => {
+const Home = ({navigation}) => {
   const TOKEN = useSelector(state => state.TokenReducer);
   const USER = useSelector(state => state.UserReducer);
-  const [data, setData] = useState({ staff: [], messageM: '', messageCount: '' });
+  const [data, setData] = useState({staff: [], messageM: '', messageCount: ''});
   const [message, setMessage] = useState();
   const [refreshing, setRefreshing] = React.useState(false);
   const isFocused = useIsFocused();
@@ -36,12 +37,14 @@ const Home = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([myFunctions.checkFingerprint(), myFunctions.permissionCamera(), myFunctions.permissionLocation()])
+    console.log('di home');
+    Promise.all([
+      myFunctions.checkFingerprint(),
+      myFunctions.permissionCamera(),
+      myFunctions.permissionLocation(),
+    ])
       .then(res => {
         console.log('promise all', res);
-        if (res[2]) {
-          myFunctions.checkGps(false);
-        }
         getData();
         getChart();
         setLoading(false);
@@ -95,10 +98,17 @@ const Home = ({ navigation }) => {
     });
   };
 
-  if (!loading) {
+  if (JailMonkey.isJailBroken()) {
+    // Alternative behaviour for jail-broken/rooted devices.
     return (
-      <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+      <View>
+        <Text>Device Anda di root tolong kembalikan seperti semula</Text>
+      </View>
+    );
+  } else if (!loading) {
+    return (
+      <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+        <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
           <ScrollView
             // style={{ backgroundColor : 'blue'}}
             scrollEnabled={true}
@@ -108,8 +118,7 @@ const Home = ({ navigation }) => {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }>
             {/* <Text>{data.staff.type}</Text> */}
-            <View style={{ backgroundColor: '#16D5FF', width: windowWidht * 1 }}>
-              
+            <View style={{backgroundColor: '#16D5FF', width: windowWidht * 1}}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -120,7 +129,7 @@ const Home = ({ navigation }) => {
                   marginTop: windowHeight * 0.02,
                 }}>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('User', { screen: 'User' })}>
+                  onPress={() => navigation.navigate('User', {screen: 'User'})}>
                   <Image
                     style={styles.iconRadius}
                     source={{
@@ -131,12 +140,12 @@ const Home = ({ navigation }) => {
                   />
                 </TouchableOpacity>
 
-                <View style={{ marginLeft: windowHeight * 0.01 }}>
-                  <Text style={{ color: '#FFFFFF' }}>{USER.name}</Text>
-                  <Text style={{ color: '#FFFFFF' }}>{USER.phone}</Text>
+                <View style={{marginLeft: windowHeight * 0.01}}>
+                  <Text style={{color: '#FFFFFF'}}>{USER.name}</Text>
+                  <Text style={{color: '#FFFFFF'}}>{USER.phone}</Text>
                 </View>
                 <TouchableOpacity
-                  style={{ marginLeft: 'auto', marginTop: windowHeight * 0.01 }}
+                  style={{marginLeft: 'auto', marginTop: windowHeight * 0.01}}
                   onPress={() => {
                     navigation.navigate('message', {
                       lat: data.staff.lat,
@@ -179,7 +188,7 @@ const Home = ({ navigation }) => {
                   borderTopRightRadius: 30,
                 }}>
                 <View style={styles.floatingView}>
-                  <Text style={{ color: '#000000' }}>
+                  <Text style={{color: '#000000'}}>
                     {data.messageM.length < 22
                       ? `${data.messageM}`
                       : `${data.messageM.substring(0, 21)}...`}
@@ -187,7 +196,7 @@ const Home = ({ navigation }) => {
                 </View>
 
                 <Image
-                  style={{ height: windowHeight * 0.23, width: windowWidht }}
+                  style={{height: windowHeight * 0.23, width: windowWidht}}
                   source={MultyDevice}></Image>
 
                 <View
@@ -198,9 +207,9 @@ const Home = ({ navigation }) => {
                     marginRight: 'auto',
                     marginTop: windowHeight * 0.03,
                   }}>
-                  <View style={{ marginRight: 'auto' }}>
+                  <View style={{marginRight: 'auto'}}>
                     <TouchableOpacity
-                      style={[styles.btnRadius, { backgroundColor: '#22820030' }]}
+                      style={[styles.btnRadius, {backgroundColor: '#22820030'}]}
                       onPress={() => navigation.navigate('ListAbsence')}>
                       <Icon
                         name="fingerprint"
@@ -208,11 +217,11 @@ const Home = ({ navigation }) => {
                         color="#228200"
                       />
                     </TouchableOpacity>
-                    <Text style={{ textAlign: 'center' }}>Absen</Text>
+                    <Text style={{textAlign: 'center'}}>Absen</Text>
                   </View>
-                  <View style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+                  <View style={{marginLeft: 'auto', marginRight: 'auto'}}>
                     <TouchableOpacity
-                      style={[styles.btnRadius, { backgroundColor: '#82008530' }]}
+                      style={[styles.btnRadius, {backgroundColor: '#82008530'}]}
                       onPress={() => navigation.navigate('Request')}>
                       <Icon
                         name="handshake"
@@ -220,13 +229,16 @@ const Home = ({ navigation }) => {
                         color="#820085"
                       />
                     </TouchableOpacity>
-                    <Text style={{ textAlign: 'center' }}>Pengajuan</Text>
+                    <Text style={{textAlign: 'center'}}>Pengajuan</Text>
                   </View>
                   {console.log('sssssddd', data)}
-                  <View style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+                  <View style={{marginLeft: 'auto', marginRight: 'auto'}}>
                     {data.staff.type == 'reguler' ? (
                       <TouchableOpacity
-                        style={[styles.btnRadius, { backgroundColor: '#22820030' }]}
+                        style={[
+                          styles.btnRadius,
+                          {backgroundColor: '#22820030'},
+                        ]}
                         onPress={() => {
                           navigation.navigate('Schedule');
                         }}>
@@ -238,7 +250,10 @@ const Home = ({ navigation }) => {
                       </TouchableOpacity>
                     ) : (
                       <TouchableOpacity
-                        style={[styles.btnRadius, { backgroundColor: '#22820030' }]}
+                        style={[
+                          styles.btnRadius,
+                          {backgroundColor: '#22820030'},
+                        ]}
                         onPress={() => navigation.navigate('ScheduleShift')}>
                         <Icon
                           name="calendar"
@@ -248,11 +263,11 @@ const Home = ({ navigation }) => {
                       </TouchableOpacity>
                     )}
 
-                    <Text style={{ textAlign: 'center' }}>Jadwal</Text>
+                    <Text style={{textAlign: 'center'}}>Jadwal</Text>
                   </View>
-                  <View style={{ marginLeft: 'auto' }}>
+                  <View style={{marginLeft: 'auto'}}>
                     <TouchableOpacity
-                      style={[styles.btnRadius, { backgroundColor: '#8B000030' }]}
+                      style={[styles.btnRadius, {backgroundColor: '#8B000030'}]}
                       onPress={() =>
                         navigation.navigate('ListHistory', {
                           type: data.staff.type,
@@ -264,7 +279,7 @@ const Home = ({ navigation }) => {
                         color="#8B0000"
                       />
                     </TouchableOpacity>
-                    <Text style={{ textAlign: 'center' }}>Histori</Text>
+                    <Text style={{textAlign: 'center'}}>Histori</Text>
                   </View>
                 </View>
                 {/* row 2 */}
@@ -276,9 +291,9 @@ const Home = ({ navigation }) => {
                     marginRight: 'auto',
                     marginTop: windowHeight * 0.03,
                   }}>
-                  <View style={{ marginRight: 'auto' }}>
+                  <View style={{marginRight: 'auto'}}>
                     <TouchableOpacity
-                      style={[styles.btnRadius, { backgroundColor: '#82008530' }]}
+                      style={[styles.btnRadius, {backgroundColor: '#82008530'}]}
                       onPress={() => navigation.navigate('Holiday')}>
                       <Icon
                         name="hiking"
@@ -286,7 +301,7 @@ const Home = ({ navigation }) => {
                         color="#820085"
                       />
                     </TouchableOpacity>
-                    <Text style={{ textAlign: 'center' }}>Libur</Text>
+                    <Text style={{textAlign: 'center'}}>Libur</Text>
                   </View>
                   <View
                     style={{
@@ -329,41 +344,42 @@ const Home = ({ navigation }) => {
 
             {/* grapich */}
 
-            <View style={styles.header}>
+            <View style={[styles.header, {justifyContent: 'space-between'}]}>
               <Text
                 style={{
                   paddingLeft: windowWidht * 0.052,
                   backgroundColor: '#FFFFFF',
                   marginVertical: windowHeight * 0.02,
+                  // backgroundColor: 'red',
                 }}>
                 {data2.year}
               </Text>
-              <View style={[{ flexDirection: 'row' }]}>
-                <View style={styles.month1}>
+              <View style={[{flexDirection: 'row'}]}>
+                <View style={styles.month3}>
                   <TouchableOpacity
                     onPress={() =>
                       navigation.navigate('History', {
-                        start: data2.start1,
-                        end: data2.end1,
+                        start: data2.start3,
+                        end: data2.end3,
                       })
                     }
                     style={[
                       styles.chart,
                       {
                         width: windowWidht * 0.22,
-                        height: data2.nMonth1
-                          ? windowHeight * 0.28 * (data2.nMonth1 / 100)
+                        height: data2.nMonth3
+                          ? windowHeight * 0.28 * (data2.nMonth3 / 100)
                           : windowHeight * 0.28,
-                        backgroundColor: data2.colorChart1
-                          ? data2.colorChart1
+                        backgroundColor: data2.colorChart3
+                          ? data2.colorChart3
                           : '#7a8793',
                       },
                     ]}>
                     <Text style={styles.textMonth}>
-                      {data2.nMonth1 ? data2.nMonth1 + '%' : ''}
+                      {data2.nMonth3 ? data2.nMonth3 + '' : ''}
                     </Text>
                   </TouchableOpacity>
-                  <Text>{data.monthName1}</Text>
+                  <Text>{data2.monthName3}</Text>
                 </View>
 
                 <View style={styles.month2}>
@@ -393,41 +409,44 @@ const Home = ({ navigation }) => {
                   <Text>{data2.monthName2}</Text>
                 </View>
 
-                <View style={styles.month3}>
+                <View style={styles.month1}>
                   <TouchableOpacity
                     onPress={() =>
                       navigation.navigate('History', {
-                        start: data2.start3,
-                        end: data2.end3,
+                        start: data2.start1,
+                        end: data2.end1,
                       })
                     }
                     style={[
                       styles.chart,
                       {
                         width: windowWidht * 0.22,
-                        height: data2.nMonth3
-                          ? windowHeight * 0.28 * (data2.nMonth3 / 100)
+                        height: data2.nMonth1
+                          ? windowHeight * 0.28 * (data2.nMonth1 / 100)
                           : windowHeight * 0.28,
-                        backgroundColor: data2.colorChart3
-                          ? data2.colorChart3
+                        backgroundColor: data2.colorChart1
+                          ? data2.colorChart1
                           : '#7a8793',
                       },
                     ]}>
                     <Text style={styles.textMonth}>
-                      {data2.nMonth3 ? data2.nMonth3 + '' : ''}
+                      {data2.nMonth1 ? data2.nMonth1 + '%' : ''}
                     </Text>
                   </TouchableOpacity>
-                  <Text>{data2.monthName3}</Text>
+                  <Text>{data2.monthName1}</Text>
                 </View>
               </View>
             </View>
-            <View style={{ flexDirection: 'row', marginTop: windowHeight * 0.02 }}>
+            <View
+              style={{flexDirection: 'row', marginTop: windowHeight * 0.02}}>
               <View
                 style={{
                   width: windowWidht * 0.05,
                   height: windowWidht * 0.05,
                   marginLeft: windowWidht * 0.02,
-                  backgroundColor: data2.colorBox1 ? data2.colorBox1 : '#7a8793',
+                  backgroundColor: data2.colorBox1
+                    ? data2.colorBox1
+                    : '#7a8793',
                 }}></View>
               <Text>Kurang</Text>
 
@@ -436,7 +455,9 @@ const Home = ({ navigation }) => {
                   width: windowWidht * 0.05,
                   height: windowWidht * 0.05,
                   marginLeft: windowWidht * 0.02,
-                  backgroundColor: data2.colorBox2 ? data2.colorBox2 : '#7a8793',
+                  backgroundColor: data2.colorBox2
+                    ? data2.colorBox2
+                    : '#7a8793',
                 }}></View>
               <Text>Cukup</Text>
 
@@ -445,7 +466,9 @@ const Home = ({ navigation }) => {
                   width: windowWidht * 0.05,
                   height: windowWidht * 0.05,
                   marginLeft: windowWidht * 0.02,
-                  backgroundColor: data2.colorBox3 ? data2.colorBox3 : '#7a8793',
+                  backgroundColor: data2.colorBox3
+                    ? data2.colorBox3
+                    : '#7a8793',
                 }}></View>
               <Text>baik</Text>
 
@@ -454,7 +477,9 @@ const Home = ({ navigation }) => {
                   width: windowWidht * 0.05,
                   height: windowWidht * 0.05,
                   marginLeft: windowWidht * 0.02,
-                  backgroundColor: data2.colorBox4 ? data2.colorBox4 : '#7a8793',
+                  backgroundColor: data2.colorBox4
+                    ? data2.colorBox4
+                    : '#7a8793',
                 }}></View>
               <Text>sangat baik</Text>
             </View>
