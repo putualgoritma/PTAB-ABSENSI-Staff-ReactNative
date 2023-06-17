@@ -11,19 +11,23 @@ import {
   Alert,
   Platform,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import MapView, { Callout, Marker, Circle } from 'react-native-maps';
-import { useSelector } from 'react-redux';
+import React, {useEffect, useState} from 'react';
+import MapView, {Callout, Marker, Circle} from 'react-native-maps';
+import {useSelector} from 'react-redux';
 import API from '../../service';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
 import RNFetchBlob from 'rn-fetch-blob';
-import { getDistance } from 'geolib';
+import {getDistance} from 'geolib';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import ScreenLoading from '../loading/ScreenLoading';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import myFunctions from '../../functions';
+import {
+  isMockingLocation,
+  MockLocationDetectorErrorCode,
+} from 'react-native-turbo-mock-location-detector';
 
-const AbsenceCreateExtra = ({ navigation, route }) => {
+const AbsenceCreateExtra = ({navigation, route}) => {
   const TOKEN = useSelector(state => state.TokenReducer);
   const USER = useSelector(state => state.UserReducer);
   const USER_ID = useSelector(state => state.UserReducer.id);
@@ -36,7 +40,7 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
   const [courseDetails, setCourseDetails] = useState();
   const [jarak, setJarak] = useState('');
   const [test, setTest] = useState('');
-  const { width, height } = Dimensions.get('window');
+  const {width, height} = Dimensions.get('window');
   const ASPECT_RATIO = width / height;
   const LATITUDE_DELTA = 0.4922;
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
@@ -53,14 +57,76 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
     todo: '',
   });
   const [loading, setLoading] = useState(true);
-  const latref = route.params.lat;// 37.78537398105849
-  const lngref = route.params.lng;// -122.40441607671049
+  const latref = route.params.lat; // 37.78537398105849
+  const lngref = route.params.lng; // -122.40441607671049
+  const [fakeGpsV, setfakeGpsV] = useState(0);
+
+  const fakeGps = async () => {
+    console.log('Fake GPS');
+    // return true;
+    await isMockingLocation()
+      .then(({isLocationMocked}) => {
+        if (isLocationMocked === true) {
+          // alert('gps falsu');
+          setfakeGpsV(2);
+          return (
+            <View>
+              <Text>
+                Anda Menggunakan Fake GPS Tolong Matikan Fake GPS dan restart HP
+                Anda Kembali
+              </Text>
+            </View>
+          );
+          // return true;
+        } else {
+          // alert('gps asli');
+          setfakeGpsV(3);
+          return (
+            <View>
+              <Text>
+                Anda Menggunakan Fake GPS Tolong Matikan Fake GPS dan restart HP
+                Anda Kembali
+              </Text>
+            </View>
+          );
+          // return true;
+        }
+
+        // isLocationMocked: boolean
+        // boolean result for Android and iOS >= 15.0
+      })
+      .catch(error => {
+        // error.message - descriptive message
+        switch (error.code) {
+          case MockLocationDetectorErrorCode.GPSNotEnabled: {
+            // user disabled GPS
+            console.log('fake 1');
+            return true;
+          }
+          case MockLocationDetectorErrorCode.NoLocationPermissionEnabled: {
+            // user has no permission to access location
+            console.log('fake 2');
+            return true;
+          }
+          case MockLocationDetectorErrorCode.CantDetermine: {
+            console.log('fake 3');
+            return true;
+            // always for iOS < 15.0
+            // for android and iOS if couldn't fetch GPS position
+          }
+        }
+      });
+  };
 
   useEffect(() => {
     console.log('route.params', route.params);
     setLoading(true);
-
-    Promise.all([myFunctions.checkFingerprint(), myFunctions.permissionCamera(), myFunctions.permissionLocation()])
+    fakeGps();
+    Promise.all([
+      myFunctions.checkFingerprint(),
+      myFunctions.permissionCamera(),
+      myFunctions.permissionLocation(),
+    ])
       .then(res => {
         setLoading(true);
         //if fingerprint off
@@ -70,55 +136,60 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
         //if perrmission loc
         if (res[2]) {
           //check gps
-          myFunctions.checkGps(route.params.highAccuracy).then(function (gps) {
-            if (!gps.status) {
-              console.log('checkGps useeffect', 'false');
-            } else {
-              console.log('position', gps.data);
-              //get distance
-              const j = getDistance(gps.data, {
-                latitude: parseFloat(latref),
-                longitude: parseFloat(lngref),
-              });
-              console.log('distance', j);
-              setTest(j);
-              if (j > route.params.radius) {
-                setJarak('1');
-                setJ1(j);
-                if (gps.data.accuracy > 40) {
-                  Alert.alert(
-                    'Peringatan',
-                    'Anda berada di luar jangkauan, akurasi GPS: ' +
-                    gps.data.accuracy +
-                    ', tolong kalibrasi GPS atau pakai Internet yang lebih kuat.',
-                  );
-                }
+          myFunctions
+            .checkGps(route.params.highAccuracy)
+            .then(function (gps) {
+              if (!gps.status) {
+                console.log('checkGps useeffect', 'false');
               } else {
-                setJarak('2');
-              }
+                console.log('position', gps.data);
+                //get distance
+                const j = getDistance(gps.data, {
+                  latitude: parseFloat(latref),
+                  longitude: parseFloat(lngref),
+                });
+                console.log('distance', j);
+                setTest(j);
+                if (j > route.params.radius) {
+                  setJarak('1');
+                  setJ1(j);
+                  if (gps.data.accuracy > 40) {
+                    Alert.alert(
+                      'Peringatan',
+                      'Anda berada di luar jangkauan, akurasi GPS: ' +
+                        gps.data.accuracy +
+                        ', tolong kalibrasi GPS atau pakai Internet yang lebih kuat.',
+                    );
+                  }
+                } else {
+                  setJarak('2');
+                }
 
-              // positionNew = position
-              console.log(
-                'posisiisii ',
-                gps.data.latitude,
-                gps.data.longitude,
-              );
-              setForm({
-                ...form,
-                lat: gps.data.latitude,
-                lng: gps.data.longitude,
-                accuracy: gps.data.accuracy,
-                distance: j,
-              });
-              setLoading(false);
-            }
-          })
+                // positionNew = position
+                console.log(
+                  'posisiisii ',
+                  gps.data.latitude,
+                  gps.data.longitude,
+                );
+                setForm({
+                  ...form,
+                  lat: gps.data.latitude,
+                  lng: gps.data.longitude,
+                  accuracy: gps.data.accuracy,
+                  distance: j,
+                });
+                setLoading(false);
+              }
+            })
             .catch(error => {
               console.log('err checkGps useeffect', error.message);
               setLoading(false);
             });
         } else {
-          Alert.alert('Location Permission', 'Location Permission tidak diizinkan.');
+          Alert.alert(
+            'Location Permission',
+            'Location Permission tidak diizinkan.',
+          );
         }
         setLoading(false);
       })
@@ -134,8 +205,13 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
     setRefreshing(true);
     console.log(route.params);
     setLoading(true);
-   
-    Promise.all([myFunctions.checkFingerprint(), myFunctions.permissionCamera(), myFunctions.permissionLocation()])
+    setfakeGpsV(0);
+    fakeGps();
+    Promise.all([
+      myFunctions.checkFingerprint(),
+      myFunctions.permissionCamera(),
+      myFunctions.permissionLocation(),
+    ])
       .then(res => {
         setLoading(true);
         //if fingerprint off
@@ -145,53 +221,58 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
         //if perrmission loc
         if (res[2]) {
           //check gps
-          myFunctions.checkGps(route.params.highAccuracy).then(function (gps) {
-            if (!gps.status) {
-              console.log('checkGps useeffect', 'false');
-            } else {
-              console.log('position', gps.data);
-              //get distance
-              const j = getDistance(gps.data, {
-                latitude: parseFloat(latref),
-                longitude: parseFloat(lngref),
-              });
-              console.log('distance', j);
-              setTest(j);
-              if (j > route.params.radius) {
-                setJarak('1');
-                setJ1(j);
-                if (gps.data.accuracy > 40) {
-                  Alert.alert(
-                    'Peringatan',
-                    'Anda berada di luar jangkauan, akurasi GPS: ' +
-                    gps.data.accuracy +
-                    ', tolong kalibrasi GPS atau pakai Internet yang lebih kuat.',
-                  );
-                }
+          myFunctions
+            .checkGps(route.params.highAccuracy)
+            .then(function (gps) {
+              if (!gps.status) {
+                console.log('checkGps useeffect', 'false');
               } else {
-                setJarak('2');
-              }
+                console.log('position', gps.data);
+                //get distance
+                const j = getDistance(gps.data, {
+                  latitude: parseFloat(latref),
+                  longitude: parseFloat(lngref),
+                });
+                console.log('distance', j);
+                setTest(j);
+                if (j > route.params.radius) {
+                  setJarak('1');
+                  setJ1(j);
+                  if (gps.data.accuracy > 40) {
+                    Alert.alert(
+                      'Peringatan',
+                      'Anda berada di luar jangkauan, akurasi GPS: ' +
+                        gps.data.accuracy +
+                        ', tolong kalibrasi GPS atau pakai Internet yang lebih kuat.',
+                    );
+                  }
+                } else {
+                  setJarak('2');
+                }
 
-              // positionNew = position
-              console.log(
-                'posisiisii ',
-                gps.data.latitude,
-                gps.data.longitude,
-              );
-              setForm({
-                ...form,
-                lat: gps.data.latitude,
-                lng: gps.data.longitude,
-              });
-              setLoading(false);
-            }
-          })
+                // positionNew = position
+                console.log(
+                  'posisiisii ',
+                  gps.data.latitude,
+                  gps.data.longitude,
+                );
+                setForm({
+                  ...form,
+                  lat: gps.data.latitude,
+                  lng: gps.data.longitude,
+                });
+                setLoading(false);
+              }
+            })
             .catch(error => {
               console.log('err checkGps useeffect', error.message);
               setLoading(false);
             });
         } else {
-          Alert.alert('Location Permission', 'Location Permission tidak diizinkan.');
+          Alert.alert(
+            'Location Permission',
+            'Location Permission tidak diizinkan.',
+          );
         }
         setLoading(false);
       })
@@ -218,7 +299,7 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
   });
 
   const authCurrent = () => {
-    FingerprintScanner.authenticate({ title: 'Verifikasi Bahwa Ini Benar Anda' })
+    FingerprintScanner.authenticate({title: 'Verifikasi Bahwa Ini Benar Anda'})
       .then(() => {
         setLoading(true);
         handleAction();
@@ -233,7 +314,9 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
           //   Alert.alert('Tunggu beberapa saat dan klik ulang tombol absen')
           // }
           // else{
-          Alert.alert('Tunggu kurang lebih 30 detik dan klik ulang tombol absen');
+          Alert.alert(
+            'Tunggu kurang lebih 30 detik dan klik ulang tombol absen',
+          );
           // }
 
           // setTimeD(30);
@@ -274,16 +357,16 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
           name: 'absence_category_id_end',
           data: route.params.absence_category_id_end.toString(),
         },
-        { name: 'staff_id', data: STAFF_ID.toString() },
+        {name: 'staff_id', data: STAFF_ID.toString()},
         {
           name: 'absence_request_id',
           data: route.params.absence_request_id.toString(),
         },
-        { name: 'lat', data: position.latitude.toString() },
-        { name: 'lng', data: position.longitude.toString() },
-        { name: 'accuracy', data: form.accuracy.toString() },
-        { name: 'distance', data: form.distance.toString() },
-        { name: 'status', data: '0' },
+        {name: 'lat', data: position.latitude.toString()},
+        {name: 'lng', data: position.longitude.toString()},
+        {name: 'accuracy', data: form.accuracy.toString()},
+        {name: 'distance', data: form.distance.toString()},
+        {name: 'status', data: '0'},
       ],
     )
       .then(result => {
@@ -332,16 +415,16 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
           name: 'absence_category_id_end',
           data: route.params.absence_category_id_end.toString(),
         },
-        { name: 'staff_id', data: STAFF_ID.toString() },
+        {name: 'staff_id', data: STAFF_ID.toString()},
         {
           name: 'absence_request_id',
           data: route.params.absence_request_id.toString(),
         },
-        { name: 'lat', data: position.latitude.toString() },
-        { name: 'lng', data: position.longitude.toString() },
-        { name: 'accuracy', data: form.accuracy.toString() },
-        { name: 'distance', data: form.distance.toString() },
-        { name: 'status', data: '0' },
+        {name: 'lat', data: position.latitude.toString()},
+        {name: 'lng', data: position.longitude.toString()},
+        {name: 'accuracy', data: form.accuracy.toString()},
+        {name: 'distance', data: form.distance.toString()},
+        {name: 'status', data: '0'},
       ],
     )
       .then(result => {
@@ -372,26 +455,56 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
     };
 
     setLoading(true);
-    Promise.all([myFunctions.permissionCamera(), myFunctions.permissionLocation()])
+    Promise.all([
+      myFunctions.permissionCamera(),
+      myFunctions.permissionLocation(),
+    ])
       .then(res => {
         setLoading(true);
         if (res[1]) {
           //check gps
-          myFunctions.checkGps(route.params.highAccuracy).then(function (gps) {
-            if (!gps.status) {
-              console.log('checkGps useeffect', 'false');
-            } else {
-              console.log('position', gps.data);
-              //get distance
-              const j = getDistance(gps.data, {
-                latitude: parseFloat(latref),
-                longitude: parseFloat(lngref),
-              });
-              console.log('distance', j);
+          myFunctions
+            .checkGps(route.params.highAccuracy)
+            .then(function (gps) {
+              if (!gps.status) {
+                console.log('checkGps useeffect', 'false');
+              } else {
+                console.log('position', gps.data);
+                //get distance
+                const j = getDistance(gps.data, {
+                  latitude: parseFloat(latref),
+                  longitude: parseFloat(lngref),
+                });
+                console.log('distance', j);
 
-              setTest(j);
-              if (j > route.params.radius) {
-                if (j - j1 < 20) {
+                setTest(j);
+                if (j > route.params.radius) {
+                  if (j - j1 < 20) {
+                    if (route.params.selfie == 'OFF') {
+                      sendDataNoImg(gps.data);
+                    } else if (route.params.image == null) {
+                      Alert.alert('Pilih Gambar Terlebih dahulu');
+                      setLoading(false);
+                    } else if (
+                      form.lat != '' &&
+                      form.lng != '' &&
+                      route.params.image.filename != '' &&
+                      route.params.image.filename != null
+                    ) {
+                      sendData(gps.data);
+                    } else {
+                      Alert.alert('Lengkapi data terlebih dahulu');
+                      setLoading(false);
+                    }
+                  } else {
+                    setJarak('1');
+                    Alert.alert('diluar area');
+                    setLoading(false);
+                  }
+                } else {
+                  setJarak('2');
+                  console.log(form.lat, form.lng);
+
                   if (route.params.selfie == 'OFF') {
                     sendDataNoImg(gps.data);
                   } else if (route.params.image == null) {
@@ -408,52 +521,31 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
                     Alert.alert('Lengkapi data terlebih dahulu');
                     setLoading(false);
                   }
-                } else {
-                  setJarak('1');
-                  Alert.alert('diluar area');
                 }
-              } else {
-                setJarak('2');
-                console.log(form.lat, form.lng);
 
-                if (route.params.selfie == 'OFF') {
-                  sendDataNoImg(gps.data);
-                } else if (route.params.image == null) {
-                  Alert.alert('Pilih Gambar Terlebih dahulu');
-                  setLoading(false);
-                } else if (
-                  form.lat != '' &&
-                  form.lng != '' &&
-                  route.params.image.filename != '' &&
-                  route.params.image.filename != null
-                ) {
-                  sendData(gps.data);
-                } else {
-                  Alert.alert('Lengkapi data terlebih dahulu');
-                  setLoading(false);
-                }
+                // positionNew = position
+                console.log(
+                  'posisiisii ',
+                  gps.data.latitude,
+                  gps.data.longitude,
+                );
+                setForm({
+                  ...form,
+                  lat: gps.data.latitude,
+                  lng: gps.data.longitude,
+                });
+                // setLoading(false);
               }
-
-              // positionNew = position
-              console.log(
-                'posisiisii ',
-                gps.data.latitude,
-                gps.data.longitude,
-              );
-              setForm({
-                ...form,
-                lat: gps.data.latitude,
-                lng: gps.data.longitude,
-              });
-              setLoading(false);
-            }
-          })
+            })
             .catch(error => {
               console.log('err checkGps useeffect', error.message);
               setLoading(false);
             });
         } else {
-          Alert.alert('Location Permission', 'Location Permission tidak diizinkan.');
+          Alert.alert(
+            'Location Permission',
+            'Location Permission tidak diizinkan.',
+          );
         }
         setLoading(false);
       })
@@ -463,9 +555,18 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
       });
   };
 
-  if (!loading && jarak != '') {
+  if (fakeGpsV === 2) {
     return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <View>
+        <Text>
+          Anda Menggunakan Fake GPS Tolong Matikan Fake GPS dan restart HP Anda
+          Kembali
+        </Text>
+      </View>
+    );
+  } else if (!loading && jarak != '' && fakeGpsV != 0) {
+    return (
+      <SafeAreaView style={{flex: 1}}>
         <ScrollView
           scrollEnabled={true}
           contentContainerStyle={styles.scrollView}
@@ -473,17 +574,17 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
-          <View style={{ alignItems: 'center' }}>
+          <View style={{alignItems: 'center'}}>
             <Text
               style={[
-                { marginVertical: windowHeight * 0.01 },
-                jarak == '1' ? { color: '#ff0000' } : '',
+                {marginVertical: windowHeight * 0.01},
+                jarak == '1' ? {color: '#ff0000'} : '',
               ]}>
               anda berada di{' '}
               {jarak == '1' ? 'Diluar Jangkauan' : 'Dalam Jangkauan'}, {test}
             </Text>
 
-            <Text style={[{ marginVertical: windowHeight * 0.05, fontSize: 24 }]}>
+            <Text style={[{marginVertical: windowHeight * 0.05, fontSize: 24}]}>
               Absen
             </Text>
             <View
@@ -493,7 +594,7 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
                 backgroundColor: '#FFFFFF',
               }}>
               <MapView
-                style={{ flex: 1 }} //window pake Dimensions
+                style={{flex: 1}} //window pake Dimensions
                 // showsUserLocation={true}
                 showsMyLocationButton={true}
                 region={{
@@ -576,8 +677,8 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
                   ) : (
                     <Image
                       style={styles.image}
-                      source={{ uri: route.params.image.uri }}
-                    // source={image.uri=='' || image.uri==null ? require('../../../assets/img/ImageFoto.png'): {uri: image.from=='local' ? image.uri : `https://simpletabadmin.ptab-vps.com/` + `${String(image.uri).replace('public/', '')}?time="${new Date()}`}}
+                      source={{uri: route.params.image.uri}}
+                      // source={image.uri=='' || image.uri==null ? require('../../../assets/img/ImageFoto.png'): {uri: image.from=='local' ? image.uri : `https://simpletabadmin.ptab-vps.com/` + `${String(image.uri).replace('public/', '')}?time="${new Date()}`}}
                     />
                   )}
                 </TouchableOpacity>
@@ -595,23 +696,23 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
             onPress={() => {
               authCurrent();
             }}>
-            <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' }}>
+            <Text style={{color: '#FFFFFF', fontSize: 24, fontWeight: 'bold'}}>
               Absen
             </Text>
           </TouchableOpacity>
         )}
 
-        {/* {jarak != 1 && route.params.fingerfrint == 'OFF' && finger == 'ON' && ( */}
-        <TouchableOpacity
-          style={[styles.btn]}
-          onPress={() => {
-            handleAction();
-          }}>
-          <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' }}>
-            Absen
-          </Text>
-        </TouchableOpacity>
-        {/* )} */}
+        {jarak != 1 && route.params.fingerfrint == 'OFF' && finger == 'ON' && (
+          <TouchableOpacity
+            style={[styles.btn]}
+            onPress={() => {
+              handleAction();
+            }}>
+            <Text style={{color: '#FFFFFF', fontSize: 24, fontWeight: 'bold'}}>
+              Absen
+            </Text>
+          </TouchableOpacity>
+        )}
 
         {jarak != 1 && route.params.fingerfrint == 'ON' && finger == 'OFF' && (
           <TouchableOpacity
@@ -619,8 +720,8 @@ const AbsenceCreateExtra = ({ navigation, route }) => {
             onPress={() => {
               handleAction();
             }}>
-            <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' }}>
-              Absen
+            <Text style={{color: '#FFFFFF', fontSize: 24, fontWeight: 'bold'}}>
+              Absen3
             </Text>
           </TouchableOpacity>
         )}

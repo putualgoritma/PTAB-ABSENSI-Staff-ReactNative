@@ -1,28 +1,37 @@
-import { Dimensions, StyleSheet, Text, View, ScrollView, PermissionsAndroid, TouchableOpacity, Image, Alert, } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import MapView, { Callout, Marker, Circle } from 'react-native-maps';
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  PermissionsAndroid,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import MapView, {Callout, Marker, Circle} from 'react-native-maps';
 import reactNativeAndroidLocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
 import Geolocation from '@react-native-community/geolocation';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import API from '../../service';
 import RNFetchBlob from 'rn-fetch-blob';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
-import { getDistance } from 'geolib';
+import {getDistance} from 'geolib';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { launchCamera } from 'react-native-image-picker';
+import {launchCamera} from 'react-native-image-picker';
 import ScreenLoading from '../loading/ScreenLoading';
 import myFunctions from '../../functions';
 
-const Permit = ({ navigation, route }) => {
-
-  const TOKEN = useSelector((state) => state.TokenReducer);
-  const [isMounted, setIsMounted] = useState(true)
-  const [courseDetails, setCourseDetails] = useState()
-  const [jarak, setJarak] = useState()
-  const { width, height } = Dimensions.get('window');
+const Permit = ({navigation, route}) => {
+  const TOKEN = useSelector(state => state.TokenReducer);
+  const [isMounted, setIsMounted] = useState(true);
+  const [courseDetails, setCourseDetails] = useState();
+  const [jarak, setJarak] = useState();
+  const {width, height} = Dimensions.get('window');
   const ASPECT_RATIO = width / height;
   const LATITUDE_DELTA = 0.4922;
-  const [check, setCheck] = useState()
+  const [check, setCheck] = useState();
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
   const [time, setTime] = React.useState();
   const [form, setForm] = useState({
@@ -32,42 +41,56 @@ const Permit = ({ navigation, route }) => {
     memo: '',
     type: '',
     // staff_id : USER_ID,
-    todo: ''
-  })
-  const [loading, setLoading] = useState(true)
+    todo: '',
+  });
+  const [loading, setLoading] = useState(true);
   const [image, set_image] = useState({
-    base64: "",
-    fileName: "",
+    base64: '',
+    fileName: '',
     fileSize: 0,
     height: 0,
-    type: "",
-    uri: "",
+    type: '',
+    uri: '',
     width: 0,
-    from: 'api'
+    from: 'api',
   });
 
   const authCurrent = () => {
-    FingerprintScanner
-      .authenticate({ title: 'Verifikasi Bahwa Ini Benar Anda' })
+    FingerprintScanner.authenticate({title: 'Verifikasi Bahwa Ini Benar Anda'})
       .then(() => {
         setLoading(true);
-        handleAction()
+        handleAction();
         // navigation.navigate('Test1')
         FingerprintScanner.release();
-
-      }).catch(error => {
+      })
+      .catch(error => {
         setLoading(false);
         FingerprintScanner.release();
       });
-
-  }
+  };
 
   React.useEffect(() => {
     if (isMounted) {
       const timer = setInterval(() => {
-        setTime(new Date().getDate() + "-" + parseInt(new Date().getMonth() + 1) + "-" + new Date().getFullYear() + " " + (new Date().getHours()) + ":" + new Date().getMinutes() + ":" + new Date().getSeconds());
+        setTime(
+          new Date().getDate() +
+            '-' +
+            parseInt(new Date().getMonth() + 1) +
+            '-' +
+            new Date().getFullYear() +
+            ' ' +
+            new Date().getHours() +
+            ':' +
+            new Date().getMinutes() +
+            ':' +
+            new Date().getSeconds(),
+        );
 
-        Promise.all([myFunctions.checkFingerprint(), myFunctions.permissionCamera(), myFunctions.permissionLocation()])
+        Promise.all([
+          myFunctions.checkFingerprint(),
+          myFunctions.permissionCamera(),
+          myFunctions.permissionLocation(),
+        ])
           .then(res => {
             console.log('rpromise all', res);
             setLoading(true);
@@ -78,41 +101,44 @@ const Permit = ({ navigation, route }) => {
             //if perrmission loc
             if (res[2]) {
               //check gps
-              myFunctions.checkGps(false).then(function (gps) {
-                if (!gps.status) {
-                  console.log('checkGps useeffect', 'false');
-                } else {
-                  console.log('position', gps.data);
-                  const j = getDistance(gps.data, {
-                    latitude: -8.5591154,
-                    longitude: 115.1399312,
-                  })
-                  // Working with W3C Geolocation API
+              myFunctions
+                .checkGps(false)
+                .then(function (gps) {
+                  if (!gps.status) {
+                    console.log('checkGps useeffect', 'false');
+                  } else {
+                    console.log('position', gps.data);
+                    const j = getDistance(gps.data, {
+                      latitude: -8.5591154,
+                      longitude: 115.1399312,
+                    });
+                    // Working with W3C Geolocation API
 
+                    if (j > 150) {
+                      setJarak('1');
+                    } else {
+                      setJarak('2');
+                    }
 
-                  if (j > 150) {
-                    setJarak('1')
+                    // positionNew = position
+                    // console.log('posisiisii ', (gps.data.latitude),(gps.data.longitude));
+                    setForm({
+                      ...form,
+                      lat: gps.data.latitude,
+                      lng: gps.data.longitude,
+                    });
+                    setLoading(false);
                   }
-                  else {
-                    setJarak('2')
-                  }
-
-                  // positionNew = position
-                  // console.log('posisiisii ', (gps.data.latitude),(gps.data.longitude));
-                  setForm({
-                    ...form,
-                    lat: gps.data.latitude,
-                    lng: gps.data.longitude
-                  })
-                  setLoading(false);
-                }
-              })
+                })
                 .catch(error => {
                   console.log('err checkGps useeffect', error.message);
                   setLoading(false);
                 });
             } else {
-              Alert.alert('Location Permission', 'Location Permission tidak diizinkan.');
+              Alert.alert(
+                'Location Permission',
+                'Location Permission tidak diizinkan.',
+              );
             }
             setLoading(false);
           })
@@ -121,38 +147,38 @@ const Permit = ({ navigation, route }) => {
             setLoading(false);
           });
         setLoading(false);
-
       }, 1000);
 
       return () => {
         clearInterval(timer);
       };
     }
-
   }, [setCourseDetails]);
-
 
   useEffect(() => {
     return () => {
       setCourseDetails(null);
       setIsMounted(false);
-    }
+    };
   }, []);
 
   useEffect(() => {
-    setLoading(true)
-    console.log(route.params.data.id.toString())
-    API.absenceLCheck(USER_ID, route.params.data.id).then((result) => {
+    setLoading(true);
+    console.log(route.params.data.id.toString());
+    API.absenceLCheck(USER_ID, route.params.data.id).then(result => {
       if (result) {
-        console.log(result.data)
-        setCheck(result.data)
-      }
-      else {
+        console.log(result.data);
+        setCheck(result.data);
+      } else {
         alert(result.message);
       }
     });
 
-    Promise.all([myFunctions.checkFingerprint(), myFunctions.permissionCamera(), myFunctions.permissionLocation()])
+    Promise.all([
+      myFunctions.checkFingerprint(),
+      myFunctions.permissionCamera(),
+      myFunctions.permissionLocation(),
+    ])
       .then(res => {
         console.log('rpromise all', res);
         setLoading(true);
@@ -163,34 +189,43 @@ const Permit = ({ navigation, route }) => {
         //if perrmission loc
         if (res[2]) {
           //check gps
-          myFunctions.checkGps(false).then(function (gps) {
-            if (!gps.status) {
-              console.log('checkGps useeffect', 'false');
-            } else {
-              console.log('position', gps.data);
-              console.log(
-                'You are ',
-                getDistance(pgps.data, {
-                  latitude: -8.5591154,
-                  longitude: 115.1399312,
-                }),
-                'meters away from 51.525, 7.4575'
-              );
-              console.log('posisiisii ', (pgps.data.latitude), (pgps.data.longitude));
-              setForm({
-                ...form,
-                lat: pgps.data.latitude,
-                lng: pgps.data.longitude
-              })
-              setLoading(false);
-            }
-          })
+          myFunctions
+            .checkGps(false)
+            .then(function (gps) {
+              if (!gps.status) {
+                console.log('checkGps useeffect', 'false');
+              } else {
+                console.log('position', gps.data);
+                console.log(
+                  'You are ',
+                  getDistance(pgps.data, {
+                    latitude: -8.5591154,
+                    longitude: 115.1399312,
+                  }),
+                  'meters away from 51.525, 7.4575',
+                );
+                console.log(
+                  'posisiisii ',
+                  pgps.data.latitude,
+                  pgps.data.longitude,
+                );
+                setForm({
+                  ...form,
+                  lat: pgps.data.latitude,
+                  lng: pgps.data.longitude,
+                });
+                setLoading(false);
+              }
+            })
             .catch(error => {
               console.log('err checkGps useeffect', error.message);
               setLoading(false);
             });
         } else {
-          Alert.alert('Location Permission', 'Location Permission tidak diizinkan.');
+          Alert.alert(
+            'Location Permission',
+            'Location Permission tidak diizinkan.',
+          );
         }
         setLoading(false);
       })
@@ -199,53 +234,51 @@ const Permit = ({ navigation, route }) => {
         setLoading(false);
       });
     setLoading(false);
-  }, [])
-
+  }, []);
 
   const handleAction = () => {
-    setLoading(true)
+    setLoading(true);
     const data = {
       lat: form.lat,
       lng: form.lng,
-
-    }
-    console.log(form.lat, form.lng)
+    };
+    console.log(form.lat, form.lng);
     RNFetchBlob.fetch(
       'POST',
       'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLocation',
       {
         // Authorization: `Bearer ${TOKEN}`,
         // otherHeader: 'foo',
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
       },
       [
         {
-          'name': 'image',
-          'filename': image.fileName,
-          'data': image.base64,
+          name: 'image',
+          filename: image.fileName,
+          data: image.base64,
         },
-        { 'name': 'user_id', 'data': USER_ID.toString() },
-        { 'name': 'lat', 'data': form.lat.toString() },
-        { 'name': 'lng', 'data': form.lng.toString() },
-        { 'name': 'id', 'data': route.params.data.id.toString() },
-        { 'name': 'status', 'data': check == "0" ? "approve" : "close" },
-        { 'name': 'absence_category_id', 'data': check == "0" ? "27" : "28" },
-      ],).then((result) => {
-
+        {name: 'user_id', data: USER_ID.toString()},
+        {name: 'lat', data: form.lat.toString()},
+        {name: 'lng', data: form.lng.toString()},
+        {name: 'id', data: route.params.data.id.toString()},
+        {name: 'status', data: check == '0' ? 'approve' : 'close'},
+        {name: 'absence_category_id', data: check == '0' ? '27' : '28'},
+      ],
+    )
+      .then(result => {
         let data = JSON.parse(result.data);
         console.log(result);
-        navigation.pop(2)
-        setLoading(false)
-        alert(data.message)
+        navigation.pop(2);
+        setLoading(false);
+        alert(data.message);
         // navigation.navigate('Action')
-      }).catch((e) => {
-        // console.log(e);
-        setLoading(false)
       })
-
-  }
-
+      .catch(e => {
+        // console.log(e);
+        setLoading(false);
+      });
+  };
 
   //   dataUpload.push(                       {
   //     'name' : 'image' ,
@@ -255,136 +288,122 @@ const Permit = ({ navigation, route }) => {
 
   if (!loading) {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{flex: 1}}>
         <ScrollView>
-          <View style={{ alignItems: 'center' }}>
-
-
+          <View style={{alignItems: 'center'}}>
             {/* <Text style = {[{marginVertical : windowHeight*0.01},jarak == "1" ? {color : '#ff0000'}:'']}>
       anda berada di {jarak == "1" ? 'Diluar Jangkauan':'Dalam Jangkauan'}
        </Text> */}
 
-            <Text style={[{ marginVertical: windowHeight * 0.05, fontSize: 24 }]}>
-              Absen {route.params.title ? route.params.title : ""}
+            <Text style={[{marginVertical: windowHeight * 0.05, fontSize: 24}]}>
+              Absen {route.params.title ? route.params.title : ''}
             </Text>
-            <View style={{ height: windowHeight * 0.3, width: windowWidht * 0.8, backgroundColor: '#FFFFFF' }}>
-
-              <MapView style={{ flex: 1 }} //window pake Dimensions
+            <View
+              style={{
+                height: windowHeight * 0.3,
+                width: windowWidht * 0.8,
+                backgroundColor: '#FFFFFF',
+              }}>
+              <MapView
+                style={{flex: 1}} //window pake Dimensions
                 showsUserLocation={true}
                 showsMyLocationButton={true}
-
                 region={{
                   latitude: -8.5591154,
                   longitude: 115.1399312,
                   latitudeDelta: 0.00683,
-                  longitudeDelta: 0.0035
-                }} >
+                  longitudeDelta: 0.0035,
+                }}>
                 <Circle
                   center={{
                     latitude: -8.5591154,
                     longitude: 115.1399312,
-
                   }}
-
                   radius={150}
                   strokeWidth={1}
-                  strokeColor='#ff0000'
-                  fillColor='#ff000030'
+                  strokeColor="#ff0000"
+                  fillColor="#ff000030"
                 />
 
                 <Marker
-
                   coordinate={{
                     latitude: -8.5591154,
                     longitude: 115.1399312,
-                  }}
-
-                >
-
+                  }}>
                   <Callout>
                     <View>
                       <Text>Posisi Kantor</Text>
                     </View>
                   </Callout>
                 </Marker>
-
               </MapView>
             </View>
-
 
             {/* <View style={styles.mapS}>
 
         </View> */}
             <Text>Map</Text>
 
-
-
-
-
-
-            <TouchableOpacity onPress={
-              () =>
+            <TouchableOpacity
+              onPress={() =>
                 launchCamera(
                   {
                     mediaType: 'photo',
                     includeBase64: true,
                     maxHeight: 500,
                     maxWidth: 500,
-                    cameraType: 'front'
+                    cameraType: 'front',
                   },
-                  (response) => {
+                  response => {
                     // console.log('ini respon', response);
                     if (response.assets) {
-
                       let image = response.assets[0];
-                      set_image(image)
-
+                      set_image(image);
                     }
-                  }
+                  },
                 )
-            }
-            >
-
-              {image.uri == "" || image.uri == null ?
+              }>
+              {image.uri == '' || image.uri == null ? (
                 <View style={styles.image}>
-                  <Icon name="camera-retro" size={windowHeight * 0.08} color="#000000" />
+                  <Icon
+                    name="camera-retro"
+                    size={windowHeight * 0.08}
+                    color="#000000"
+                  />
                 </View>
-                :
+              ) : (
                 <Image
                   style={styles.image}
-                  source={{ uri: image.uri }}
-                // source={image.uri=='' || image.uri==null ? require('../../../assets/img/ImageFoto.png'): {uri: image.from=='local' ? image.uri : `https://simpletabadmin.ptab-vps.com/` + `${String(image.uri).replace('public/', '')}?time="${new Date()}`}}
+                  source={{uri: image.uri}}
+                  // source={image.uri=='' || image.uri==null ? require('../../../assets/img/ImageFoto.png'): {uri: image.from=='local' ? image.uri : `https://simpletabadmin.ptab-vps.com/` + `${String(image.uri).replace('public/', '')}?time="${new Date()}`}}
                 />
-
-
-              }
-
-
-
+              )}
             </TouchableOpacity>
 
             <Text>Image</Text>
-
           </View>
         </ScrollView>
-        <TouchableOpacity style={styles.btn} onPress={() => { authCurrent() }}>
-          <Text style={{ color: '#FFFFFF', fontSize: 24, fontWeight: 'bold' }}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => {
+            authCurrent();
+          }}>
+          <Text style={{color: '#FFFFFF', fontSize: 24, fontWeight: 'bold'}}>
             Absen
           </Text>
         </TouchableOpacity>
       </View>
-    )
-  }
-  else {
+    );
+  } else {
     return (
       <View>
         <ScreenLoading />
       </View>
-    )
+    );
   }
-}
+};
 
-export default Permit
+export default Permit;
 
 const windowWidht = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -398,7 +417,7 @@ const styles = StyleSheet.create({
   image: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: windowWidht * 0.70,
+    width: windowWidht * 0.7,
     height: windowHeight * 0.3233,
     backgroundColor: '#00000010',
   },
@@ -410,5 +429,5 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
     alignItems: 'center',
     justifyContent: 'center',
-  }
-})
+  },
+});
