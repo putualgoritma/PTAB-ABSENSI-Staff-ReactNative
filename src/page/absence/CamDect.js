@@ -63,6 +63,7 @@ const CamDect = ({navigation, route}) => {
   let camera = '';
 
   useEffect(() => {
+    console.log('RNCamera.Constants',RNCamera.Constants)
     // if(isFocused){
     // setLoading(true)
     // LocationServicesDialogBox.checkLocationServicesIsEnabled({
@@ -130,6 +131,7 @@ const CamDect = ({navigation, route}) => {
     if (camera) {
       const options = {base64: true};
       const data = await camera.takePictureAsync(options);
+      console.log('data.uri',data.uri);
 
       await ImageResizer.createResizedImage(
         data.uri,
@@ -249,9 +251,10 @@ const CamDect = ({navigation, route}) => {
           camera = ref;
         }}
         style={styles.preview}
-        type={RNCamera.Constants.Type.back}
+        type={RNCamera.Constants.Type.front}
         flashMode={RNCamera.Constants.FlashMode.on}
         ratio={'4:4'}
+        /*
         androidCameraPermissionOptions={{
           title: 'Permission to use camera',
           message: 'We need your permission to use your camera',
@@ -264,26 +267,39 @@ const CamDect = ({navigation, route}) => {
           buttonPositive: 'Ok',
           buttonNegative: 'Cancel',
         }}
+        */
         faceDetectionClassifications={
-          RNCamera.Constants.FaceDetection.Classifications.all
+          RNCamera.Constants.FaceDetection.Classifications
         }
-        faceDetectionLandmarks={RNCamera.Constants.FaceDetection.Landmarks.all}
-        onFacesDetected={face => {
+        
+        faceDetectionLandmarks={RNCamera.Constants.FaceDetection.Landmarks}
+        
+        //*
+        onFacesDetected={ face => {
           // if (state.fd) {
           // this.setState({ fd: face.faces.length === 0, btnAble: false, test: "uuuu" });
           // this.setState({ test: "gggg" })
+          console.log('onFacesDetected', face)
           setBtinAble(false);
           // setState({btnAble: false, test: "On"})
           // alert(JSON.stringify(face));
-
+          alert('onFacesDetected')
           // }
         }}
-        // onFaceDetectionError={
+        //*/
 
-        //   // this.setState({ test: "kkkk" })
-        //   alert("test2")
+        // onCameraReady={() => this.setState({canDetectFaces: true})}
+        // onFacesDetected={this.state.canDetectFaces ? this.facesDetected : null}
 
-        // }
+        //*
+        onFaceDetectionError={ error =>{
+
+          // this.setState({ test: "kkkk" })
+          alert('err onFaceDetectionError',error)
+
+        }}
+        //*/
+
         // onGoogleVisionBarcodesDetected={({ barcodes }) => {
         //   console.log(barcodes);
         // }}
@@ -295,9 +311,9 @@ const CamDect = ({navigation, route}) => {
         {/* <TouchableOpacity onPress={takePicture.bind(this)} style={btnAble ?  styles.captureF : styles.capture } > */}
         <TouchableOpacity
           onPress={takePicture.bind(this)}
-          style={btnAble ? styles.captureF : styles.capture}
+          style={styles.capture}
           // disabled={btnAble}
-        >
+          >
           <Text style={{fontSize: 14}}> Ambil</Text>
         </TouchableOpacity>
       </View>
