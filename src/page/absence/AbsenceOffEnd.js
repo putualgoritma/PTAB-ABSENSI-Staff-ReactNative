@@ -228,13 +228,13 @@ const AbsenceOffEnd = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      // 'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLocationEnd',
-      // {
-      //   // Authorization: `Bearer ${TOKEN}`,
-      //   // otherHeader: 'foo',
-      //   Accept: 'application/json',
-      //   'Content-Type': 'multipart/form-data',
-      // },
+      'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLocationEnd',
+      {
+        // Authorization: `Bearer ${TOKEN}`,
+        // otherHeader: 'foo',
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+      },
       [
         {name: 'id', data: route.params.id.toString()},
         {name: 'absence_id', data: route.params.absence_id.toString()},
