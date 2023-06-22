@@ -54,6 +54,7 @@
     "react-native-password-eye": "^1.0.5",
     "react-native-permissions": "^3.8.0",
     "react-native-reanimated": "^2.9.1",
+    "react-native-rename": "^3.2.13",
     "react-native-safe-area-context": "^4.3.1",
     "react-native-screens": "^3.15.0",
     "react-native-searchable-dropdown": "^1.1.3",

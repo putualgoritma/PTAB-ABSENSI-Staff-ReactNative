@@ -36,11 +36,11 @@ import HistoryRequest from '../page/history/HistoryRequests';
 import Shift from '../page/shift';
 import ChangeShift from '../page/shift/ChangeShift';
 
-import changeShiftProposal from '../page/history/changeShiftProposal';
-import changeShift from '../page/history/changeShift';
+import changeShiftProposal from '../page/history/ChangeShiftProposal';
+import changeShift from '../page/history/ChangeShift';
 
-import message from '../page/message';
-import Holiday from '../page/holiday';
+import message from '../page/Message';
+import Holiday from '../page/Holiday';
 
 import ShiftStaff from '../page/shift/ShiftStaff';
 import Login from '../page/login/Login';

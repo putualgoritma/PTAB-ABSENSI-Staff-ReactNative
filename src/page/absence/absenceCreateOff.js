@@ -323,12 +323,12 @@ const AbsenceCreateOff = ({navigation, route}) => {
     RNFetchBlob.fetch(
       'POST',
       'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLocation',
-      {
-        // Authorization: `Bearer ${TOKEN}`,
-        // otherHeader: 'foo',
-        Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
-      },
+      // {
+      //   // Authorization: `Bearer ${TOKEN}`,
+      //   // otherHeader: 'foo',
+      //   Accept: 'application/json',
+      //   'Content-Type': 'multipart/form-data',
+      // },
       [
         {name: 'absence_id', data: route.params.absence_id.toString()},
         {

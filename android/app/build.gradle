@@ -93,9 +93,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.testplugins"
+    namespace "com.perumdatab.absence"
     defaultConfig {
-        applicationId "com.testplugins"
+        applicationId "com.perumdatab.absence"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

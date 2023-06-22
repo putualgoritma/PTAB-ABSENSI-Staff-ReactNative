@@ -537,7 +537,7 @@ const Absence = ({navigation, route}) => {
             'Location Permission tidak diizinkan.',
           );
         }
-        setLoading(false);
+        // setLoading(false);
       })
       .catch(e => {
         console.log('err promise all', e);
@@ -576,7 +576,7 @@ const Absence = ({navigation, route}) => {
             </Text>
 
             <Text style={[{marginVertical: windowHeight * 0.05, fontSize: 24}]}>
-              Absen {fakeGpsV}
+              Absen
             </Text>
             <View
               style={{

@@ -24,6 +24,7 @@ import {useIsFocused} from '@react-navigation/native';
 import ScreenLoading from '../loading/ScreenLoading';
 import myFunctions from '../../functions';
 import SelectDropdown from 'react-native-select-dropdown';
+import reactNativeAndroidLocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
 import JailMonkey from 'jail-monkey';
 
 const Home = ({navigation}) => {
@@ -38,6 +39,24 @@ const Home = ({navigation}) => {
 
   useEffect(() => {
     console.log('di home');
+    if (Platform.OS === 'android') {
+      reactNativeAndroidLocationServicesDialogBox
+        .checkLocationServicesIsEnabled({
+          message:
+            "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
+          ok: 'YES',
+          cancel: 'NO',
+        })
+        .then(function (success) {
+          if (success) {
+          }
+        })
+        .catch(error => {
+          console.log(error.message);
+          // alert('gps harus aktif');
+          // setLoading(false);
+        });
+    }
     Promise.all([
       myFunctions.checkFingerprint(),
       myFunctions.permissionCamera(),

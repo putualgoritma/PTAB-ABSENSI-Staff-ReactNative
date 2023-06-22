@@ -224,13 +224,13 @@ const AbsenceCreateExtra = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLeaveCuty',
-      {
-        // Authorization: `Bearer ${TOKEN}`,
-        // otherHeader: 'foo',
-        Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
-      },
+      // 'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLeaveCuty',
+      // {
+      //   // Authorization: `Bearer ${TOKEN}`,
+      //   // otherHeader: 'foo',
+      //   Accept: 'application/json',
+      //   'Content-Type': 'multipart/form-data',
+      // },
       [
         {name: 'staff_id', data: STAFF_ID.toString()},
         {
