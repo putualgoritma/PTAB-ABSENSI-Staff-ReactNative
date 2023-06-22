@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>TestPlugins</string>
+	<string>PTAB Absence</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -37,38 +37,38 @@
 	</dict>
 
 	<key>NSCalendarsUsageDescription</key>
-	<string>Your own description of the purpose</string>
+	<string>App wants to access Calendar</string>
 	<key>NSContactsUsageDescription</key>
-	<string>Your own description of the purpose</string>
+	<string>App wants to access Contact</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Your own description of the purpose</string>
+	<string>App wants to access Bluetooth</string>
 	<key>NSAppleMusicUsageDescription</key>
-	<string>Your own description of the purpose</string>
+	<string>App wants to access Apple Music</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Your own description of the purpose</string>
+	<string>App wants to access Motion</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Your own description of the purpose</string>
+	<string>App wants to access Speech</string>
 	<key>NSSiriUsageDescription</key>
-	<string>Your own description of the purpose</string>
+	<string>App wants to access Siri</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Your own description of the purpose</string>
+	<string>App wants to access Bluetooth Always</string>
 
 	<key>NSCameraUsageDescription</key>
-	<string>Your own description of the purpose</string>
+	<string>App wants to access Camera</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>$(PRODUCT_NAME) requires FaceID access to allows you quick and secure access.</string>
+	<string>App requires FaceID access to allows you quick and secure access.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>YOUR TEXT</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>App wants to access Location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Your own description of the purpose</string>
+	<string>App wants to access Location In</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Your message to user when the microphone is accessed for the first time</string>
+	<string>App wants to access Microphone</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Your message to user when the photo library is accessed for the first time</string>
+	<string>App wants to access Photo Library</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Your message to user when the photo library is accessed for the first time</string>
+	<string>App wants to access Photo Library Usage</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
