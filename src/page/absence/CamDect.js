@@ -3,6 +3,7 @@ import React from 'react';
 import {useEffect, useState} from 'react';
 import {
   Dimensions,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -242,74 +243,110 @@ const CamDect = ({navigation, route}) => {
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <RNCamera
-        ref={ref => {
-          camera = ref;
-        }}
-        style={styles.preview}
-        type={RNCamera.Constants.Type.front}
-        flashMode={RNCamera.Constants.FlashMode.on}
-        ratio={'4:4'}
-        androidCameraPermissionOptions={{
-          title: 'Permission to use camera',
-          message: 'We need your permission to use your camera',
-          buttonPositive: 'Ok',
-          buttonNegative: 'Cancel',
-        }}
-        androidRecordAudioPermissionOptions={{
-          title: 'Permission to use audio recording',
-          message: 'We need your permission to use your audio',
-          buttonPositive: 'Ok',
-          buttonNegative: 'Cancel',
-        }}
-        faceDetectionClassifications={
-          RNCamera.Constants.FaceDetection.Classifications.all
-        }
-        faceDetectionLandmarks={RNCamera.Constants.FaceDetection.Landmarks.all}
-        onFacesDetected={face => {
-          // if (state.fd) {
-          // this.setState({ fd: face.faces.length === 0, btnAble: false, test: "uuuu" });
-          // this.setState({ test: "gggg" })
-          setBtinAble(false);
-          // setState({btnAble: false, test: "On"})
-          // alert(JSON.stringify(face));
+  if (Platform.OS === 'android') {
+    return (
+      <View style={styles.container}>
+        <RNCamera
+          ref={ref => {
+            camera = ref;
+          }}
+          style={styles.preview}
+          type={RNCamera.Constants.Type.front}
+          flashMode={RNCamera.Constants.FlashMode.on}
+          ratio={'4:4'}
+          androidCameraPermissionOptions={{
+            title: 'Permission to use camera',
+            message: 'We need your permission to use your camera',
+            buttonPositive: 'Ok',
+            buttonNegative: 'Cancel',
+          }}
+          androidRecordAudioPermissionOptions={{
+            title: 'Permission to use audio recording',
+            message: 'We need your permission to use your audio',
+            buttonPositive: 'Ok',
+            buttonNegative: 'Cancel',
+          }}
+          faceDetectionClassifications={
+            RNCamera.Constants.FaceDetection.Classifications.all
+          }
+          faceDetectionLandmarks={
+            RNCamera.Constants.FaceDetection.Landmarks.all
+          }
+          onFacesDetected={face => {
+            // if (state.fd) {
+            // this.setState({ fd: face.faces.length === 0, btnAble: false, test: "uuuu" });
+            // this.setState({ test: "gggg" })
+            setBtinAble(false);
+            // setState({btnAble: false, test: "On"})
+            // alert(JSON.stringify(face));
+
+            // }
+          }}
+          // onFaceDetectionError={
+
+          //   // this.setState({ test: "kkkk" })
+          //   alert("test2")
 
           // }
-        }}
-        // onFaceDetectionError={
-
-        //   // this.setState({ test: "kkkk" })
-        //   alert("test2")
-
-        // }
-        // onGoogleVisionBarcodesDetected={({ barcodes }) => {
-        //   console.log(barcodes);
-        // }}
-      />
-      {/* <Text style={{ backgroundColor: 'red', textAlign : 'center' }}>Arahkan Kamera Ke Wajah</Text> */}
-      {/* {this.state.test == "On" && */}
-      <View style={{flex: 0, flexDirection: 'row', justifyContent: 'center'}}>
-        {/* <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture} disabled={this.state.btnAble}> */}
-        {/* <TouchableOpacity onPress={takePicture.bind(this)} style={btnAble ?  styles.captureF : styles.capture } > */}
-        <TouchableOpacity
-          onPress={takePicture.bind(this)}
-          style={btnAble ? styles.captureF : styles.capture}
-          disabled={btnAble}>
-          <Text style={{fontSize: 14}}> Ambil</Text>
-        </TouchableOpacity>
-      </View>
-      {/* // } */}
-      {/* {this.state.test == "Off" &&
+          // onGoogleVisionBarcodesDetected={({ barcodes }) => {
+          //   console.log(barcodes);
+          // }}
+        />
+        {/* <Text style={{ backgroundColor: 'red', textAlign : 'center' }}>Arahkan Kamera Ke Wajah</Text> */}
+        {/* {this.state.test == "On" && */}
+        <View style={{flex: 0, flexDirection: 'row', justifyContent: 'center'}}>
+          {/* <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture} disabled={this.state.btnAble}> */}
+          {/* <TouchableOpacity onPress={takePicture.bind(this)} style={btnAble ?  styles.captureF : styles.capture } > */}
+          <TouchableOpacity
+            onPress={takePicture.bind(this)}
+            style={btnAble ? styles.captureF : styles.capture}
+            disabled={btnAble}>
+            <Text style={{fontSize: 14}}> Ambil</Text>
+          </TouchableOpacity>
+        </View>
+        {/* // } */}
+        {/* {this.state.test == "Off" &&
  <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
  <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture} disabled={this.state.btnAble}>
    <Text style={{ fontSize: 14 }}> Arahkan Ke Wajah </Text>
  </TouchableOpacity>
 </View>
         } */}
-    </View>
-  );
+      </View>
+    );
+  } else {
+    return (
+      <View style={styles.container}>
+        <RNCamera
+          ref={ref => {
+            camera = ref;
+          }}
+          style={styles.preview}
+          type={RNCamera.Constants.Type.front}
+          flashMode={RNCamera.Constants.FlashMode.on}
+          ratio={'4:4'}
+        />
+
+        <View style={{flex: 0, flexDirection: 'row', justifyContent: 'center'}}>
+          {/* <TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture} disabled={this.state.btnAble}> */}
+          {/* <TouchableOpacity onPress={takePicture.bind(this)} style={btnAble ?  styles.captureF : styles.capture } > */}
+          <TouchableOpacity
+            onPress={takePicture.bind(this)}
+            style={styles.capture}>
+            <Text style={{fontSize: 14}}> Ambil</Text>
+          </TouchableOpacity>
+        </View>
+        {/* // } */}
+        {/* {this.state.test == "Off" &&
+<View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
+<TouchableOpacity onPress={this.takePicture.bind(this)} style={styles.capture} disabled={this.state.btnAble}>
+ <Text style={{ fontSize: 14 }}> Arahkan Ke Wajah </Text>
+</TouchableOpacity>
+</View>
+      } */}
+      </View>
+    );
+  }
 };
 
 export default CamDect;
