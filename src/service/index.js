@@ -3,12 +3,13 @@ import Get from './Get';
 import Post from './Post';
 import Put from './Put';
 import Delete from './Delete';
+import FileUpload from './FileUpload';
 
 // GET
-const absence = STAFF_ID =>
-  Get('close/absence/absence?staff_id=' + STAFF_ID, false);
+const absence = (STAFF_ID, TOKEN) =>
+  Get('close/absence/absence?staff_id=' + STAFF_ID, false, TOKEN);
 
-const absenceHistory = (USER_ID, date, date2) =>
+const absenceHistory = (USER_ID, date, date2, TOKEN) =>
   Get(
     'close/absence/history?staff_id=' +
       USER_ID +
@@ -17,9 +18,10 @@ const absenceHistory = (USER_ID, date, date2) =>
       '&to=' +
       date2,
     false,
+    TOKEN,
   );
 
-const absenceHistoryExtra = (USER_ID, date, date2) =>
+const absenceHistoryExtra = (USER_ID, date, date2, TOKEN) =>
   Get(
     'close/absence/historyExtra?staff_id=' +
       USER_ID +
@@ -28,9 +30,10 @@ const absenceHistoryExtra = (USER_ID, date, date2) =>
       '&to=' +
       date2,
     false,
+    TOKEN,
   );
 
-const absenceHistoryRequests = (USER_ID, page, date, date2) =>
+const absenceHistoryRequests = (USER_ID, page, date, date2, TOKEN) =>
   Get(
     'close/absence/requests/history?staff_id=' +
       USER_ID +
@@ -41,24 +44,30 @@ const absenceHistoryRequests = (USER_ID, page, date, date2) =>
       '&to=' +
       date2,
     false,
+    TOKEN,
   );
 
-const menu = STAFF_ID =>
-  Get('close/absence/menu?staff_id=' + STAFF_ID + '&version=2023-04-19', false);
+const menu = (STAFF_ID, TOKEN) =>
+  Get(
+    'close/absence/menu?staff_id=' + STAFF_ID + '&version=2023-04-19',
+    false,
+    TOKEN,
+  );
 
-const chart = STAFF_ID =>
-  Get('close/absence/menu/graphic?staff_id=' + STAFF_ID, false);
+const chart = (STAFF_ID, TOKEN) =>
+  Get('close/absence/menu/graphic?staff_id=' + STAFF_ID, false, TOKEN);
 
-const absenceLCheck = (USER_ID, requests_id) =>
+const absenceLCheck = (USER_ID, requests_id, TOKEN) =>
   Get(
     'close/absence/checkAbsenceLocation?user_id=' +
       USER_ID +
       '&requests_id=' +
       requests_id,
     false,
+    TOKEN,
   );
 
-const shift_staff = (USER_ID, date, shift) =>
+const shift_staff = (USER_ID, date, shift, TOKEN) =>
   Get(
     'close/absence/shift?staff_id=' +
       USER_ID +
@@ -67,33 +76,38 @@ const shift_staff = (USER_ID, date, shift) =>
       '&shift_id=' +
       shift,
     false,
+    TOKEN,
   );
 
-const shiftChange = (USER_ID, staff_id) =>
+const shiftChange = (USER_ID, staff_id, TOKEN) =>
   Get(
     'close/absence/shift/listChange?user_id=' +
       USER_ID +
       '&staff_id=' +
       staff_id,
     false,
+    TOKEN,
   );
 
-const getPermissionCat = () =>
-  Get('close/absence/requests/getPermissionCat', false);
+const getPermissionCat = TOKEN =>
+  Get('close/absence/requests/getPermissionCat', false, TOKEN);
 
-const myShift = id => Get('close/absence/shift/myShift?staff_id=' + id, false);
+const myShift = (id, TOKEN) =>
+  Get('close/absence/shift/myShift?staff_id=' + id, false, TOKEN);
 
-const listChangeShift = id => Get('close/absence/shiftChange?id=' + id, false);
+const listChangeShift = (id, TOKEN) =>
+  Get('close/absence/shiftChange?id=' + id, false, TOKEN);
 
-const listRequest = id =>
-  Get('close/absence/requests/absenceList?staff_id=' + id, false);
+const listRequest = (id, TOKEN) =>
+  Get('close/absence/requests/absenceList?staff_id=' + id, false, TOKEN);
 
-const listFile = id => Get('close/absence/requests/listFile?id=' + id, false);
+const listFile = (id, TOKEN) =>
+  Get('close/absence/requests/listFile?id=' + id, false, TOKEN);
 
-const absenceSchedule = id =>
-  Get('close/absence/absence/schedule?staff_id=' + id, false);
+const absenceSchedule = (id, TOKEN) =>
+  Get('close/absence/absence/schedule?staff_id=' + id, false, TOKEN);
 
-const changeShiftProposal = (id, page, date, date2) =>
+const changeShiftProposal = (id, page, date, date2, TOKEN) =>
   Get(
     'close/absence/changeShiftProposal?staff_id=' +
       id +
@@ -104,8 +118,9 @@ const changeShiftProposal = (id, page, date, date2) =>
       '&to=' +
       date2,
     false,
+    TOKEN,
   );
-const changeShift = (id, page, date, date2) =>
+const changeShift = (id, page, date, date2, TOKEN) =>
   Get(
     'close/absence/changeShift?staff_id=' +
       id +
@@ -116,29 +131,46 @@ const changeShift = (id, page, date, date2) =>
       '&to=' +
       date2,
     false,
+    TOKEN,
   );
-const message = (id, page) =>
-  Get('close/absence/message?staff_id=' + id + '&page=' + page, false);
-const Holiday = (id, page) =>
-  Get('close/absence/holiday?staff_id=' + id + '&page=' + page, false);
+const message = (id, page, TOKEN) =>
+  Get('close/absence/message?staff_id=' + id + '&page=' + page, false, TOKEN);
+const Holiday = (id, page, TOKEN) =>
+  Get('close/absence/holiday?staff_id=' + id + '&page=' + page, false, TOKEN);
 
+const getDataStaff = (currentPage, search, TOKEN) =>
+  Get(
+    'close/visit/getDataStaff?page=' + currentPage + '&name=' + search,
+    false,
+    TOKEN,
+  );
+
+const getDataCbox = TOKEN => Get('close/visit/getDataCbox', false, TOKEN);
 //POST
-const requestsStore = data => Post('close/absence/requests/store', false, data);
-const login = data => Post('close/absence/login', false, data);
-const leaveEnd = data => Post('close/absence/leaveEnd', false, data);
-const scanCode = data => Post('open/staff/code', false, data);
-const updateShiftStaff = data =>
-  Post('close/absence/shiftChange/store', false, data);
-const shiftChangeStore = data =>
-  Post('close/absence/shiftChange/store', false, data);
-const changeShiftApprove = data =>
-  Post('close/absence/changeShiftApprove', false, data);
-const readMessage = data => Post('close/absence/message/read', false, data);
-const checkStaff = data => Post('close/absence/message/check', false, data);
+const requestsStore = (data, TOKEN) =>
+  Post('close/absence/requests/store', false, data, TOKEN);
+const login = data => Post('open/absence/login', false, data);
+const leaveEnd = (data, TOKEN) =>
+  Post('close/absence/leaveEnd', false, data, TOKEN);
+const scanCode = (data, TOKEN) => Post('open/staff/code', false, data, TOKEN);
+const updateShiftStaff = (data, TOKEN) =>
+  Post('close/absence/shiftChange/store', false, data, TOKEN);
+const shiftChangeStore = (data, TOKEN) =>
+  Post('close/absence/shiftChange/store', false, data, TOKEN);
+const changeShiftApprove = (data, TOKEN) =>
+  Post('close/absence/changeShiftApprove', false, data, TOKEN);
+const readMessage = (data, TOKEN) =>
+  Post('close/absence/message/read', false, data, TOKEN);
+const checkStaff = (data, TOKEN) =>
+  Post('close/absence/message/check', false, data, TOKEN);
 
 // DELETE
 const deleteImage = (id, token) =>
   Delete(`close/absence/requests/imageDelete/${id}`, false, token);
+
+//  UPLOAD FILE
+const visitEtc = (data, TOKEN) =>
+  FileUpload('close/visit/storeEtc', data, TOKEN);
 
 const API = {
   login,
@@ -170,6 +202,9 @@ const API = {
   readMessage,
   checkStaff,
   chart,
+  getDataStaff,
+  getDataCbox,
+  visitEtc,
 };
 
 export default API;

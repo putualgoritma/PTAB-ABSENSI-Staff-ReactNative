@@ -145,6 +145,7 @@ const AbsenceCreateExtra = ({navigation, route}) => {
             .checkGps(false)
             .then(function (gps) {
               if (!gps.status) {
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log(
@@ -225,12 +226,12 @@ const AbsenceCreateExtra = ({navigation, route}) => {
     RNFetchBlob.fetch(
       'POST',
       'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLeaveCuty',
-      // {
-      //   // Authorization: `Bearer ${TOKEN}`,
-      //   // otherHeader: 'foo',
-      //   Accept: 'application/json',
-      //   'Content-Type': 'multipart/form-data',
-      // },
+      {
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
+        Accept: 'application/json',
+        //   'Content-Type': 'multipart/form-data',
+      },
       [
         {name: 'staff_id', data: STAFF_ID.toString()},
         {

@@ -141,6 +141,7 @@ const AbsenceCreate = ({navigation, route}) => {
             .checkGps(route.params.highAccuracy)
             .then(function (gps) {
               if (!gps.status) {
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log('position', gps.data);
@@ -244,6 +245,7 @@ const AbsenceCreate = ({navigation, route}) => {
             .checkGps(route.params.highAccuracy)
             .then(function (gps) {
               if (!gps.status) {
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log('position', gps.data);
@@ -344,12 +346,12 @@ const AbsenceCreate = ({navigation, route}) => {
     RNFetchBlob.fetch(
       'POST',
       'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLocation',
-      // {
-      //   // Authorization: `Bearer ${TOKEN}`,
-      //   // otherHeader: 'foo',
-      //   Accept: 'application/json',
-      //   'Content-Type': 'multipart/form-data',
-      // },
+      {
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
+        Accept: 'application/json',
+        // 'Content-Type': 'multipart/form-data',
+      },
       [
         {name: 'absence_id', data: route.params.absence_id.toString()},
         {
@@ -399,8 +401,8 @@ const AbsenceCreate = ({navigation, route}) => {
       'POST',
       'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLocation',
       {
-        // Authorization: `Bearer ${TOKEN}`,
-        // otherHeader: 'foo',
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
       },
@@ -510,6 +512,11 @@ const AbsenceCreate = ({navigation, route}) => {
             .checkGps(route.params.highAccuracy)
             .then(function (gps) {
               if (!gps.status) {
+                Alert.alert(
+                  'Gagal Mengirim Data',
+                  'Tolong cek kembali lokasi anda',
+                );
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log('position', gps.data);

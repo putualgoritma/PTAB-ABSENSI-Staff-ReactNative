@@ -165,7 +165,7 @@ const Permit = ({navigation, route}) => {
   useEffect(() => {
     setLoading(true);
     console.log(route.params.data.id.toString());
-    API.absenceLCheck(USER_ID, route.params.data.id).then(result => {
+    API.absenceLCheck(USER_ID, route.params.data.id, TOKEN).then(result => {
       if (result) {
         console.log(result.data);
         setCheck(result.data);

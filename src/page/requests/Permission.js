@@ -97,8 +97,8 @@ const Permission = ({navigation}) => {
         'POST',
         'https://simpletabadmin.ptab-vps.com/api/close/absence/requests/store',
         {
-          // Authorization: `Bearer ${TOKEN}`,
-          // otherHeader: 'foo',
+          Authorization: `Bearer ${TOKEN}`,
+          otherHeader: 'foo',
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
         },
@@ -191,7 +191,7 @@ const Permission = ({navigation}) => {
 
   const getStaffList = () => {
     setLoadingList(true);
-    API.getPermissionCat().then(result => {
+    API.getPermissionCat(TOKEN).then(result => {
       if (result) {
         console.log(result.data);
         if (todos.length < 1) {

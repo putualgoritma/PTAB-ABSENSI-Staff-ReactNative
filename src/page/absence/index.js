@@ -143,6 +143,7 @@ const Absence = ({navigation, route}) => {
             .checkGps(route.params.highAccuracy)
             .then(function (gps) {
               if (!gps.status) {
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log('position', gps.data);
@@ -229,6 +230,7 @@ const Absence = ({navigation, route}) => {
             .then(function (gps) {
               if (!gps.status) {
                 console.log('checkGps useeffect', 'false');
+                setLoading(false);
               } else {
                 console.log('position', gps.data);
                 //get distance
@@ -310,10 +312,10 @@ const Absence = ({navigation, route}) => {
       'POST',
       'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/store',
       {
-        // Authorization: `Bearer ${TOKEN}`,
-        // otherHeader: 'foo',
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
         Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
+        // 'Content-Type': 'multipart/form-data',
       },
       [
         {name: 'id', data: route.params.id.toString()},
@@ -358,8 +360,8 @@ const Absence = ({navigation, route}) => {
       'POST',
       'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/store',
       {
-        // Authorization: `Bearer ${TOKEN}`,
-        // otherHeader: 'foo',
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
       },
@@ -459,6 +461,11 @@ const Absence = ({navigation, route}) => {
             .checkGps(route.params.highAccuracy)
             .then(function (gps) {
               if (!gps.status) {
+                Alert.alert(
+                  'Gagal Mengirim Data',
+                  'Tolong cek kembali lokasi anda',
+                );
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log('position', gps.data);
@@ -485,6 +492,7 @@ const Absence = ({navigation, route}) => {
                     ) {
                       sendData(gps.data);
                     } else {
+                      console.log('data : ', form);
                       Alert.alert('Lengkapi data terlebih dahulu');
                       setLoading(false);
                     }
@@ -509,6 +517,7 @@ const Absence = ({navigation, route}) => {
                   ) {
                     sendData(gps.data);
                   } else {
+                    console.log('data : ', form);
                     Alert.alert('Lengkapi data terlebih dahulu');
                     setLoading(false);
                   }

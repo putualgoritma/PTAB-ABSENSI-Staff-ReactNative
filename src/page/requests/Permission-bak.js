@@ -178,7 +178,7 @@ const Permission = ({navigation}) => {
 
   const getStaffList = () => {
     setLoadingList(true);
-    API.getPermissionCat().then(result => {
+    API.getPermissionCat(TOKEN).then(result => {
       if (result) {
         console.log(result.data);
         if (todos.length < 1) {

@@ -93,7 +93,7 @@ const ChangeShift = ({navigation, route}) => {
   const getStaffList = (date, shift) => {
     console.log('getStaffList', date, shift);
     setLoadingList(true);
-    API.shift_staff(USER.staff_id, date, shift).then(result => {
+    API.shift_staff(USER.staff_id, date, shift, TOKEN).then(result => {
       if (result) {
         console.log(result.data);
         setStaffList(result.data);
@@ -124,9 +124,12 @@ const ChangeShift = ({navigation, route}) => {
 
     console.log('data', JSON.stringify(form));
     if (form.description != null) {
-      API.shiftChangeStore({
-        form: JSON.stringify(form),
-      }).then(result => {
+      API.shiftChangeStore(
+        {
+          form: JSON.stringify(form),
+        },
+        TOKEN,
+      ).then(result => {
         if (result.message != 'failed') {
           console.log(result);
           navigation.navigate('Home');

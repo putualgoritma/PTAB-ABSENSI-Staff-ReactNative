@@ -71,6 +71,7 @@ const ShiftSchedule = ({navigation, route}) => {
       USER.staff_id,
       date == '0000-00-00' ? '' : date,
       date2 == '0000-00-00' ? '' : date2,
+      TOKEN,
     ).then(result => {
       if (result) {
         console.log('data2', result.data);
@@ -89,7 +90,7 @@ const ShiftSchedule = ({navigation, route}) => {
     setLoading(true);
     setDate('0000-00-00');
     setDate2('0000-00-00');
-    API.absenceSchedule(USER.staff_id, '0000-00-00', '0000-00-00').then(
+    API.absenceSchedule(USER.staff_id, '0000-00-00', '0000-00-00', TOKEN).then(
       result => {
         if (result) {
           console.log(result.data);

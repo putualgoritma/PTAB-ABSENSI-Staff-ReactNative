@@ -87,8 +87,8 @@ const DutyOut = ({navigation}) => {
         'POST',
         'https://simpletabadmin.ptab-vps.com/api/close/absence/requests/store',
         {
-          // Authorization: `Bearer ${TOKEN}`,
-          // otherHeader: 'foo',
+          Authorization: `Bearer ${TOKEN}`,
+          otherHeader: 'foo',
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
         },

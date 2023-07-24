@@ -148,6 +148,7 @@ const AbsenceOff = ({navigation, route}) => {
             .checkGps(false)
             .then(function (gps) {
               if (!gps.status) {
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log('position', gps.data);
@@ -230,10 +231,10 @@ const AbsenceOff = ({navigation, route}) => {
       'POST',
       'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/store',
       {
-        // Authorization: `Bearer ${TOKEN}`,
-        // otherHeader: 'foo',
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
         Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
+        // 'Content-Type': 'multipart/form-data',
       },
       [
         {name: 'id', data: route.params.id.toString()},
@@ -274,8 +275,8 @@ const AbsenceOff = ({navigation, route}) => {
       'POST',
       'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/store',
       {
-        // Authorization: `Bearer ${TOKEN}`,
-        // otherHeader: 'foo',
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
       },
@@ -313,7 +314,7 @@ const AbsenceOff = ({navigation, route}) => {
         // navigation.navigate('Action')
       })
       .catch(e => {
-        // console.log(e);
+        console.log(e);
         setLoading(false);
       });
   };
@@ -327,17 +328,30 @@ const AbsenceOff = ({navigation, route}) => {
     if (route.params.selfie == 'OFF') {
       sendDataNoImg();
     } else if (route.params.image == null) {
-      Alert.alert('Pilih Gambar Terlebih dahulu');
+      Alert.alert('Pilih Gambar Terlebih dahulu A');
       setLoading(false);
     } else if (
-      form.lat != '' &&
-      form.lng != '' &&
+      form.lat != null &&
+      form.lng != null &&
       route.params.image.filename != '' &&
       route.params.image.filename != null
     ) {
       sendData();
     } else {
-      Alert.alert('Lengkapi data terlebih dahulu');
+      console.log('data : ', route.params.image);
+      console.log(
+        'lat : ',
+        form.lat.toString(),
+        form.lat != '',
+        'lng : ',
+        form.lng.toString(),
+        form.lng != '',
+        'file',
+        1 * 2 === 2,
+        route.params.image.filename != 'dddd',
+        route.params.image.filename != 'aasxx',
+      );
+      Alert.alert('Lengkapi data terlebih dahulu B');
     }
   };
 

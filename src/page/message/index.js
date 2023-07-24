@@ -142,7 +142,7 @@ const Message = ({navigation, route}) => {
     console.log(page);
     console.log('jumlah data', data.length);
     setLoading(true);
-    API.message(STAFF_ID, page).then(result => {
+    API.message(STAFF_ID, page, TOKEN).then(result => {
       if (result) {
         if (page > 1) {
           // if (page < lastPage) {
@@ -187,7 +187,7 @@ const Message = ({navigation, route}) => {
     setPage(1);
 
     setLoading(true);
-    API.message(STAFF_ID, 1).then(result => {
+    API.message(STAFF_ID, 1, TOKEN).then(result => {
       if (result) {
         //   if (page > 1) {
         //     // if (page < lastPage) {

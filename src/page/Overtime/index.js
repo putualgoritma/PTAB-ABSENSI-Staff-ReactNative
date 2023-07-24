@@ -156,7 +156,7 @@ const Overtime = ({navigation, route}) => {
   useEffect(() => {
     console.log(route.params.data.id);
     setLoading(true);
-    API.absenceLCheck(USER_ID, route.params.data.id).then(result => {
+    API.absenceLCheck(USER_ID, route.params.data.id, TOKEN).then(result => {
       if (result) {
         console.log(result.data);
         setCheck(result.data);

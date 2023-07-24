@@ -36,11 +36,11 @@ import HistoryRequest from '../page/history/HistoryRequests';
 import Shift from '../page/shift';
 import ChangeShift from '../page/shift/ChangeShift';
 
-import changeShiftProposal from '../page/history/changeShiftProposal';
-import changeShift from '../page/history/changeShift';
+import changeShiftProposal from '../page/history/ChangeShiftProposal';
+import changeShift from '../page/history/ChangeShift';
 
-import message from '../page/message';
-import Holiday from '../page/holiday';
+import message from '../page/Message';
+import Holiday from '../page/Holiday';
 
 import ShiftStaff from '../page/shift/ShiftStaff';
 import Login from '../page/login/Login';
@@ -53,11 +53,19 @@ import ListAbsence from '../page/absence/ListAbsence';
 import ListHistory from '../page/history/ListHistory';
 import EndSick from '../page/absence/EndSick';
 
+import VisitEtc from '../page/VisitEtc';
+
 const Stack = createStackNavigator();
 
 const Router = () => {
   return (
     <Stack.Navigator initialRouteName="SplashScreen">
+      <Stack.Screen
+        name="VisitEtc"
+        component={VisitEtc}
+        options={{headerShown: false}}
+      />
+
       <Stack.Screen
         name="CamDect"
         component={CamDect}
