@@ -246,8 +246,8 @@ const AbsenceOffEnd = ({navigation, route}) => {
         {name: 'type', data: route.params.type.toString()},
         {name: 'queue', data: route.params.queue.toString()},
         {name: 'staff_id', data: STAFF_ID.toString()},
-        {name: 'lat', data: form.lat.toString()},
-        {name: 'lng', data: form.lng.toString()},
+        {name: 'lat', data: form.lat ? form.lat.toString() : ''},
+        {name: 'lng', data: form.lng ? form.lng.toString() : ''},
         {name: 'status', data: '0'},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
@@ -300,8 +300,8 @@ const AbsenceOffEnd = ({navigation, route}) => {
         {name: 'type', data: route.params.type.toString()},
         {name: 'queue', data: route.params.queue.toString()},
         {name: 'staff_id', data: STAFF_ID.toString()},
-        {name: 'lat', data: form.lat.toString()},
-        {name: 'lng', data: form.lng.toString()},
+        {name: 'lat', data: form.lat ? form.lat.toString() : ''},
+        {name: 'lng', data: form.lng ? form.lng.toString() : ''},
         {name: 'status', data: '0'},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
@@ -339,13 +339,20 @@ const AbsenceOffEnd = ({navigation, route}) => {
       Alert.alert('Pilih Gambar Terlebih dahulu');
       setLoading(false);
     } else if (
-      form.lat != '' &&
-      form.lng != '' &&
+      // form.lat != '' &&
+      // form.lng != '' &&
       route.params.image.filename != '' &&
       route.params.image.filename != null
     ) {
       sendData();
     } else {
+      console.log(
+        'hasil',
+        form.lat != '',
+        form.lng != '',
+        route.params.image.filename != '',
+        route.params.image.filename != null,
+      );
       Alert.alert('Lengkapi data terlebih dahulu');
     }
   };

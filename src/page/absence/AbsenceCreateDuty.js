@@ -239,8 +239,8 @@ const AbsenceCreateExtra = ({navigation, route}) => {
           name: 'absence_request_id',
           data: route.params.absence_request_id.toString(),
         },
-        {name: 'lat', data: form.lat.toString()},
-        {name: 'lng', data: form.lng.toString()},
+        {name: 'lat', data: form.lat ? form.lat.toString() : ''},
+        {name: 'lng', data: form.lng ? form.lng.toString() : ''},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
       ],
@@ -287,8 +287,8 @@ const AbsenceCreateExtra = ({navigation, route}) => {
           name: 'absence_request_id',
           data: route.params.absence_request_id.toString(),
         },
-        {name: 'lat', data: form.lat.toString()},
-        {name: 'lng', data: form.lng.toString()},
+        {name: 'lat', data: form.lat ? form.lat.toString() : ''},
+        {name: 'lng', data: form.lng ? form.lng.toString() : ''},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
       ],
@@ -326,8 +326,8 @@ const AbsenceCreateExtra = ({navigation, route}) => {
       Alert.alert('Pilih Gambar Terlebih dahulu');
       setLoading(false);
     } else if (
-      form.lat != '' &&
-      form.lng != '' &&
+      // form.lat != '' &&
+      // form.lng != '' &&
       route.params.image.filename != '' &&
       route.params.image.filename != null
     ) {

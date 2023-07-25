@@ -429,8 +429,8 @@ const AbsenceCreateOff = ({navigation, route}) => {
           name: 'absence_request_id',
           data: route.params.absence_request_id.toString(),
         },
-        {name: 'lat', data: position.latitude.toString()},
-        {name: 'lng', data: position.longitude.toString()},
+        {name: 'lat', data: form.lat ? form.lat.toString() : ''},
+        {name: 'lng', data: form.lng ? form.lng.toString() : ''},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
         {name: 'status', data: '0'},
@@ -551,12 +551,12 @@ const AbsenceCreateOff = ({navigation, route}) => {
                 if (route.params.selfie == 'OFF') {
                   sendDataNoImg(gps.data);
                 } else if (
-                  form.lat != '' &&
-                  form.lng != '' &&
+                  // form.lat != '' &&
+                  // form.lng != '' &&
                   route.params.image.filename != '' &&
                   route.params.image.filename != null
                 ) {
-                  alert('5');
+                  // alert('5');
                   sendData(gps.data);
                 } else {
                   Alert.alert('Lengkapi data terlebih dahulu');

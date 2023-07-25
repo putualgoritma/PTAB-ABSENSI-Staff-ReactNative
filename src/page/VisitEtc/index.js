@@ -86,9 +86,9 @@ const VisitEtc = ({navigation, route}) => {
   };
 
   const getData = () => {
-    API.getDataCbox(TOKEN).then(result => {
-      setcategories(result.cat);
-    });
+    // API.getDataCbox(TOKEN).then(result => {
+    //   setcategories(result.cat);
+    // });
   };
 
   useEffect(() => {
@@ -225,8 +225,8 @@ const VisitEtc = ({navigation, route}) => {
             <Label title="Bukti Dinas" size={24} color="#000000" />
           </View>
 
-          <Label title="Pilih Kategori" size={16} color="#000000" />
-          <Dropdown categories={categories} setForm={setForm} form={form} />
+          {/* <Label title="Pilih Kategori" size={16} color="#000000" />
+          <Dropdown categories={categories} setForm={setForm} form={form} /> */}
           <Label title="Keterangan" size={16} color="#000000" />
           <TextAreaInpt
             gMarginBottom={0.02}
