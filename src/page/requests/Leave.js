@@ -20,6 +20,7 @@ import {useEffect} from 'react';
 import ScreenLoading from '../loading/ScreenLoading';
 import {useSelector} from 'react-redux';
 import myFunctions from '../../functions';
+import Config from 'react-native-config';
 
 const Leave = ({navigation}) => {
   const Cdate = new Date();
@@ -74,15 +75,15 @@ const Leave = ({navigation}) => {
         lat: form.lat,
         lng: form.lng,
       };
-      console.log(form.lat, form.lng);
+      console.log(JSON.stringify(form));
       RNFetchBlob.fetch(
         'POST',
-        'https://simpletabadmin.ptab-vps.com/api/close/absence/requests/store',
+        Config.REACT_APP_BASE_URL + '/close/absence/requests/store',
         {
           Authorization: `Bearer ${TOKEN}`,
           otherHeader: 'foo',
           Accept: 'application/json',
-          'Content-Type': 'multipart/form-data',
+          // 'Content-Type': 'multipart/form-data',
         },
         [
           {
@@ -107,7 +108,7 @@ const Leave = ({navigation}) => {
           // navigation.navigate('Action')
         })
         .catch(e => {
-          // console.log(e);
+          console.log(e);
           setLoading(false);
         });
     } else {

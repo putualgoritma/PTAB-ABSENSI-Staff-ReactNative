@@ -27,6 +27,7 @@ import {
   isMockingLocation,
   MockLocationDetectorErrorCode,
 } from 'react-native-turbo-mock-location-detector';
+import Config from 'react-native-config';
 
 const AbsenceOff = ({navigation, route}) => {
   const TOKEN = useSelector(state => state.TokenReducer);
@@ -229,7 +230,7 @@ const AbsenceOff = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/store',
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/store',
       {
         Authorization: `Bearer ${TOKEN}`,
         otherHeader: 'foo',
@@ -273,7 +274,7 @@ const AbsenceOff = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/store',
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/store',
       {
         Authorization: `Bearer ${TOKEN}`,
         otherHeader: 'foo',

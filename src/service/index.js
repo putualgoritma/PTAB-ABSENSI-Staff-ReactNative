@@ -4,26 +4,23 @@ import Post from './Post';
 import Put from './Put';
 import Delete from './Delete';
 import FileUpload from './FileUpload';
+import {config} from '@fortawesome/fontawesome-svg-core';
 
 // GET
 const absence = (STAFF_ID, TOKEN) =>
-  Get('close/absence/absence?staff_id=' + STAFF_ID, false, TOKEN);
+  Get(Config.absence + '=' + STAFF_ID, false, TOKEN);
 
 const absenceHistory = (USER_ID, date, date2, TOKEN) =>
   Get(
-    'close/absence/history?staff_id=' +
-      USER_ID +
-      '&from=' +
-      date +
-      '&to=' +
-      date2,
+    Config.absenceHistory + '=' + USER_ID + '&from=' + date + '&to=' + date2,
     false,
     TOKEN,
   );
 
 const absenceHistoryExtra = (USER_ID, date, date2, TOKEN) =>
   Get(
-    'close/absence/historyExtra?staff_id=' +
+    Config.absenceHistoryExtra +
+      '=' +
       USER_ID +
       '&from=' +
       date +
@@ -35,7 +32,8 @@ const absenceHistoryExtra = (USER_ID, date, date2, TOKEN) =>
 
 const absenceHistoryRequests = (USER_ID, page, date, date2, TOKEN) =>
   Get(
-    'close/absence/requests/history?staff_id=' +
+    Config.absenceHistoryRequests +
+      '=' +
       USER_ID +
       '&page=' +
       page +
@@ -48,28 +46,22 @@ const absenceHistoryRequests = (USER_ID, page, date, date2, TOKEN) =>
   );
 
 const menu = (STAFF_ID, TOKEN) =>
-  Get(
-    'close/absence/menu?staff_id=' + STAFF_ID + '&version=2023-04-19',
-    false,
-    TOKEN,
-  );
+  Get(Config.menu + '=' + STAFF_ID + '&version=2023-04-19', false, TOKEN);
 
 const chart = (STAFF_ID, TOKEN) =>
-  Get('close/absence/menu/graphic?staff_id=' + STAFF_ID, false, TOKEN);
+  Get(Config.chart + '=' + STAFF_ID, false, TOKEN);
 
 const absenceLCheck = (USER_ID, requests_id, TOKEN) =>
   Get(
-    'close/absence/checkAbsenceLocation?user_id=' +
-      USER_ID +
-      '&requests_id=' +
-      requests_id,
+    Config.absenceLCheck + '=' + USER_ID + '&requests_id=' + requests_id,
     false,
     TOKEN,
   );
 
 const shift_staff = (USER_ID, date, shift, TOKEN) =>
   Get(
-    'close/absence/shift?staff_id=' +
+    Config.shift_staff +
+      '=' +
       USER_ID +
       '&start=' +
       date +
@@ -81,35 +73,30 @@ const shift_staff = (USER_ID, date, shift, TOKEN) =>
 
 const shiftChange = (USER_ID, staff_id, TOKEN) =>
   Get(
-    'close/absence/shift/listChange?user_id=' +
-      USER_ID +
-      '&staff_id=' +
-      staff_id,
+    Config.shiftChange + '=' + USER_ID + '&staff_id=' + staff_id,
     false,
     TOKEN,
   );
 
-const getPermissionCat = TOKEN =>
-  Get('close/absence/requests/getPermissionCat', false, TOKEN);
+const getPermissionCat = TOKEN => Get(Config.getPermissionCat, false, TOKEN);
 
-const myShift = (id, TOKEN) =>
-  Get('close/absence/shift/myShift?staff_id=' + id, false, TOKEN);
+const myShift = (id, TOKEN) => Get(Config.myShift + '=' + id, false, TOKEN);
 
 const listChangeShift = (id, TOKEN) =>
-  Get('close/absence/shiftChange?id=' + id, false, TOKEN);
+  Get(Config.listChangeShift + '=' + id, false, TOKEN);
 
 const listRequest = (id, TOKEN) =>
-  Get('close/absence/requests/absenceList?staff_id=' + id, false, TOKEN);
+  Get(Config.listRequest + '=' + id, false, TOKEN);
 
-const listFile = (id, TOKEN) =>
-  Get('close/absence/requests/listFile?id=' + id, false, TOKEN);
+const listFile = (id, TOKEN) => Get(Config.listFile + '=' + id, false, TOKEN);
 
 const absenceSchedule = (id, TOKEN) =>
-  Get('close/absence/absence/schedule?staff_id=' + id, false, TOKEN);
+  Get(Config.absenceSchedule + '=' + id, false, TOKEN);
 
 const changeShiftProposal = (id, page, date, date2, TOKEN) =>
   Get(
-    'close/absence/changeShiftProposal?staff_id=' +
+    Config.changeShiftProposal +
+      '=' +
       id +
       '&page=' +
       page +
@@ -122,7 +109,8 @@ const changeShiftProposal = (id, page, date, date2, TOKEN) =>
   );
 const changeShift = (id, page, date, date2, TOKEN) =>
   Get(
-    'close/absence/changeShift?staff_id=' +
+    config.changeShift +
+      '=' +
       id +
       '&page=' +
       page +
@@ -134,43 +122,40 @@ const changeShift = (id, page, date, date2, TOKEN) =>
     TOKEN,
   );
 const message = (id, page, TOKEN) =>
-  Get('close/absence/message?staff_id=' + id + '&page=' + page, false, TOKEN);
+  Get(config.message + '=' + id + '&page=' + page, false, TOKEN);
 const Holiday = (id, page, TOKEN) =>
-  Get('close/absence/holiday?staff_id=' + id + '&page=' + page, false, TOKEN);
+  Get(config.holiday + '=' + id + '&page=' + page, false, TOKEN);
 
 const getDataStaff = (currentPage, search, TOKEN) =>
   Get(
-    'close/visit/getDataStaff?page=' + currentPage + '&name=' + search,
+    Config.getDataStaff + '=' + currentPage + '&name=' + search,
     false,
     TOKEN,
   );
 
-const getDataCbox = TOKEN => Get('close/visit/getDataCbox', false, TOKEN);
+const getDataCbox = TOKEN => Get(Config.getDataCbox, false, TOKEN);
 //POST
 const requestsStore = (data, TOKEN) =>
-  Post('close/absence/requests/store', false, data, TOKEN);
-const login = data => Post('open/absence/login', false, data);
-const leaveEnd = (data, TOKEN) =>
-  Post('close/absence/leaveEnd', false, data, TOKEN);
-const scanCode = (data, TOKEN) => Post('open/staff/code', false, data, TOKEN);
+  Post(Config.requestsStore, false, data, TOKEN);
+const login = data => Post(Config.login, false, data);
+const leaveEnd = (data, TOKEN) => Post(Config.leaveEnd, false, data, TOKEN);
+const scanCode = (data, TOKEN) => Post(Config.scanCode, false, data, TOKEN);
 const updateShiftStaff = (data, TOKEN) =>
-  Post('close/absence/shiftChange/store', false, data, TOKEN);
+  Post(Config.updateShiftStaff, false, data, TOKEN);
 const shiftChangeStore = (data, TOKEN) =>
-  Post('close/absence/shiftChange/store', false, data, TOKEN);
+  Post(config.shiftChangeStore, false, data, TOKEN);
 const changeShiftApprove = (data, TOKEN) =>
-  Post('close/absence/changeShiftApprove', false, data, TOKEN);
+  Post(config.changeShiftApprove, false, data, TOKEN);
 const readMessage = (data, TOKEN) =>
-  Post('close/absence/message/read', false, data, TOKEN);
-const checkStaff = (data, TOKEN) =>
-  Post('close/absence/message/check', false, data, TOKEN);
+  Post(config.readMessage, false, data, TOKEN);
+const checkStaff = (data, TOKEN) => Post(config.checkStaff, false, data, TOKEN);
 
 // DELETE
 const deleteImage = (id, token) =>
   Delete(`close/absence/requests/imageDelete/${id}`, false, token);
 
 //  UPLOAD FILE
-const visitEtc = (data, TOKEN) =>
-  FileUpload('close/visit/storeEtc', data, TOKEN);
+const visitEtc = (data, TOKEN) => FileUpload(config.visitEtc, data, TOKEN);
 
 const API = {
   login,

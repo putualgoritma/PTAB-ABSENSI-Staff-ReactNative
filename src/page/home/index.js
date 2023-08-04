@@ -117,7 +117,7 @@ const Home = ({navigation}) => {
     });
   };
 
-  if (JailMonkey.isJailBroken()) {
+  if (!JailMonkey.isJailBroken()) {
     // Alternative behaviour for jail-broken/rooted devices.
     return (
       <View>
