@@ -273,6 +273,8 @@ const HistoryRequest = ({navigation}) => {
             ? 'Absen Diluar'
             : item.category == 'permission'
             ? 'Izin'
+            : item.category == 'forget'
+            ? 'Lambat Absen'
             : item.type == 'sick'
             ? 'Sakit'
             : item.category == '3'

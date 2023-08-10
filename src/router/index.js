@@ -52,6 +52,7 @@ import CamDect from '../page/absence/CamDect';
 import ListAbsence from '../page/absence/ListAbsence';
 import ListHistory from '../page/history/ListHistory';
 import EndSick from '../page/absence/EndSick';
+import Forget from '../page/requests/Forget';
 
 import VisitEtc from '../page/VisitEtc';
 
@@ -70,6 +71,21 @@ const Router = () => {
         name="CamDect"
         component={CamDect}
         options={{headerShown: false}}
+      />
+
+      <Stack.Screen
+        name="Forget"
+        component={Forget}
+        options={{
+          headerStyle: {
+            backgroundColor: '#16D5FF',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          title: 'Lupa Absen',
+        }}
       />
 
       <Stack.Screen
