@@ -4,7 +4,6 @@ import Post from './Post';
 import Put from './Put';
 import Delete from './Delete';
 import FileUpload from './FileUpload';
-import {config} from '@fortawesome/fontawesome-svg-core';
 
 // GET
 const absence = (STAFF_ID, TOKEN) =>
@@ -109,7 +108,7 @@ const changeShiftProposal = (id, page, date, date2, TOKEN) =>
   );
 const changeShift = (id, page, date, date2, TOKEN) =>
   Get(
-    config.changeShift +
+    Config.changeShift +
       '=' +
       id +
       '&page=' +
@@ -122,9 +121,9 @@ const changeShift = (id, page, date, date2, TOKEN) =>
     TOKEN,
   );
 const message = (id, page, TOKEN) =>
-  Get(config.message + '=' + id + '&page=' + page, false, TOKEN);
+  Get(Config.message + '=' + id + '&page=' + page, false, TOKEN);
 const Holiday = (id, page, TOKEN) =>
-  Get(config.holiday + '=' + id + '&page=' + page, false, TOKEN);
+  Get(Config.holiday + '=' + id + '&page=' + page, false, TOKEN);
 
 const getDataStaff = (currentPage, search, TOKEN) =>
   Get(
@@ -143,19 +142,19 @@ const scanCode = (data, TOKEN) => Post(Config.scanCode, false, data, TOKEN);
 const updateShiftStaff = (data, TOKEN) =>
   Post(Config.updateShiftStaff, false, data, TOKEN);
 const shiftChangeStore = (data, TOKEN) =>
-  Post(config.shiftChangeStore, false, data, TOKEN);
+  Post(Config.shiftChangeStore, false, data, TOKEN);
 const changeShiftApprove = (data, TOKEN) =>
-  Post(config.changeShiftApprove, false, data, TOKEN);
+  Post(Config.changeShiftApprove, false, data, TOKEN);
 const readMessage = (data, TOKEN) =>
-  Post(config.readMessage, false, data, TOKEN);
-const checkStaff = (data, TOKEN) => Post(config.checkStaff, false, data, TOKEN);
+  Post(Config.readMessage, false, data, TOKEN);
+const checkStaff = (data, TOKEN) => Post(Config.checkStaff, false, data, TOKEN);
 
 // DELETE
 const deleteImage = (id, token) =>
   Delete(`close/absence/requests/imageDelete/${id}`, false, token);
 
 //  UPLOAD FILE
-const visitEtc = (data, TOKEN) => FileUpload(config.visitEtc, data, TOKEN);
+const visitEtc = (data, TOKEN) => FileUpload(Config.visitEtc, data, TOKEN);
 
 const API = {
   login,
