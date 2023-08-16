@@ -26,7 +26,7 @@ const User = ({navigation}) => {
   // console.log(USER)
 
   const getData = () => {
-    API.menu(USER.staff_id).then(result => {
+    API.menu(USER.staff_id, TOKEN).then(result => {
       if (result) {
         console.log('data2', result);
         setData(result);

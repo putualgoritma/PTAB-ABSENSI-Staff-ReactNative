@@ -91,7 +91,7 @@ const Home = ({navigation}) => {
   });
 
   const getData = () => {
-    API.menu(USER.staff_id).then(result => {
+    API.menu(USER.staff_id, TOKEN).then(result => {
       if (result) {
         console.log('data2', result);
         setData(result);
@@ -106,7 +106,7 @@ const Home = ({navigation}) => {
   };
 
   const getChart = () => {
-    API.chart(USER.staff_id).then(result => {
+    API.chart(USER.staff_id, TOKEN).then(result => {
       if (result) {
         console.log('data2', result);
         setData2(result);
@@ -207,11 +207,11 @@ const Home = ({navigation}) => {
                   borderTopRightRadius: 30,
                 }}>
                 <View style={styles.floatingView}>
-                  <Text style={{color: '#000000'}}>
+                  {/* <Text style={{color: '#000000'}}>
                     {data.messageM.length < 22
                       ? `${data.messageM}`
                       : `${data.messageM.substring(0, 21)}...`}
-                  </Text>
+                  </Text> */}
                 </View>
 
                 <Image
@@ -513,7 +513,7 @@ const Home = ({navigation}) => {
               marginRight: windowWidht * 0.02,
               backgroundColor: '#FFFFFF',
             }}>
-            V-23.04.19
+            V-23.08.10
           </Text>
         </SafeAreaView>
         <Footer focus="Home" navigation={navigation} />
@@ -549,11 +549,11 @@ const styles = StyleSheet.create({
     borderRadius: (windowWidht * 0.11) / 2,
   },
   floatingView: {
-    borderWidth: 2,
-    borderColor: '#00000020',
+    // borderWidth: 2,
+    // borderColor: '#00000020',
     width: windowWidht * 0.675,
     height: windowHeight * 0.1,
-    backgroundColor: '#FFFFFF',
+    // backgroundColor: '#FFFFFF',
     marginLeft: 'auto',
     marginRight: 'auto',
     marginTop: -windowHeight * 0.04,

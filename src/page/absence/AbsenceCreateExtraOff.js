@@ -26,6 +26,7 @@ import {
   isMockingLocation,
   MockLocationDetectorErrorCode,
 } from 'react-native-turbo-mock-location-detector';
+import Config from 'react-native-config';
 
 const AbsenceCreateExtraOff = ({navigation, route}) => {
   const TOKEN = useSelector(state => state.TokenReducer);
@@ -148,6 +149,7 @@ const AbsenceCreateExtraOff = ({navigation, route}) => {
             .checkGps(false)
             .then(function (gps) {
               if (!gps.status) {
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log('position', gps.data);
@@ -243,13 +245,13 @@ const AbsenceCreateExtraOff = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLocationExtra',
-      // {
-      //   // Authorization: `Bearer ${TOKEN}`,
-      //   // otherHeader: 'foo',
-      //   Accept: 'application/json',
-      //   'Content-Type': 'multipart/form-data',
-      // },
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/storeLocationExtra',
+      {
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
+        Accept: 'application/json',
+        //   'Content-Type': 'multipart/form-data',
+      },
       [
         {
           name: 'absence_category_id',
@@ -264,8 +266,8 @@ const AbsenceCreateExtraOff = ({navigation, route}) => {
           name: 'absence_request_id',
           data: route.params.absence_request_id.toString(),
         },
-        {name: 'lat', data: form.lat.toString()},
-        {name: 'lng', data: form.lng.toString()},
+        {name: 'lat', data: form.lat ? form.lat.toString() : ''},
+        {name: 'lng', data: form.lng ? form.lng.toString() : ''},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
         {name: 'status', data: '0'},
@@ -296,10 +298,10 @@ const AbsenceCreateExtraOff = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLocationExtra',
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/storeLocationExtra',
       {
-        // Authorization: `Bearer ${TOKEN}`,
-        // otherHeader: 'foo',
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
       },
@@ -322,8 +324,8 @@ const AbsenceCreateExtraOff = ({navigation, route}) => {
           name: 'absence_request_id',
           data: route.params.absence_request_id.toString(),
         },
-        {name: 'lat', data: form.lat.toString()},
-        {name: 'lng', data: form.lng.toString()},
+        {name: 'lat', data: form.lat ? form.lat.toString() : ''},
+        {name: 'lng', data: form.lng ? form.lng.toString() : ''},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
         {name: 'status', data: '0'},
@@ -362,8 +364,8 @@ const AbsenceCreateExtraOff = ({navigation, route}) => {
       Alert.alert('Pilih Gambar Terlebih dahulu');
       setLoading(false);
     } else if (
-      form.lat != '' &&
-      form.lng != '' &&
+      // form.lat != '' &&
+      // form.lng != '' &&
       route.params.image.filename != '' &&
       route.params.image.filename != null
     ) {

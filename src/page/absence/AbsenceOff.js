@@ -27,6 +27,7 @@ import {
   isMockingLocation,
   MockLocationDetectorErrorCode,
 } from 'react-native-turbo-mock-location-detector';
+import Config from 'react-native-config';
 
 const AbsenceOff = ({navigation, route}) => {
   const TOKEN = useSelector(state => state.TokenReducer);
@@ -148,6 +149,7 @@ const AbsenceOff = ({navigation, route}) => {
             .checkGps(false)
             .then(function (gps) {
               if (!gps.status) {
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log('position', gps.data);
@@ -228,12 +230,12 @@ const AbsenceOff = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/store',
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/store',
       {
-        // Authorization: `Bearer ${TOKEN}`,
-        // otherHeader: 'foo',
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
         Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
+        // 'Content-Type': 'multipart/form-data',
       },
       [
         {name: 'id', data: route.params.id.toString()},
@@ -241,8 +243,8 @@ const AbsenceOff = ({navigation, route}) => {
         {name: 'type', data: route.params.type.toString()},
         {name: 'queue', data: route.params.queue.toString()},
         {name: 'staff_id', data: STAFF_ID.toString()},
-        {name: 'lat', data: form.lat.toString()},
-        {name: 'lng', data: form.lng.toString()},
+        {name: 'lat', data: form.lat ? form.lat.toString() : ''},
+        {name: 'lng', data: form.lng ? form.lng.toString() : ''},
         {name: 'status', data: '0'},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
@@ -272,10 +274,10 @@ const AbsenceOff = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/store',
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/store',
       {
-        // Authorization: `Bearer ${TOKEN}`,
-        // otherHeader: 'foo',
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
       },
@@ -290,8 +292,8 @@ const AbsenceOff = ({navigation, route}) => {
         {name: 'type', data: route.params.type.toString()},
         {name: 'queue', data: route.params.queue.toString()},
         {name: 'staff_id', data: STAFF_ID.toString()},
-        {name: 'lat', data: form.lat.toString()},
-        {name: 'lng', data: form.lng.toString()},
+        {name: 'lat', data: form.lat ? form.lat.toString() : ''},
+        {name: 'lng', data: form.lng ? form.lng.toString() : ''},
         {name: 'status', data: '0'},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
@@ -313,7 +315,7 @@ const AbsenceOff = ({navigation, route}) => {
         // navigation.navigate('Action')
       })
       .catch(e => {
-        // console.log(e);
+        console.log(e);
         setLoading(false);
       });
   };
@@ -327,17 +329,30 @@ const AbsenceOff = ({navigation, route}) => {
     if (route.params.selfie == 'OFF') {
       sendDataNoImg();
     } else if (route.params.image == null) {
-      Alert.alert('Pilih Gambar Terlebih dahulu');
+      Alert.alert('Pilih Gambar Terlebih dahulu A');
       setLoading(false);
     } else if (
-      form.lat != '' &&
-      form.lng != '' &&
+      // form.lat != null &&
+      // form.lng != null &&
       route.params.image.filename != '' &&
       route.params.image.filename != null
     ) {
       sendData();
     } else {
-      Alert.alert('Lengkapi data terlebih dahulu');
+      console.log('data : ', route.params.image);
+      console.log(
+        'lat : ',
+        form.lat.toString(),
+        form.lat != '',
+        'lng : ',
+        form.lng.toString(),
+        form.lng != '',
+        'file',
+        1 * 2 === 2,
+        route.params.image.filename != 'dddd',
+        route.params.image.filename != 'aasxx',
+      );
+      Alert.alert('Lengkapi data terlebih dahulu B');
     }
   };
 

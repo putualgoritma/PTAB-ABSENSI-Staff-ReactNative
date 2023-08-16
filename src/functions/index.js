@@ -148,8 +148,9 @@ const checkFingerprint = async () => {
           // Alert.alert('Fingerprint Off');
           Alert.alert(
             'HP tidak support fingerprint',
-            'Konfirmasi ke admin untuk menonaktifkan fitur fingerprint',
+            'Konfirmasi ke admin untuk menonaktifkan fitur fingerprint *abaikan jika sudah konfirmasi ke admin',
           );
+          return true;
           // return false;
         } else {
           Alert.alert('Fingerprint tidak jalan: ' + error.message);

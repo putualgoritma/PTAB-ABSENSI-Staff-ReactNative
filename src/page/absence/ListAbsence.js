@@ -23,6 +23,7 @@ import myFunctions from '../../functions';
 
 const ListAbsence = ({navigation, route}) => {
   const USER_ID = useSelector(state => state.UserReducer.id);
+  const TOKEN = useSelector(state => state.TokenReducer);
   const STAFF_ID = useSelector(state => state.UserReducer.staff_id);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -51,9 +52,12 @@ const ListAbsence = ({navigation, route}) => {
           setLoading(true);
           // console.log(JSON.stringify(form));
           if (id != '') {
-            API.leaveEnd({
-              id: id,
-            }).then(result => {
+            API.leaveEnd(
+              {
+                id: id,
+              },
+              TOKEN,
+            ).then(result => {
               if (result) {
                 console.log(result);
                 // navigation.pop(2)
@@ -91,7 +95,7 @@ const ListAbsence = ({navigation, route}) => {
 
   const getMenu = () => {
     setLoading(true);
-    API.absence(STAFF_ID).then(result => {
+    API.absence(STAFF_ID, TOKEN).then(result => {
       // alert('2');
       if (result) {
         // alert('3');
@@ -107,11 +111,7 @@ const ListAbsence = ({navigation, route}) => {
                 .then(function (gps) {
                   if (!gps.status) {
                     // alert('gps gagal');
-                    return (
-                      <View>
-                        <Text>Gagal</Text>
-                      </View>
-                    );
+                    setLoading(false);
                     console.log('checkGps useeffect', 'false');
                   } else {
                     // alert('gps berhasil');
@@ -213,6 +213,7 @@ const ListAbsence = ({navigation, route}) => {
          <Text style={{ marginTop : 10 }}>Jika GPS Kuat (lebih lama dan akurat)</Text>
     </View> */}
             {(data.menu.menuVisit == 'ON' && data.absenceOut != null) ||
+            (data.menu.menuVisit == 'ACTIVE' && data.absenceOut != null) ||
             (data.menu.menuBreak == 'ON' && data.absenceOut != null) ||
             (data.menu.menuExcuse == 'ON' && data.absenceOut != null) ||
             (data.menu.menuReguler == 'OFF' && data.absenceOut != null) ? (
@@ -500,6 +501,21 @@ const ListAbsence = ({navigation, route}) => {
                 <Text style={styles.btnText}>Absen Dinas Selesai</Text>
               </TouchableOpacity>
             )}
+
+            {/* bukti dinas start */}
+            {data.menu.menuVisit == 'ACTIVE' && data.visit != null && (
+              <TouchableOpacity
+                style={[styles.listMenu, {backgroundColor: '#1fae51'}]}
+                onPress={() => {
+                  navigation.navigate('VisitEtc', {
+                    absence_request_id: data.visit.absence_request_id,
+                  });
+                }}>
+                <Text style={styles.btnText}>Bukti Dinas</Text>
+              </TouchableOpacity>
+            )}
+            {/* bukti dinas end */}
+
             {data.menu.menuVisit == 'ON' && data.visit == null && (
               <TouchableOpacity
                 style={[styles.listMenu, {backgroundColor: '#1fae51'}]}

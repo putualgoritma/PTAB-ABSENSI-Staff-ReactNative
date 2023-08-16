@@ -143,6 +143,7 @@ const ChangeShift = ({navigation}) => {
       page,
       date == '0000-00-00' ? '' : date,
       date2 == '0000-00-00' ? '' : date2,
+      TOKEN,
     ).then(result => {
       if (result) {
         if (page > 1) {
@@ -179,6 +180,7 @@ const ChangeShift = ({navigation}) => {
       1,
       date == '0000-00-00' ? '' : date,
       date2 == '0000-00-00' ? '' : date2,
+      TOKEN,
     ).then(result => {
       if (result) {
         //   if (page > 1) {
@@ -211,6 +213,7 @@ const ChangeShift = ({navigation}) => {
       1,
       date == '0000-00-00' ? '' : date,
       date2 == '0000-00-00' ? '' : date2,
+      TOKEN,
     ).then(result => {
       if (result) {
         //   if (page > 1) {

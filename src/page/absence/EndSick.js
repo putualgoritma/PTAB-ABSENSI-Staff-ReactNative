@@ -20,6 +20,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import {useEffect} from 'react';
 import ScreenLoading from '../loading/ScreenLoading';
 import {useSelector} from 'react-redux';
+import Config from 'react-native-config';
 
 const EndSick = ({navigation, route}) => {
   const Cdate = new Date();
@@ -82,10 +83,10 @@ const EndSick = ({navigation, route}) => {
       console.log(form.lat, form.lng);
       RNFetchBlob.fetch(
         'POST',
-        'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/sickAdd',
+        Config.REACT_APP_BASE_URL + '/close/absence/absence/sickAdd',
         {
-          // Authorization: `Bearer ${TOKEN}`,
-          // otherHeader: 'foo',
+          Authorization: `Bearer ${TOKEN}`,
+          otherHeader: 'foo',
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
         },

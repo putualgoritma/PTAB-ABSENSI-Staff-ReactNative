@@ -25,6 +25,7 @@ import {
   isMockingLocation,
   MockLocationDetectorErrorCode,
 } from 'react-native-turbo-mock-location-detector';
+import Config from 'react-native-config';
 
 const AbsenceCreateExtra = ({navigation, route}) => {
   const TOKEN = useSelector(state => state.TokenReducer);
@@ -147,6 +148,7 @@ const AbsenceCreateExtra = ({navigation, route}) => {
             .checkGps(false)
             .then(function (gps) {
               if (!gps.status) {
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log(
@@ -225,21 +227,21 @@ const AbsenceCreateExtra = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLocationDuty',
-      // {
-      //   // Authorization: `Bearer ${TOKEN}`,
-      //   // otherHeader: 'foo',
-      //   Accept: 'application/json',
-      //   'Content-Type': 'multipart/form-data',
-      // },
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/storeLocationDuty',
+      {
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
+        Accept: 'application/json',
+        //   'Content-Type': 'multipart/form-data',
+      },
       [
         {name: 'staff_id', data: STAFF_ID.toString()},
         {
           name: 'absence_request_id',
           data: route.params.absence_request_id.toString(),
         },
-        {name: 'lat', data: form.lat.toString()},
-        {name: 'lng', data: form.lng.toString()},
+        {name: 'lat', data: form.lat ? form.lat.toString() : ''},
+        {name: 'lng', data: form.lng ? form.lng.toString() : ''},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
       ],
@@ -268,9 +270,9 @@ const AbsenceCreateExtra = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLocationDuty',
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/storeLocationDuty',
       {
-        // Authorization: `Bearer ${TOKEN}`,
+        Authorization: `Bearer ${TOKEN}`,
         // otherHeader: 'foo',
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
@@ -286,8 +288,8 @@ const AbsenceCreateExtra = ({navigation, route}) => {
           name: 'absence_request_id',
           data: route.params.absence_request_id.toString(),
         },
-        {name: 'lat', data: form.lat.toString()},
-        {name: 'lng', data: form.lng.toString()},
+        {name: 'lat', data: form.lat ? form.lat.toString() : ''},
+        {name: 'lng', data: form.lng ? form.lng.toString() : ''},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
       ],
@@ -325,8 +327,8 @@ const AbsenceCreateExtra = ({navigation, route}) => {
       Alert.alert('Pilih Gambar Terlebih dahulu');
       setLoading(false);
     } else if (
-      form.lat != '' &&
-      form.lng != '' &&
+      // form.lat != '' &&
+      // form.lng != '' &&
       route.params.image.filename != '' &&
       route.params.image.filename != null
     ) {

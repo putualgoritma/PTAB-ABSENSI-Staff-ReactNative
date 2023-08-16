@@ -111,7 +111,7 @@ const Holiday = ({navigation}) => {
   const getData = () => {
     console.log(page);
     setLoading(true);
-    API.Holiday(STAFF_ID, page).then(result => {
+    API.Holiday(STAFF_ID, page, TOKEN).then(result => {
       if (result) {
         if (page > 1) {
           // setTicket(ticket.concat(result.data.data))

@@ -166,7 +166,7 @@ const DutyOut = ({navigation, route}) => {
 
   useEffect(() => {
     setLoading(true);
-    API.absenceLCheck(USER_ID, route.params.data.id).then(result => {
+    API.absenceLCheck(USER_ID, route.params.data.id, TOKEN).then(result => {
       if (result) {
         console.log(result.data);
         setCheck(result.data);
@@ -249,8 +249,8 @@ const DutyOut = ({navigation, route}) => {
       'POST',
       'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLocation',
       {
-        // Authorization: `Bearer ${TOKEN}`,
-        // otherHeader: 'foo',
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
       },

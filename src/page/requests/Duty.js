@@ -23,6 +23,7 @@ import ScreenLoading from '../loading/ScreenLoading';
 import {useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import myFunctions from '../../functions';
+import Config from 'react-native-config';
 
 const Duty = ({navigation}) => {
   const Cdate = new Date();
@@ -94,10 +95,10 @@ const Duty = ({navigation}) => {
       console.log(form.lat, form.lng);
       RNFetchBlob.fetch(
         'POST',
-        'https://simpletabadmin.ptab-vps.com/api/close/absence/requests/store',
+        Config.REACT_APP_BASE_URL + '/close/absence/requests/store',
         {
-          // Authorization: `Bearer ${TOKEN}`,
-          // otherHeader: 'foo',
+          Authorization: `Bearer ${TOKEN}`,
+          otherHeader: 'foo',
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
         },

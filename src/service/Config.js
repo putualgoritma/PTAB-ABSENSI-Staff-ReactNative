@@ -5,5 +5,6 @@ const source = cancelToken.source();
 
 export const Source = source;
 // export const RootPath = 'https://cors-anywhere.herokuapp.com/' +  process.env.REACT_APP_BASE_URL;
-export const RootPath = 'https://simpletabadmin.ptab-vps.com/api/';
+// console.log('ccccc', Config.REACT_APP_BASE_URL);
+export const RootPath = Config.REACT_APP_BASE_URL + '/';
 export const OnlineRoot = '';

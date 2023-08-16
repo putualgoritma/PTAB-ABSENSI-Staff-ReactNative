@@ -1,242 +1,258 @@
-import {     StyleSheet,
+import {
+  StyleSheet,
   View,
   ScrollView,
   TextInput,
   Text,
-  TouchableOpacity, 
+  TouchableOpacity,
   Dimensions,
-  Alert} from 'react-native'
-import React from 'react'
-import { useState } from 'react';
+  Alert,
+} from 'react-native';
+import React from 'react';
+import {useState} from 'react';
 import Textarea from 'react-native-textarea';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import API from '../../service';
-import { useEffect } from 'react';
+import {useEffect} from 'react';
 import ScreenLoading from '../loading/ScreenLoading';
-import { useSelector } from 'react-redux';
-import { RadioButton } from 'react-native-paper';
+import {useSelector} from 'react-redux';
+import {RadioButton} from 'react-native-paper';
 
-
-const Permit = ({navigation}) => { 
-
-  const TOKEN = useSelector((state) => state.TokenReducer);
-  const USER = useSelector((state) => state.UserReducer);
-  const USER_ID = useSelector((state) => state.UserReducer.id);
-  const STAFF_ID = useSelector((state) => state.UserReducer.staff_id);
+const Permit = ({navigation}) => {
+  const TOKEN = useSelector(state => state.TokenReducer);
+  const USER = useSelector(state => state.UserReducer);
+  const USER_ID = useSelector(state => state.UserReducer.id);
+  const STAFF_ID = useSelector(state => state.UserReducer.staff_id);
   const [date1, setDate1] = useState(new Date(1598051730000));
-  const [date, setDate] = useState("0000-00-00");
-  const [date2, setDate2] = useState("0000-00-00");
-  const [time, setTime] = useState("00:00");
+  const [date, setDate] = useState('0000-00-00');
+  const [date2, setDate2] = useState('0000-00-00');
+  const [time, setTime] = useState('00:00');
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
-  const [type, setType] =useState('start');
-  const [memo, setMemo] = useState("");
+  const [type, setType] = useState('start');
+  const [memo, setMemo] = useState('');
   const [mode, setMode] = useState('date');
   const [loading, setLoading] = useState(true);
   // const [checked, setChecked] = React.useState('first');
   const [form, setForm] = useState({
-    staff_id : STAFF_ID,
-    description : '',
-    start : '',
-    end : '',
-    type : 'back',
-    time : '',
-    status : 'pending',
-    category : 'excuse'
-})
-// Api start
-const handleAction = () => {
- 
-  let dataUpload = []
-  dataUpload =
-  [
+    staff_id: STAFF_ID,
+    description: '',
+    start: '',
+    end: '',
+    type: 'back',
+    time: '',
+    status: 'pending',
+    category: 'excuse',
+  });
+  // Api start
+  const handleAction = () => {
+    let dataUpload = [];
+    dataUpload = [
       {
-          name: 'form',
-          data: JSON.stringify(form)
+        name: 'form',
+        data: JSON.stringify(form),
       },
-  ];
+    ];
 
-  
-  console.log(JSON.stringify(form));
-    if(form.time != ""){
-      setLoading(true)
-        API.requestsStore({
-          form : JSON.stringify(form)
-      }).then((result) => {
-            if(result){
-              console.log(result);
-              navigation.pop(2)
-              alert(result.message)
-              setLoading(false)
-
-            }else{
-                alert(result.message)
-                setLoading(false)
-            }
-        });
-    }else{
-      Alert.alert('Gagal','mohon lengkapi data')
+    console.log(JSON.stringify(form));
+    if (form.time != '') {
+      setLoading(true);
+      API.requestsStore(
+        {
+          form: JSON.stringify(form),
+        },
+        TOKEN,
+      ).then(result => {
+        if (result) {
+          console.log(result);
+          navigation.pop(2);
+          alert(result.message);
+          setLoading(false);
+        } else {
+          alert(result.message);
+          setLoading(false);
+        }
+      });
+    } else {
+      Alert.alert('Gagal', 'mohon lengkapi data');
     }
-}
-// Api end
+  };
+  // Api end
 
   const onChangeStart = (event, selectedDate) => {
     const currentDate = selectedDate || date1;
-     setShow(Platform.OS === 'ios');
-     let hours = currentDate.getHours();
-     let minutes = currentDate.getMinutes();
-     
-     let time = `${hours} : ${minutes}`
-     setForm({...form, time : currentDate.getHours()+":"+currentDate.getMinutes()+":00"})
-     setTime(time);
-     console.log(time);
-     setDate1(currentDate);
-   };
-   const showMode = (currentMode) => {
+    setShow(Platform.OS === 'ios');
+    let hours = currentDate.getHours();
+    let minutes = currentDate.getMinutes();
+
+    let time = `${hours} : ${minutes}`;
+    setForm({
+      ...form,
+      time: currentDate.getHours() + ':' + currentDate.getMinutes() + ':00',
+    });
+    setTime(time);
+    console.log(time);
+    setDate1(currentDate);
+  };
+  const showMode = currentMode => {
     setShow(true);
     setMode(currentMode);
   };
-   const showTimepicker = () => {
+  const showTimepicker = () => {
     showMode('time');
   };
 
   useEffect(() => {
     // if(isFocused){
-    console.log('test')
-    setLoading(false)
+    console.log('test');
+    setLoading(false);
     //    }
-  }, [])
+  }, []);
 
-  if(!loading){
+  if (!loading) {
     return (
-      <View style={{flex : 1}}>
+      <View style={{flex: 1}}>
         <ScrollView>
-        
-          <Text style={{ marginVertical : windowHeight*0.01, marginRight : 'auto', marginLeft : 'auto', fontWeight : 'bold', fontSize : 20, color : '#000000' }}>
+          <Text
+            style={{
+              marginVertical: windowHeight * 0.01,
+              marginRight: 'auto',
+              marginLeft: 'auto',
+              fontWeight: 'bold',
+              fontSize: 20,
+              color: '#000000',
+            }}>
             Input Data Permisi
           </Text>
           <View>
-          <View style={{ flexDirection : 'row' }}>
-      <RadioButton
-        value="back"
-        status={ form.type === 'back' ? 'checked' : 'unchecked' }
-        onPress={() => setForm({...form, type : "back"})}
-      />
-      <Text style={{ marginTop : 10 }}>Kembali</Text>
+            <View style={{flexDirection: 'row'}}>
+              <RadioButton
+                value="back"
+                status={form.type === 'back' ? 'checked' : 'unchecked'}
+                onPress={() => setForm({...form, type: 'back'})}
+              />
+              <Text style={{marginTop: 10}}>Kembali</Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <RadioButton
+                value="out"
+                status={form.type === 'out' ? 'checked' : 'unchecked'}
+                onPress={() => setForm({...form, type: 'out'})}
+              />
+              <Text style={{marginTop: 10}}>Tidak Kembali</Text>
+            </View>
+          </View>
+
+          <Text>
+            Jam Mulai<Text style={{color: '#ff0000'}}>*</Text>
+          </Text>
+          <TouchableOpacity
+            style={styles.input}
+            onPress={() => {
+              showTimepicker();
+              setType('start');
+            }}
+            title="Mulai Pukul">
+            <View style={{flexDirection: 'row'}}>
+              {/* <FontAwesomeIcon icon={faClock} style={{color:'#FFFFFF'}} size={ 20 } /> */}
+              {/* <Distance distanceH={5}/> */}
+              <Text style={styles.text}>{time}</Text>
+            </View>
+          </TouchableOpacity>
+
+          <Text style={styles.title}>Memo</Text>
+          <Textarea
+            containerStyle={styles.textareaContainer}
+            style={styles.textarea}
+            placeholder="Isi Memo Disini"
+            editable={true}
+            maxLength={255}
+            value={form.description}
+            onChangeText={value =>
+              setForm({...form, description: value})
+            }></Textarea>
+
+          {show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date1}
+              mode={mode}
+              is24Hour={true}
+              display="spinner"
+              onChange={type == 'end' ? onChangeEnd : onChangeStart}
+            />
+          )}
+        </ScrollView>
+
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => {
+            handleAction();
+          }}>
+          <Text style={{color: '#FFFFFF', fontSize: 24, fontWeight: 'bold'}}>
+            Ajukan
+          </Text>
+        </TouchableOpacity>
       </View>
-      <View style={{ flexDirection : 'row' }}>
-      <RadioButton
-        value="out"
-        status={ form.type === 'out' ? 'checked' : 'unchecked' }
-        onPress={() => setForm({...form, type : "out"}) }
-      />
-         <Text style={{ marginTop : 10 }}>Tidak Kembali</Text>
-    </View>
-    </View>
-  
-  <Text>Jam Mulai<Text style={{ color : '#ff0000' }}>*</Text></Text>
-  <TouchableOpacity style={styles.input} onPress={() => {showTimepicker(); setType('start')}} title="Mulai Pukul">
-                                <View style={{flexDirection:'row'}}>
-                                    {/* <FontAwesomeIcon icon={faClock} style={{color:'#FFFFFF'}} size={ 20 } /> */}
-                                    {/* <Distance distanceH={5}/> */}
-                                    <Text style={styles.text}>{time}</Text>
-                                </View>
-                            </TouchableOpacity>
-  
-                            <Text style={styles.title}>Memo</Text>
-                            <Textarea
-     containerStyle={styles.textareaContainer}
-     style={styles.textarea}
-       placeholder="Isi Memo Disini"
-       editable={true}
-       maxLength={255}
-       value={form.description}
-       onChangeText ={(value)=>  setForm({...form, description : value})}
-   ></Textarea>
-  
-                            
-  
-  {show && (
-                              <DateTimePicker
-                              testID="dateTimePicker"
-                              value={date1}
-                              mode={mode}
-                              is24Hour={true}
-                              display="spinner"
-                              onChange={type == 'end' ? onChangeEnd : onChangeStart}
-                              />
-                              )}
-  
-  </ScrollView>
-  
-  
-  <TouchableOpacity style={styles.btn} onPress={()=>{handleAction()}}>
-      <Text style={{ color : '#FFFFFF', fontSize : 24, fontWeight : 'bold' }}>
-        Ajukan
-        </Text>
-      </TouchableOpacity>
-      </View>
-    )
-  }
-  else{
-    return(
+    );
+  } else {
+    return (
       <View>
-        <ScreenLoading/>
+        <ScreenLoading />
       </View>
-    )
+    );
   }
- 
-}
+};
 
-export default Permit
+export default Permit;
 
-const windowWidht =Dimensions.get('window').width;
-const windowHeight =Dimensions.get('window').height;
+const windowWidht = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
-  input : {
-    width : windowWidht*0.7,
-    height : windowHeight*0.043,
-    borderWidth : 1,
-    backgroundColor : '#FFFFFF',
-    marginRight : 'auto',
-    marginLeft : 'auto',
-    marginVertical : windowHeight*0.01,
+  input: {
+    width: windowWidht * 0.7,
+    height: windowHeight * 0.043,
+    borderWidth: 1,
+    backgroundColor: '#FFFFFF',
+    marginRight: 'auto',
+    marginLeft: 'auto',
+    marginVertical: windowHeight * 0.01,
   },
-   text :{
-    fontSize : 14,
+  text: {
+    fontSize: 14,
     paddingTop: 10,
-    paddingLeft : 10
-   },
-   textareaContainer: {
-    width : windowWidht*0.7,
+    paddingLeft: 10,
+  },
+  textareaContainer: {
+    width: windowWidht * 0.7,
     height: 120,
-    borderRadius:10,
+    borderRadius: 10,
     padding: 5,
     backgroundColor: '#FFFFFF',
-    borderWidth:1,
-    marginRight : 'auto',
-    marginLeft : 'auto',
-},
-textarea: {
-    textAlignVertical: 'top', 
+    borderWidth: 1,
+    marginRight: 'auto',
+    marginLeft: 'auto',
+  },
+  textarea: {
+    textAlignVertical: 'top',
     fontSize: 14,
     color: '#696969',
-},
-title: {
-  marginLeft : windowWidht*0.02,
-  fontWeight : 'bold',
-  color : '#000000',
-},
-btn : {
-  width : windowWidht*0.76,
-   height : windowHeight*0.07,
- backgroundColor : '#00B2FF',
- marginLeft : 'auto',
- marginRight : 'auto',
- alignItems : 'center',
- justifyContent : 'center',
-}
-})
+  },
+  title: {
+    marginLeft: windowWidht * 0.02,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+  btn: {
+    width: windowWidht * 0.76,
+    height: windowHeight * 0.07,
+    backgroundColor: '#00B2FF',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

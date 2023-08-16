@@ -28,6 +28,7 @@ import {
   isMockingLocation,
   MockLocationDetectorErrorCode,
 } from 'react-native-turbo-mock-location-detector';
+import Config from 'react-native-config';
 
 const AbsenceCreateOff = ({navigation, route}) => {
   const TOKEN = useSelector(state => state.TokenReducer);
@@ -141,6 +142,7 @@ const AbsenceCreateOff = ({navigation, route}) => {
             .checkGps(route.params.highAccuracy)
             .then(function (gps) {
               if (!gps.status) {
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log('position', gps.data);
@@ -234,6 +236,7 @@ const AbsenceCreateOff = ({navigation, route}) => {
             .checkGps(route.params.highAccuracy)
             .then(function (gps) {
               if (!gps.status) {
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log('position', gps.data);
@@ -320,15 +323,26 @@ const AbsenceCreateOff = ({navigation, route}) => {
 
   const sendDataNoImg = position => {
     setLoading(true);
+    alert('dhdh');
+    console.log(
+      'dataaaa',
+      route.params.absence_id,
+      route.params.absence_category_id,
+      route.params.absence_category_id_end,
+      route.params.expired_date,
+      route.params.absence_request_id,
+      position.latitude,
+      position.longitude,
+    );
     RNFetchBlob.fetch(
       'POST',
-      'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLocation',
-      // {
-      //   // Authorization: `Bearer ${TOKEN}`,
-      //   // otherHeader: 'foo',
-      //   Accept: 'application/json',
-      //   'Content-Type': 'multipart/form-data',
-      // },
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/storeLocation',
+      {
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
+        Accept: 'application/json',
+        // 'Content-Type': 'multipart/form-data',
+      },
       [
         {name: 'absence_id', data: route.params.absence_id.toString()},
         {
@@ -345,10 +359,22 @@ const AbsenceCreateOff = ({navigation, route}) => {
           name: 'absence_request_id',
           data: route.params.absence_request_id.toString(),
         },
-        {name: 'lat', data: position.latitude.toString()},
-        {name: 'lng', data: position.longitude.toString()},
-        {name: 'accuracy', data: form.accuracy.toString()},
-        {name: 'distance', data: form.distance.toString()},
+        {
+          name: 'lat',
+          data: position.latitude ? position.latitude.toString() : null,
+        },
+        {
+          name: 'lng',
+          data: position.longitude ? position.longitude.toString() : null,
+        },
+        {
+          name: 'accuracy',
+          data: form.accuracy ? form.accuracy.toString() : null,
+        },
+        {
+          name: 'distance',
+          data: form.distance ? form.distance.toString() : null,
+        },
         {name: 'status', data: '0'},
       ],
     )
@@ -367,7 +393,7 @@ const AbsenceCreateOff = ({navigation, route}) => {
         // navigation.navigate('Action')
       })
       .catch(e => {
-        // console.log(e);
+        console.log(e);
         setLoading(false);
       });
   };
@@ -376,10 +402,10 @@ const AbsenceCreateOff = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLocation',
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/storeLocation',
       {
-        // Authorization: `Bearer ${TOKEN}`,
-        // otherHeader: 'foo',
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
       },
@@ -404,8 +430,8 @@ const AbsenceCreateOff = ({navigation, route}) => {
           name: 'absence_request_id',
           data: route.params.absence_request_id.toString(),
         },
-        {name: 'lat', data: position.latitude.toString()},
-        {name: 'lng', data: position.longitude.toString()},
+        {name: 'lat', data: form.lat ? form.lat.toString() : ''},
+        {name: 'lng', data: form.lng ? form.lng.toString() : ''},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
         {name: 'status', data: '0'},
@@ -426,7 +452,7 @@ const AbsenceCreateOff = ({navigation, route}) => {
         // navigation.navigate('Action')
       })
       .catch(e => {
-        // console.log(e);
+        console.log(e);
         setLoading(false);
       });
   };
@@ -495,9 +521,15 @@ const AbsenceCreateOff = ({navigation, route}) => {
             .checkGps(route.params.highAccuracy)
             .then(function (gps) {
               if (!gps.status) {
+                Alert.alert(
+                  'Gagal Mengirim Data',
+                  'Tolong cek kembali lokasi anda',
+                );
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log('position', gps.data);
+
                 console.log(
                   'You are ',
                   getDistance(gps.data, {
@@ -517,12 +549,15 @@ const AbsenceCreateOff = ({navigation, route}) => {
                 // Working with W3C Geolocation API
 
                 setTest(j);
-                if (
-                  form.lat != '' &&
-                  form.lng != '' &&
+                if (route.params.selfie == 'OFF') {
+                  sendDataNoImg(gps.data);
+                } else if (
+                  // form.lat != '' &&
+                  // form.lng != '' &&
                   route.params.image.filename != '' &&
                   route.params.image.filename != null
                 ) {
+                  // alert('5');
                   sendData(gps.data);
                 } else {
                   Alert.alert('Lengkapi data terlebih dahulu');

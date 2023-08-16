@@ -20,6 +20,7 @@ import {useEffect} from 'react';
 import ScreenLoading from '../loading/ScreenLoading';
 import {useSelector} from 'react-redux';
 import myFunctions from '../../functions';
+import Config from 'react-native-config';
 
 const DutyOut = ({navigation}) => {
   const Cdate = new Date();
@@ -76,19 +77,20 @@ const DutyOut = ({navigation}) => {
 
   // Api start
   const handleAction = () => {
-    if ((form.date != '') & (form.end != '')) {
+    if (form.start != '' && form.end != '') {
       setLoading(true);
       const data = {
         lat: form.lat,
         lng: form.lng,
       };
-      console.log(form.lat, form.lng);
+      const dat = JSON.stringify(form);
+      console.log(JSON.stringify(form));
       RNFetchBlob.fetch(
         'POST',
-        'https://simpletabadmin.ptab-vps.com/api/close/absence/requests/store',
+        Config.REACT_APP_BASE_URL + '/close/absence/requests/store',
         {
-          // Authorization: `Bearer ${TOKEN}`,
-          // otherHeader: 'foo',
+          Authorization: `Bearer ${TOKEN}`,
+          otherHeader: 'foo',
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
         },
@@ -103,7 +105,7 @@ const DutyOut = ({navigation}) => {
             filename: imageP.fileName,
             data: imageP.base64,
           },
-          {name: 'form', data: JSON.stringify(form)},
+          {name: 'form', data: dat},
         ],
       )
         .then(result => {
@@ -115,7 +117,7 @@ const DutyOut = ({navigation}) => {
           // navigation.navigate('Action')
         })
         .catch(e => {
-          // console.log(e);
+          console.log(e);
           setLoading(false);
         });
     } else {

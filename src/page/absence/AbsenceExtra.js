@@ -28,6 +28,7 @@ import {
   isMockingLocation,
   MockLocationDetectorErrorCode,
 } from 'react-native-turbo-mock-location-detector';
+import Config from 'react-native-config';
 
 const AbsenceExtra = ({navigation, route}) => {
   const TOKEN = useSelector(state => state.TokenReducer);
@@ -141,6 +142,7 @@ const AbsenceExtra = ({navigation, route}) => {
             .checkGps(route.params.highAccuracy)
             .then(function (gps) {
               if (!gps.status) {
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log('position', gps.data);
@@ -239,6 +241,7 @@ const AbsenceExtra = ({navigation, route}) => {
             .checkGps(route.params.highAccuracy)
             .then(function (gps) {
               if (!gps.status) {
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log('position', gps.data);
@@ -364,13 +367,13 @@ const AbsenceExtra = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeExtra',
-      // {
-      //   // Authorization: `Bearer ${TOKEN}`,
-      //   // otherHeader: 'foo',
-      //   Accept: 'application/json',
-      //   'Content-Type': 'multipart/form-data',
-      // },
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/storeExtra',
+      {
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
+        Accept: 'application/json',
+        //   'Content-Type': 'multipart/form-data',
+      },
       [
         {name: 'id', data: route.params.id.toString()},
         {name: 'absence_id', data: route.params.absence_id.toString()},
@@ -408,10 +411,10 @@ const AbsenceExtra = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeExtra',
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/storeExtra',
       {
-        // Authorization: `Bearer ${TOKEN}`,
-        // otherHeader: 'foo',
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
         Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
       },
@@ -479,6 +482,11 @@ const AbsenceExtra = ({navigation, route}) => {
             .checkGps(route.params.highAccuracy)
             .then(function (gps) {
               if (!gps.status) {
+                Alert.alert(
+                  'Gagal Mengirim Data',
+                  'Tolong cek kembali lokasi anda',
+                );
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log('position', gps.data);

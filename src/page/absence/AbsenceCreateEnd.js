@@ -25,6 +25,7 @@ import {
   isMockingLocation,
   MockLocationDetectorErrorCode,
 } from 'react-native-turbo-mock-location-detector';
+import Config from 'react-native-config';
 
 const AbsenceCreateExtra = ({navigation, route}) => {
   const TOKEN = useSelector(state => state.TokenReducer);
@@ -145,6 +146,7 @@ const AbsenceCreateExtra = ({navigation, route}) => {
             .checkGps(false)
             .then(function (gps) {
               if (!gps.status) {
+                setLoading(false);
                 console.log('checkGps useeffect', 'false');
               } else {
                 console.log(
@@ -224,13 +226,13 @@ const AbsenceCreateExtra = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLeaveCuty',
-      // {
-      //   // Authorization: `Bearer ${TOKEN}`,
-      //   // otherHeader: 'foo',
-      //   Accept: 'application/json',
-      //   'Content-Type': 'multipart/form-data',
-      // },
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/storeLeaveCuty',
+      {
+        Authorization: `Bearer ${TOKEN}`,
+        otherHeader: 'foo',
+        Accept: 'application/json',
+        //   'Content-Type': 'multipart/form-data',
+      },
       [
         {name: 'staff_id', data: STAFF_ID.toString()},
         {
@@ -267,7 +269,7 @@ const AbsenceCreateExtra = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      'https://simpletabadmin.ptab-vps.com/api/close/absence/absence/storeLeaveCuty',
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/storeLeaveCuty',
       {
         // Authorization: `Bearer ${TOKEN}`,
         // otherHeader: 'foo',
