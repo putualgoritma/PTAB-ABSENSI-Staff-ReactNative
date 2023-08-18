@@ -54,7 +54,7 @@
 	<string>App wants to access Bluetooth Always</string>
 
 	<key>NSCameraUsageDescription</key>
-	<string>App wants to access Camera</string>
+	<string>App wants to access Camera, the camera is used to take selfies as proof of attendance</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>App requires FaceID access to allows you quick and secure access.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -62,7 +62,7 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>App wants to access Location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>App wants to access Location In</string>
+	<string>App wants to access Location, Your location will be used to check if you are still within the office radius</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>App wants to access Microphone</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
