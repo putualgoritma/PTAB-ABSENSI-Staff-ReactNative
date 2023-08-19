@@ -94,12 +94,7 @@ const History = ({navigation, route}) => {
     setLoading(true);
     setDate('0000-00-00');
     setDate2('0000-00-00');
-    API.absenceHistory(
-      USER.staff_id,
-      date == '0000-00-00' ? '' : date,
-      date2 == '0000-00-00' ? '' : date2,
-      TOKEN,
-    ).then(result => {
+    API.absenceHistory(USER.staff_id, '', '', TOKEN).then(result => {
       if (result) {
         console.log(result.data);
         setData(result.data);

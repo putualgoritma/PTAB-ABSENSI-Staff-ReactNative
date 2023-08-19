@@ -196,13 +196,7 @@ const HistoryRequest = ({navigation}) => {
     setPage(1);
 
     setLoading(true);
-    API.absenceHistoryRequests(
-      USER.staff_id,
-      1,
-      date == '0000-00-00' ? '' : date,
-      date2 == '0000-00-00' ? '' : date2,
-      TOKEN,
-    ).then(result => {
+    API.absenceHistoryRequests(USER.staff_id, 1, '', '', TOKEN).then(result => {
       if (result) {
         //   if (page > 1) {
         //     // setTicket(ticket.concat(result.data.data))
