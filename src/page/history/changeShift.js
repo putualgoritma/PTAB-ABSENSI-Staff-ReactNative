@@ -208,13 +208,7 @@ const ChangeShift = ({navigation}) => {
     setLoading(true);
     // setData([])
     // setPage(1)
-    API.changeShift(
-      STAFF_ID,
-      1,
-      date == '0000-00-00' ? '' : date,
-      date2 == '0000-00-00' ? '' : date2,
-      TOKEN,
-    ).then(result => {
+    API.changeShift(STAFF_ID, 1, '', '', TOKEN).then(result => {
       if (result) {
         //   if (page > 1) {
         //     // setTicket(ticket.concat(result.data.data))

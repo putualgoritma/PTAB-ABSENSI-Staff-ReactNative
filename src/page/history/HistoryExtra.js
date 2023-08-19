@@ -90,12 +90,7 @@ const HistoryExtra = () => {
     setLoading(true);
     setDate('0000-00-00');
     setDate2('0000-00-00');
-    API.absenceHistoryExtra(
-      USER.staff_id,
-      '0000-00-00',
-      '0000-00-00',
-      TOKEN,
-    ).then(result => {
+    API.absenceHistoryExtra(USER.staff_id, '', '', TOKEN).then(result => {
       if (result) {
         console.log(result.data);
         setData(result.data);
