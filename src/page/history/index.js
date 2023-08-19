@@ -94,17 +94,20 @@ const History = ({navigation, route}) => {
     setLoading(true);
     setDate('0000-00-00');
     setDate2('0000-00-00');
-    API.absenceHistory(USER.staff_id, '0000-00-00', '0000-00-00', TOKEN).then(
-      result => {
-        if (result) {
-          console.log(result.data);
-          setData(result.data);
-          setLoading(false);
-        } else {
-          alert(result.message);
-        }
-      },
-    );
+    API.absenceHistory(
+      USER.staff_id,
+      date == '0000-00-00' ? '' : date,
+      date2 == '0000-00-00' ? '' : date2,
+      TOKEN,
+    ).then(result => {
+      if (result) {
+        console.log(result.data);
+        setData(result.data);
+        setLoading(false);
+      } else {
+        alert(result.message);
+      }
+    });
   };
 
   if (!loading) {

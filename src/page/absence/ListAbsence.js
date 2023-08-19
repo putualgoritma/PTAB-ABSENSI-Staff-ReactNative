@@ -81,6 +81,44 @@ const ListAbsence = ({navigation, route}) => {
     ]);
   };
 
+  // Api lokasi start
+  const handleActionLocation = id => {
+    Alert.alert('Yakin ?', `mengakhiri Izin`, [
+      {
+        text: 'Yakin',
+        onPress: () => {
+          setLoading(true);
+          // console.log(JSON.stringify(form));
+          if (id != '') {
+            API.closeLocation(
+              {
+                id: id,
+              },
+              TOKEN,
+            ).then(result => {
+              if (result) {
+                console.log(result);
+                // navigation.pop(2)
+                getMenu();
+                Alert.alert(result.message);
+                setLoading(false);
+              } else {
+                Alert.alert(result.message);
+                getMenu();
+                setLoading(false);
+              }
+            });
+          } else {
+            Alert.alert('Gagal', 'mohon lengkapi data');
+          }
+        },
+      },
+      {
+        text: 'Tidak',
+      },
+    ]);
+  };
+
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     getMenu();
@@ -667,6 +705,16 @@ const ListAbsence = ({navigation, route}) => {
                   {/* Akhiri Cuti */}
                   Anda Masih Cuti
                 </Text>
+              </TouchableOpacity>
+            )}
+
+            {data.moveLocation && (
+              <TouchableOpacity
+                style={[styles.listMenu, {backgroundColor: '#7a8793'}]}
+                onPress={() => {
+                  handleActionLocation(data.permission.id);
+                }}>
+                <Text style={styles.btnText}>Tutup Pindah Lokasi</Text>
               </TouchableOpacity>
             )}
 
