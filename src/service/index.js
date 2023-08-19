@@ -9,6 +9,8 @@ import FileUpload from './FileUpload';
 const absence = (STAFF_ID, TOKEN) =>
   Get(Config.absence + '=' + STAFF_ID, false, TOKEN);
 
+const getLocation = TOKEN => Get(Config.getLocation, false, TOKEN);
+
 const absenceHistory = (USER_ID, date, date2, TOKEN) =>
   Get(
     Config.absenceHistory + '=' + USER_ID + '&from=' + date + '&to=' + date2,
@@ -149,6 +151,9 @@ const readMessage = (data, TOKEN) =>
   Post(Config.readMessage, false, data, TOKEN);
 const checkStaff = (data, TOKEN) => Post(Config.checkStaff, false, data, TOKEN);
 
+const closeLocation = (data, TOKEN) =>
+  Post('close/absence/requests/closeLocation', false, data, TOKEN);
+
 // DELETE
 const deleteImage = (id, token) =>
   Delete(`close/absence/requests/imageDelete/${id}`, false, token);
@@ -189,6 +194,8 @@ const API = {
   getDataStaff,
   getDataCbox,
   visitEtc,
+  getLocation,
+  closeLocation,
 };
 
 export default API;

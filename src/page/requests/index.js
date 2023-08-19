@@ -89,6 +89,14 @@ const Requests = ({navigation, route}) => {
         }}>
         <Text style={styles.btnText}>Lupa Absen</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.listMenu, {backgroundColor: '#443cf4'}]}
+        onPress={() => {
+          navigation.navigate('Location');
+        }}>
+        <Text style={styles.btnText}>Lokasi Absen</Text>
+      </TouchableOpacity>
     </View>
   );
 };

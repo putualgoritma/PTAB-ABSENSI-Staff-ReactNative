@@ -19,6 +19,7 @@ import ScreenLoading from '../loading/ScreenLoading';
 import {useSelector} from 'react-redux';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useIsFocused} from '@react-navigation/native';
+import myFunctions from '../../functions';
 
 const Message = ({navigation, route}) => {
   const TOKEN = useSelector(state => state.TokenReducer);
@@ -36,11 +37,13 @@ const Message = ({navigation, route}) => {
   const [refresh, setRefresh] = useState(false);
   const [page, setPage] = useState(1);
   const isFocused = useIsFocused();
+  const [form, setForm] = useState(true);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     resetData();
     setRefreshing(false);
+    getLocation();
   }, []);
 
   const read = (id, message) => {
@@ -133,10 +136,64 @@ const Message = ({navigation, route}) => {
   useEffect(() => {
     if (isFocused) {
       setLoading(true);
+      getLocation();
       getData();
     }
     // console.log('ssss')
   }, [isFocused]);
+
+  const getLocation = () => {
+    myFunctions
+      .permissionLocation()
+      .then(res => {
+        if (res) {
+          myFunctions
+            .checkGps(false)
+            .then(function (gps) {
+              if (!gps.status) {
+                // alert('gps gagal');
+                setLoading(false);
+                console.log('checkGps useeffect', 'false');
+              } else {
+                // alert('gps berhasil');
+                console.log(
+                  'You are ',
+                  getDistance(gps.data, {
+                    latitude: parseFloat(result.lat),
+                    longitude: parseFloat(result.lng),
+                  }),
+                  'meters away from 51.525, 7.4575',
+                );
+                const j = getDistance(gps.data, {
+                  latitude: parseFloat(result.lat),
+                  longitude: parseFloat(result.lng),
+                });
+
+                // setTest(j);
+                if (j > result.radius) {
+                  setForm(true);
+                  // alert('true' + j + ' ' + gps.data.latitude);
+                  console.log('true');
+                  // setLoading(false);
+                } else {
+                  setForm(false);
+                  // alert('true' + j + ' ' + gps.data.latitude);
+                  console.log('false');
+                  // setLoading(false);
+                }
+              }
+            })
+            .catch(error => {
+              console.log('err checkGps useeffect', error.message);
+              // setLoading(false);
+            });
+        }
+      })
+      .catch(e => {
+        console.log(e);
+        setLoading(false);
+      });
+  };
 
   const getData = () => {
     console.log(page);
@@ -242,6 +299,7 @@ const Message = ({navigation, route}) => {
               lng: route.params.lng,
               lat: route.params.lat,
               radius: route.params.radius,
+              highAccuracy: form,
             });
           }}>
           <Text
