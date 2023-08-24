@@ -279,7 +279,7 @@ const AbsenceOffEnd = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      Config.REACT_APP_BASE_URL + 'close/absence/absence/storeLocationEnd',
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/storeLocationEnd',
       {
         Authorization: `Bearer ${TOKEN}`,
         otherHeader: 'foo',
