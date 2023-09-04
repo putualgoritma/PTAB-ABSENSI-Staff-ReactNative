@@ -19,10 +19,9 @@ import {useEffect} from 'react';
 import ScreenLoading from '../loading/ScreenLoading';
 import {useSelector} from 'react-redux';
 import {RadioButton} from 'react-native-paper';
-import SelectDropdown from 'react-native-select-dropdown';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 
-const Location = ({navigation}) => {
+const AdditionalTime = ({navigation}) => {
+  const Cdate = new Date();
   const TOKEN = useSelector(state => state.TokenReducer);
   const USER = useSelector(state => state.UserReducer);
   const USER_ID = useSelector(state => state.UserReducer.id);
@@ -35,24 +34,19 @@ const Location = ({navigation}) => {
   const [show1, setShow1] = useState(false);
   const [type, setType] = useState('start');
   const [memo, setMemo] = useState('');
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [mode, setMode] = useState('date');
   const [loading, setLoading] = useState(true);
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  // const [checked, setChecked] = React.useState('first');
   const [form, setForm] = useState({
     staff_id: STAFF_ID,
     description: '',
     start: '',
     end: '',
-    type: 'other',
-    time: '00:00:00',
+    type: 'in',
+    time: '',
     status: 'pending',
-    category: 'location',
-    work_unit_id: '',
+    category: 'AdditionalTime',
   });
-  const [todos, setTodos] = useState([]);
-
-  // tanggal
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -63,14 +57,7 @@ const Location = ({navigation}) => {
   };
   const handleConfirm = date => {
     // setLoading(true);
-    // console.log(date, Cdate);
     // if(Cdate > date){
-
-    //   alert('tanggal pengajuan harus lebih besar dari tanggal saat ini')
-
-    // }
-    // else{
-
     const dated =
       date.getFullYear() +
       '-' +
@@ -80,25 +67,27 @@ const Location = ({navigation}) => {
     console.log('ssssssaa', dated);
     setForm({...form, start: dated});
     setDate(dated);
+    // }
+    // else{
 
+    //   alert('tanggal pengajuan harus lebih besar dari tanggal saat ini')
     // }
     hideDatePicker();
   };
+
   // Api start
   const handleAction = () => {
-    // let dataUpload = [];
-    // dataUpload = [
-    //   {
-    //     name: 'form',
-    //     data: JSON.stringify(form),
-    //   },
-    // ];
-
-    console.log('kaa', form);
+    setLoading(true);
+    let dataUpload = [];
+    dataUpload = [
+      {
+        name: 'form',
+        data: JSON.stringify(form),
+      },
+    ];
 
     console.log(JSON.stringify(form));
-    if (form.time != '') {
-      setLoading(true);
+    if (form.description != null) {
       API.requestsStore(
         {
           form: JSON.stringify(form),
@@ -127,12 +116,12 @@ const Location = ({navigation}) => {
     let hours = currentDate.getHours();
     let minutes = currentDate.getMinutes();
 
-    let time = `${hours} : ${minutes}`;
+    let time = `${hours}:${minutes}`;
+    setTime(time);
     setForm({
       ...form,
       time: currentDate.getHours() + ':' + currentDate.getMinutes() + ':00',
     });
-    setTime(time);
     console.log(time);
     setDate1(currentDate);
   };
@@ -144,22 +133,10 @@ const Location = ({navigation}) => {
     showMode('time');
   };
 
-  const getLocation = () => {
-    setLoading(true);
-    API.getLocation(TOKEN).then(result => {
-      if (result) {
-        setTodos(result.data);
-
-        setLoading(false);
-      }
-    });
-  };
-
   useEffect(() => {
     // if(isFocused){
-    getLocation();
     console.log('test');
-    // setLoading(false);
+    setLoading(false);
     //    }
   }, []);
 
@@ -176,71 +153,33 @@ const Location = ({navigation}) => {
               fontSize: 20,
               color: '#000000',
             }}>
-            Input Data Titik Lokasi
+            Input Penambahan Jam kerja
           </Text>
 
-          <Text style={styles.title}>Pilih Lokasi</Text>
-
-          <View style={styles.inputselect}>
-            <SelectDropdown
-              data={todos}
-              onSelect={(selectedItem, index) => {
-                console.log('todos: ', todos);
-                console.log('selectedItem', selectedItem);
-                setForm({...form, work_unit_id: selectedItem.id.toString()});
-              }}
-              defaultButtonText={'Cari Work Unit'}
-              buttonTextAfterSelection={(selectedItem, index) => {
-                //setForm({ ...form, type: selectedItem.id.toString() })
-                return selectedItem.name;
-              }}
-              rowTextForSelection={(item, index) => {
-                //setForm({ ...form, type: item.id.toString() })
-                return item.name;
-              }}
-              buttonStyle={styles.dropdown1BtnStyle}
-              buttonTextStyle={styles.dropdown1BtnTxtStyle}
-              renderDropdownIcon={isOpened => {
-                return (
-                  <Icon
-                    name={isOpened ? 'chevron-up' : 'chevron-down'}
-                    color={'#444'}
-                    size={18}
-                  />
-                );
-              }}
-              dropdownIconPosition={'right'}
-              dropdownStyle={styles.dropdown1DropdownStyle}
-              rowStyle={styles.dropdown1RowStyle}
-              rowTextStyle={styles.dropdown1RowTxtStyle}
-              selectedRowStyle={styles.dropdown1SelectedRowStyle}
-              search
-              searchInputStyle={styles.dropdown1searchInputStyleStyle}
-              searchPlaceHolder={'Pilih Status'}
-              searchPlaceHolderColor={'darkgrey'}
-              renderSearchInputLeftIcon={() => {
-                return <Icon name={'search'} color={'#444'} size={18} />;
-              }}
-            />
+          <View>
+            <View style={{flexDirection: 'row'}}>
+              <RadioButton
+                value="in"
+                status={form.type === 'in' ? 'checked' : 'unchecked'}
+                onPress={() => setForm({...form, type: 'in'})}
+              />
+              <Text style={{marginTop: 10}}>Dalam Kantor</Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <RadioButton
+                value="outside"
+                status={form.type === 'outside' ? 'checked' : 'unchecked'}
+                onPress={() => setForm({...form, type: 'outside'})}
+              />
+              <Text style={{marginTop: 10}}>Luar Kantor</Text>
+            </View>
           </View>
-
-          <Text style={styles.title}>Pilih Tanggal</Text>
-
-          <TouchableOpacity style={styles.input} onPress={showDatePicker}>
-            <Text style={styles.text}>{date}</Text>
-          </TouchableOpacity>
-          <DateTimePickerModal
-            isVisible={isDatePickerVisible}
-            mode="date"
-            onConfirm={handleConfirm}
-            onCancel={hideDatePicker}
-          />
 
           <Text style={styles.title}>Memo</Text>
           <Textarea
             containerStyle={styles.textareaContainer}
             style={styles.textarea}
-            placeholder="Isi Memo Disini"
+            placeholder="memo"
             editable={true}
             maxLength={255}
             value={form.description}
@@ -258,6 +197,14 @@ const Location = ({navigation}) => {
               onChange={type == 'end' ? onChangeEnd : onChangeStart}
             />
           )}
+
+          <Text
+            style={{
+              marginLeft: windowWidht * 0.05,
+              marginTop: windowHeight * 0.01,
+            }}>
+            Note : Tidak dihitung lembur
+          </Text>
         </ScrollView>
 
         <TouchableOpacity
@@ -280,7 +227,7 @@ const Location = ({navigation}) => {
   }
 };
 
-export default Location;
+export default AdditionalTime;
 
 const windowWidht = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -310,10 +257,6 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
     marginLeft: 'auto',
   },
-  inputselect: {
-    alignItems: 'center',
-    marginBottom: 10,
-  },
   textarea: {
     textAlignVertical: 'top',
     fontSize: 14,
@@ -332,24 +275,5 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  dropdown1BtnStyle: {
-    width: windowWidht * 0.7,
-    height: windowHeight * 0.043,
-    backgroundColor: '#FFF',
-    borderRadius: 0,
-    borderWidth: 1,
-    borderColor: '#444',
-  },
-  dropdown1BtnTxtStyle: {color: '#444', textAlign: 'left'},
-  dropdown1DropdownStyle: {backgroundColor: '#EFEFEF'},
-  dropdown1RowStyle: {backgroundColor: '#EFEFEF', borderBottomColor: '#C5C5C5'},
-  dropdown1RowTxtStyle: {color: '#444', textAlign: 'left'},
-  dropdown1SelectedRowStyle: {backgroundColor: 'rgba(0,0,0,0.1)'},
-  dropdown1searchInputStyleStyle: {
-    backgroundColor: '#EFEFEF',
-    borderRadius: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#444',
   },
 });

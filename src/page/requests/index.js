@@ -83,6 +83,14 @@ const Requests = ({navigation, route}) => {
       </TouchableOpacity>
 
       <TouchableOpacity
+        style={[styles.listMenu, {backgroundColor: '#4169E170'}]}
+        onPress={() => {
+          navigation.navigate('AdditionalTime');
+        }}>
+        <Text style={styles.btnText}>Additional Time</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
         style={[styles.listMenu, {backgroundColor: '#e6bc15'}]}
         onPress={() => {
           navigation.navigate('Forget');
@@ -95,7 +103,7 @@ const Requests = ({navigation, route}) => {
         onPress={() => {
           navigation.navigate('Location');
         }}>
-        <Text style={styles.btnText}>Lokasi Absen</Text>
+        <Text style={styles.btnText}>Titik Lokasi Absen</Text>
       </TouchableOpacity>
     </View>
   );

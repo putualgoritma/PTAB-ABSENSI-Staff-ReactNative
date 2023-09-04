@@ -138,8 +138,8 @@ const checkFingerprint = async () => {
       .catch(error => {
         if (error.name == 'PasscodeNotSet') {
           Alert.alert(
-            'Aktifkan Fingerprint anda',
-            'masuk ke setting/sandi&keamanan pilih sidik jari',
+            'Aktifkan Fingerprint/Facedetection (khusus ios) anda',
+            'masuk ke setting/sandi&keamanan pilih sidik jari/Facedetection',
           );
           //test
           //Alert.alert(error.name)

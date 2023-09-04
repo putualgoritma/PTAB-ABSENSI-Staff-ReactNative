@@ -267,6 +267,7 @@ const ListAbsence = ({navigation, route}) => {
             {data.menu.menuReguler == 'ON' &&
               data.menu.menuVisit != 'ON' &&
               data.menu.menuBreak != 'ON' &&
+              data.menu.menuVisit != 'ACTIVE' &&
               data.menu.menuExcuse != 'ON' && (
                 <TouchableOpacity
                   style={[styles.listMenu, {backgroundColor: '#044cd0'}]}
@@ -310,6 +311,7 @@ const ListAbsence = ({navigation, route}) => {
             {/* jika tidak dinas */}
             {data.menu.menuBreak == 'ON' &&
               data.break.queue == 2 &&
+              data.menu.menuVisit != 'ACTIVE' &&
               data.menu.menuVisit != 'ON' && (
                 <TouchableOpacity
                   style={[styles.listMenu, {backgroundColor: '#09aeae'}]}
@@ -341,11 +343,16 @@ const ListAbsence = ({navigation, route}) => {
                           image: null,
                         });
                   }}>
-                  <Text style={styles.btnText}>Absen Istirahat Selesai</Text>
+                  <Text style={styles.btnText}>
+                    {route.params.type == 'reguler'
+                      ? 'Kegiatan 2'
+                      : 'Kontrol 2'}
+                  </Text>
                 </TouchableOpacity>
               )}
             {data.menu.menuBreak == 'ON' &&
               data.break.queue == 1 &&
+              data.menu.menuVisit != 'ACTIVE' &&
               data.menu.menuVisit != 'ON' && (
                 <TouchableOpacity
                   style={[styles.listMenu, {backgroundColor: '#09aeae'}]}
@@ -377,7 +384,11 @@ const ListAbsence = ({navigation, route}) => {
                           image: null,
                         });
                   }}>
-                  <Text style={styles.btnText}>Absen Istirahat</Text>
+                  <Text style={styles.btnText}>
+                    {route.params.type == 'reguler'
+                      ? 'Kegiatan 1'
+                      : 'Kontrol 1'}
+                  </Text>
                 </TouchableOpacity>
               )}
             {/* jika dinas */}
@@ -401,7 +412,11 @@ const ListAbsence = ({navigation, route}) => {
                       image: null,
                     });
                   }}>
-                  <Text style={styles.btnText}>Absen Istirahat Selesai</Text>
+                  <Text style={styles.btnText}>
+                    {route.params.type == 'reguler'
+                      ? 'Kegiatan 2'
+                      : 'Kontrol 2'}
+                  </Text>
                 </TouchableOpacity>
               )}
             {data.menu.menuBreak == 'ON' &&
@@ -424,7 +439,11 @@ const ListAbsence = ({navigation, route}) => {
                       image: null,
                     });
                   }}>
-                  <Text style={styles.btnText}>Absen Istirahat</Text>
+                  <Text style={styles.btnText}>
+                    {route.params.type == 'reguler'
+                      ? 'Kegiatan 1'
+                      : 'Kontrol 1'}
+                  </Text>
                 </TouchableOpacity>
               )}
 
