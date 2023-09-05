@@ -273,6 +273,10 @@ const HistoryRequest = ({navigation}) => {
             ? 'Sakit'
             : item.category == '3'
             ? 'Lain-lain'
+            : item.category == 'location'
+            ? 'Pindah Lokasi'
+            : item.category == 'AdditionalTime'
+            ? 'Additional Time'
             : ''}
           <Text
             style={[
@@ -283,13 +287,11 @@ const HistoryRequest = ({navigation}) => {
               },
             ]}>
             {' '}
-            (
             {item.type == 'out'
-              ? 'Tidak Kembali'
+              ? '(Tidak Kembali)'
               : item.type == 'back'
-              ? 'Kembali'
+              ? '(Kembali)'
               : ''}
-            )
           </Text>
         </Text>
         <View style={{flexDirection: 'row'}}>

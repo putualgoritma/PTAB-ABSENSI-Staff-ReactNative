@@ -229,7 +229,11 @@ const Home = ({navigation}) => {
                   <View style={{marginRight: 'auto'}}>
                     <TouchableOpacity
                       style={[styles.btnRadius, {backgroundColor: '#22820030'}]}
-                      onPress={() => navigation.navigate('ListAbsence')}>
+                      onPress={() =>
+                        navigation.navigate('ListAbsence', {
+                          type: data.staff.type,
+                        })
+                      }>
                       <Icon
                         name="fingerprint"
                         size={windowHeight * 0.03}
@@ -513,7 +517,7 @@ const Home = ({navigation}) => {
               marginRight: windowWidht * 0.02,
               backgroundColor: '#FFFFFF',
             }}>
-            V-23.08.23
+            V-23.09.04
           </Text>
         </SafeAreaView>
         <Footer focus="Home" navigation={navigation} />

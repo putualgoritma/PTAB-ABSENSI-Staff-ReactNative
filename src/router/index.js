@@ -54,6 +54,7 @@ import ListHistory from '../page/history/ListHistory';
 import EndSick from '../page/absence/EndSick';
 import Forget from '../page/requests/Forget';
 import Location from '../page/requests/Location';
+import AdditionalTime from '../page/requests/AdditionalTime';
 
 import VisitEtc from '../page/VisitEtc';
 
@@ -85,7 +86,22 @@ const Router = () => {
           headerTitleStyle: {
             fontWeight: 'bold',
           },
-          title: 'Lupa Absen',
+          title: 'Titik Lokasi',
+        }}
+      />
+
+      <Stack.Screen
+        name="AdditionalTime"
+        component={AdditionalTime}
+        options={{
+          headerStyle: {
+            backgroundColor: '#16D5FF',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          title: 'Tambahan Jam kerja',
         }}
       />
 

@@ -230,7 +230,7 @@ const AbsenceOff = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      Config.REACT_APP_BASE_URL + '/close/absence/absence/store',
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/storeN3w',
       {
         Authorization: `Bearer ${TOKEN}`,
         otherHeader: 'foo',
@@ -274,7 +274,7 @@ const AbsenceOff = ({navigation, route}) => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
-      Config.REACT_APP_BASE_URL + '/close/absence/absence/store',
+      Config.REACT_APP_BASE_URL + '/close/absence/absence/storeN3w',
       {
         Authorization: `Bearer ${TOKEN}`,
         otherHeader: 'foo',
