@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState} from 'react';
-import {ImageBackground, StyleSheet} from 'react-native';
+import {Alert, ImageBackground, StyleSheet} from 'react-native';
 import {useDispatch} from 'react-redux';
 import NetInfo from '@react-native-community/netinfo';
 import {
@@ -36,19 +36,26 @@ const SplashScreen = ({navigation}) => {
                   login_date: user.login_date,
                 })
                   .then(result => {
-                    console.log('sudah login', result);
-                    result.data['password'] = result.password;
-                    dispatch(SET_DATA_USER(result.data));
-                    dispatch(SET_DATA_TOKEN(result.token));
-                    dispatch(SET_DATA_PERMISSION(result.permission));
-                    storeDataToken(result.token);
-                    storeDataUser(result.data);
-                    storeDataPermission(result.permission);
-                    navigation.replace('Home');
+                    if (result.success) {
+                      console.log('sudah login', result);
+                      result.data['password'] = result.password;
+                      dispatch(SET_DATA_USER(result.data));
+                      dispatch(SET_DATA_TOKEN(result.token));
+                      dispatch(SET_DATA_PERMISSION(result.permission));
+                      storeDataToken(result.token);
+                      storeDataUser(result.data);
+                      storeDataPermission(result.permission);
+                      navigation.replace('Home');
+                    } else {
+                      navigation.replace('Login');
+                    }
                   })
                   .catch(e => {
                     console.log(e);
-                    navigation.replace('Login');
+                    Alert.alert(
+                      'Masalah koneksi',
+                      'cek koneksi anda dan buka ulang aplikasi',
+                    );
                   });
               } else {
                 setTimeout(() => {

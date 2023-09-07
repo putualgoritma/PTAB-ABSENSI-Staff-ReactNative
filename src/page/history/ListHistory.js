@@ -26,7 +26,11 @@ const ListHistory = ({navigation, route}) => {
       <TouchableOpacity
         style={[styles.listMenu, {backgroundColor: '#443cf4'}]}
         onPress={() => {
-          navigation.navigate('History', {start: null, end: null});
+          navigation.navigate('History', {
+            start: null,
+            end: null,
+            type: route.params.type,
+          });
         }}>
         <Text style={styles.btnText}>Histori Absen</Text>
       </TouchableOpacity>

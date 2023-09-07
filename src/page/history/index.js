@@ -174,12 +174,26 @@ const History = ({navigation, route}) => {
                             {value2.category_title == 'in' ||
                             value2.category_title == 'shift_in'
                               ? 'Masuk'
-                              : value2.category_title == 'break_in' ||
-                                value2.category_title == 'shift_break_in'
-                              ? 'istirahat'
-                              : value2.category_title == 'break_out' ||
-                                value2.category_title == 'shift_break_out'
-                              ? 'istirahat Selesai'
+                              : (value2.category_title == 'break_in' &&
+                                  route.params.type == 'shift') ||
+                                (value2.category_title == 'shift_break_in' &&
+                                  route.params.type == 'shift')
+                              ? 'Kontrol 1'
+                              : (value2.category_title == 'break_out' &&
+                                  route.params.type == 'shift') ||
+                                (value2.category_title == 'shift_break_out' &&
+                                  route.params.type == 'shift')
+                              ? 'Kontrol 2'
+                              : (value2.category_title == 'break_in' &&
+                                  route.params.type == 'reguler') ||
+                                (value2.category_title == 'shift_break_in' &&
+                                  route.params.type == 'reguler')
+                              ? 'Kegiatan 1'
+                              : (value2.category_title == 'break_out' &&
+                                  route.params.type == 'reguler') ||
+                                (value2.category_title == 'shift_break_out' &&
+                                  route.params.type == 'reguler')
+                              ? 'Kegiatan 2'
                               : value2.category_title == 'out' ||
                                 value2.category_title == 'shift_out'
                               ? 'Pulang'

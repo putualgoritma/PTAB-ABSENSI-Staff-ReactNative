@@ -66,11 +66,11 @@ const Home = ({navigation}) => {
         console.log('promise all', res);
         getData();
         getChart();
-        setLoading(false);
+        // setLoading(false);
       })
       .catch(e => {
         console.log('err promise all', e);
-        setLoading(false);
+        // setLoading(false);
       });
   }, []);
 
@@ -98,7 +98,7 @@ const Home = ({navigation}) => {
         if (result.versionNow == 'not') {
           Alert.alert(result.version);
         }
-        // setLoading(false)
+        setLoading(false);
       } else {
         Alert.alert(result.message);
       }
@@ -384,6 +384,7 @@ const Home = ({navigation}) => {
                       navigation.navigate('History', {
                         start: data2.start3,
                         end: data2.end3,
+                        type: data.staff.type,
                       })
                     }
                     style={[
@@ -411,6 +412,7 @@ const Home = ({navigation}) => {
                       navigation.navigate('History', {
                         start: data2.start2,
                         end: data2.end2,
+                        type: data.staff.type,
                       })
                     }
                     style={[
@@ -438,6 +440,7 @@ const Home = ({navigation}) => {
                       navigation.navigate('History', {
                         start: data2.start1,
                         end: data2.end1,
+                        type: data.staff.type,
                       })
                     }
                     style={[
@@ -517,7 +520,7 @@ const Home = ({navigation}) => {
               marginRight: windowWidht * 0.02,
               backgroundColor: '#FFFFFF',
             }}>
-            V-23.09.04
+            V-23.09.07
           </Text>
         </SafeAreaView>
         <Footer focus="Home" navigation={navigation} />
