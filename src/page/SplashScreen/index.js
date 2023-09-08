@@ -18,7 +18,7 @@ const SplashScreen = ({navigation}) => {
     NetInfo.addEventListener(state => {
       const offline = !(state.isConnected && state.isInternetReachable);
       if (offline) {
-        alert('Cek koneksi internet');
+        //alert('Cek koneksi internet');
       } else {
         console.log('ini di splashscreen');
         let isAmounted = false;
@@ -52,10 +52,10 @@ const SplashScreen = ({navigation}) => {
                   })
                   .catch(e => {
                     console.log(e);
-                    Alert.alert(
-                      'Masalah koneksi',
-                      'cek koneksi anda dan buka ulang aplikasi',
-                    );
+                    // Alert.alert(
+                    //   'Masalah koneksi',
+                    //   'cek koneksi anda dan buka ulang aplikasi',
+                    // );
                   });
               } else {
                 setTimeout(() => {
