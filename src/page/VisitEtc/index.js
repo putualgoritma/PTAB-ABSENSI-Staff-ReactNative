@@ -25,6 +25,7 @@ import Loading from '../../Components/Loading';
 import {useSelector} from 'react-redux';
 import Geolocation from 'react-native-geolocation-service';
 import LocationServicesDialogBox from 'react-native-android-location-services-dialog-box';
+import myFunctions from '../../functions';
 
 const VisitEtc = ({navigation, route}) => {
   const TOKEN = useSelector(state => state.TokenReducer);
@@ -121,12 +122,15 @@ const VisitEtc = ({navigation, route}) => {
 
     if (dataImage.length > 0 && staffs.length > 0) {
       console.log('skxocem');
-      LocationServicesDialogBox.checkLocationServicesIsEnabled({
-        message:
-          "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
-        ok: 'YES',
-        cancel: 'NO',
-      })
+      // LocationServicesDialogBox.checkLocationServicesIsEnabled({
+      //   message:
+      //     "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
+      //   ok: 'YES',
+      //   cancel: 'NO',
+      // })
+
+      myFunctions
+        .checkGps(false)
         .then(function (success) {
           console.log('corrrrrr', success);
           Geolocation.getCurrentPosition(

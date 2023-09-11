@@ -56,10 +56,15 @@ const SplashScreen = ({navigation}) => {
                     //   'Masalah koneksi',
                     //   'cek koneksi anda dan buka ulang aplikasi',
                     // );
+
+                    // Alert.alert(
+                    //   'Masalah koneksi',
+                    //   'cek koneksi anda dan buka ulang aplikasi',
+                    // );
                   });
               } else {
                 setTimeout(() => {
-                  navigation.replace('Login');
+                  // navigation.replace('Login');
                 }, 2000);
               }
             })
