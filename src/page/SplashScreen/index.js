@@ -64,7 +64,7 @@ const SplashScreen = ({navigation}) => {
                   });
               } else {
                 setTimeout(() => {
-                  // navigation.replace('Login');
+                  navigation.replace('Login');
                 }, 2000);
               }
             })
