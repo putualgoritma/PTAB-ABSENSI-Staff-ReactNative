@@ -55,6 +55,7 @@ const AbsenceOff = ({navigation, route}) => {
   const LATITUDE_DELTA = 0.4922;
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
   const [time, setTime] = React.useState();
+  const [imageUri, setImageUri] = useState('');
   const [finger, setFinger] = useState('ON');
   const [form, setForm] = useState({
     lat: '',
@@ -386,38 +387,84 @@ const AbsenceOff = ({navigation, route}) => {
             {route.params.selfie == 'ON' && (
               <View>
                 <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate('CamDect', {
-                      highAccuracy: route.params.highAccuracy,
-                      fingerfrint: route.params.fingerfrint,
-                      selfie: route.params.selfie,
-                      link: 'AbsenceOff',
-                      lat: route.params.lat,
-                      lng: route.params.lng,
-                      radius: route.params.radius,
-                      id: route.params.id,
-                      queue: route.params.queue,
-                      absence_id: route.params.absence_id,
-                      type: route.params.type,
-                      image: null,
-                    })
-                  }>
-                  {route.params.image == null ? (
-                    <View style={styles.image}>
-                      <Icon
-                        name="camera-retro"
-                        size={windowHeight * 0.08}
-                        color="#000000"
-                      />
-                    </View>
-                  ) : (
-                    <Image
-                      style={styles.image}
-                      source={{uri: route.params.image.uri}}
-                      // source={image.uri=='' || image.uri==null ? require('../../../assets/img/ImageFoto.png'): {uri: image.from=='local' ? image.uri : `https://simpletabadmin.ptab-vps.com/` + `${String(image.uri).replace('public/', '')}?time="${new Date()}`}}
-                    />
-                  )}
+                  onPress={() => {
+                    console.log(route.params.type, route.params.image.filename);
+                  }}>
+                  <Text>Tesssssx</Text>
                 </TouchableOpacity>
+                {route.params.type == 'break' ? (
+                  <TouchableOpacity
+                    onPress={() =>
+                      launchCamera(
+                        {
+                          mediaType: 'photo',
+                          includeBase64: true,
+                          maxHeight: 900,
+                          maxWidth: 900,
+                          cameraType: 'front',
+                        },
+                        response => {
+                          console.log('ini respon', response);
+                          if (response.assets) {
+                            let image = response.assets[0];
+                            route.params.image = image;
+                            route.params.image.filename = image.fileName;
+                            route.params.image.uri = image.uri;
+                            setImageUri(image.uri);
+                          }
+                        },
+                      )
+                    }>
+                    {imageUri == '' ? (
+                      <View style={styles.image}>
+                        <Icon
+                          name="camera-retro"
+                          size={windowHeight * 0.08}
+                          color="#000000"
+                        />
+                      </View>
+                    ) : (
+                      <Image
+                        style={styles.image}
+                        source={{uri: imageUri}}
+                        // source={image.uri=='' || image.uri==null ? require('../../../assets/img/ImageFoto.png'): {uri: image.from=='local' ? image.uri : `https://simpletabadmin.ptab-vps.com/` + `${String(image.uri).replace('public/', '')}?time="${new Date()}`}}
+                      />
+                    )}
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('CamDect', {
+                        highAccuracy: route.params.highAccuracy,
+                        fingerfrint: route.params.fingerfrint,
+                        selfie: route.params.selfie,
+                        link: 'AbsenceOff',
+                        lat: route.params.lat,
+                        lng: route.params.lng,
+                        radius: route.params.radius,
+                        id: route.params.id,
+                        queue: route.params.queue,
+                        absence_id: route.params.absence_id,
+                        type: route.params.type,
+                        image: null,
+                      })
+                    }>
+                    {route.params.image == null ? (
+                      <View style={styles.image}>
+                        <Icon
+                          name="camera-retro"
+                          size={windowHeight * 0.08}
+                          color="#000000"
+                        />
+                      </View>
+                    ) : (
+                      <Image
+                        style={styles.image}
+                        source={{uri: route.params.image.uri}}
+                      />
+                    )}
+                  </TouchableOpacity>
+                )}
                 <Text>Image</Text>
               </View>
             )}

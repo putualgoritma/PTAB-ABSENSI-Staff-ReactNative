@@ -309,6 +309,7 @@ const AbsenceExtraOff = ({navigation, route}) => {
         } else {
           setLoading(false);
           Alert.alert(data.message);
+          console.log(data.message);
         }
         // navigation.navigate('Action')
       })
