@@ -390,7 +390,7 @@ const AbsenceOff = ({navigation, route}) => {
                   onPress={() => {
                     console.log(route.params.type, route.params.image.filename);
                   }}>
-                  <Text>Tesssssx</Text>
+                  {/* <Text>Tesssssx</Text> */}
                 </TouchableOpacity>
                 {route.params.type == 'break' ? (
                   <TouchableOpacity
