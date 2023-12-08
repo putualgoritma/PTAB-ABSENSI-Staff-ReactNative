@@ -57,6 +57,7 @@ import Location from '../page/requests/Location';
 import AdditionalTime from '../page/requests/AdditionalTime';
 
 import VisitEtc from '../page/VisitEtc';
+import Dispense from '../page/requests/Dispense';
 
 const Stack = createStackNavigator();
 
@@ -713,6 +714,20 @@ const Router = () => {
       <Stack.Screen
         name="HistoryCShift"
         component={HistoryCShift}
+        options={{
+          headerStyle: {
+            backgroundColor: '#16D5FF',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          title: 'History Pertukaran Shift',
+        }}
+      />
+      <Stack.Screen
+        name="Dispense"
+        component={Dispense}
         options={{
           headerStyle: {
             backgroundColor: '#16D5FF',

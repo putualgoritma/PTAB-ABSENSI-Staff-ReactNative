@@ -86,30 +86,33 @@ const permissionLocation = async () => {
 
 const checkGps = async accuracy => {
   // setLoading(true);
-  if (Platform.OS === 'android') {
-    reactNativeAndroidLocationServicesDialogBox
-      .checkLocationServicesIsEnabled({
-        message:
-          "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
-        ok: 'YES',
-        cancel: 'NO',
-      })
-      .then(function (success) {
-        if (success) {
-        }
-      })
-      .catch(error => {
-        console.log(error.message);
-        // alert('gps harus aktif');
-        // setLoading(false);
-      });
-  }
+  // if (Platform.OS === 'android') {
+  //   reactNativeAndroidLocationServicesDialogBox
+  //     .checkLocationServicesIsEnabled({
+  //       message:
+  //         "<h2 style='color: #0af13e'>Use Location ?</h2>This app wants to change your device settings:<br/><br/>Use GPS, Wi-Fi, and cell network for location<br/><br/><a href='#'>Learn more</a>",
+  //       ok: 'YES',
+  //       cancel: 'NO',
+  //     })
+  //     .then(function (success) {
+  //       if (success) {
+  //       }
+  //     })
+  //     .catch(error => {
+  //       console.log(error.message);
+  //       // alert('gps harus aktif');
+  //       // setLoading(false);
+  //     });
+  // }
   console.log('accuracy', accuracy);
   const opt = {
+    // enableHighAccuracy: accuracy,
     enableHighAccuracy: accuracy,
     timeout: 15000,
-    maximumAge: 10000,
-    accuracy: 'high',
+    // timeout: 30000,
+    // maximumAge: 10000,
+    maximumAge: 0,
+    // accuracy: 'high',
   };
   const getCurrentPosition = () =>
     new Promise((resolve, error) =>

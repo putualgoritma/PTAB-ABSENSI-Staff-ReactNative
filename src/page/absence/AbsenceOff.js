@@ -58,8 +58,8 @@ const AbsenceOff = ({navigation, route}) => {
   const [imageUri, setImageUri] = useState('');
   const [finger, setFinger] = useState('ON');
   const [form, setForm] = useState({
-    lat: '',
-    lng: '',
+    lat: 0,
+    lng: 0,
     customer_id: '',
     memo: '',
     type: '',
@@ -390,7 +390,7 @@ const AbsenceOff = ({navigation, route}) => {
                   onPress={() => {
                     console.log(route.params.type, route.params.image.filename);
                   }}>
-                  <Text>Tesssssx</Text>
+                  {/* <Text>Tesssssx</Text> */}
                 </TouchableOpacity>
                 {route.params.type == 'break' ? (
                   <TouchableOpacity

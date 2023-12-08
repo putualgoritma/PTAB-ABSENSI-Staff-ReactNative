@@ -520,7 +520,7 @@ const Home = ({navigation}) => {
               marginRight: windowWidht * 0.02,
               backgroundColor: '#FFFFFF',
             }}>
-            V-23.09.07
+            V-23.09.19-1
           </Text>
         </SafeAreaView>
         <Footer focus="Home" navigation={navigation} />

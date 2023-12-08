@@ -56,8 +56,8 @@ const AbsenceCreateExtraOff = ({navigation, route}) => {
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
   const [time, setTime] = React.useState();
   const [form, setForm] = useState({
-    lat: '',
-    lng: '',
+    lat: 0,
+    lng: 0,
     customer_id: '',
     memo: '',
     type: '',
@@ -279,12 +279,12 @@ const AbsenceCreateExtraOff = ({navigation, route}) => {
           console.log(result);
           setLoading(false);
           navigation.goBack();
-          alert('1');
+          // alert('1');
           Alert.alert(data.message);
           console.log('ini error', data.message, form);
         } else {
           setLoading(false);
-          alert('2');
+          // alert('2');
           Alert.alert(data.message);
           console.log('ini error', data.message, form);
           console.log('lkjhgf', form.lng.toString());

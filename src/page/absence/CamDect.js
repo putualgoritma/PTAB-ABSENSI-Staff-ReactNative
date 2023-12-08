@@ -300,8 +300,7 @@ const CamDect = ({navigation, route}) => {
           <TouchableOpacity
             onPress={takePicture.bind(this)}
             style={btnAble ? styles.captureF : styles.capture}
-            // disabled={btnAble}
-          >
+            disabled={btnAble}>
             <Text style={{fontSize: 14}}> Ambil</Text>
           </TouchableOpacity>
         </View>

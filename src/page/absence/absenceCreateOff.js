@@ -49,8 +49,8 @@ const AbsenceCreateOff = ({navigation, route}) => {
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
   const [time, setTime] = React.useState();
   const [form, setForm] = useState({
-    lat: '',
-    lng: '',
+    lat: 0,
+    lng: 0,
     customer_id: '',
     memo: '',
     type: '',

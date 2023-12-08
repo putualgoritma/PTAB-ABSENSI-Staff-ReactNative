@@ -307,7 +307,7 @@ const Absence = ({navigation, route}) => {
     from: 'api',
   });
 
-  const sendDataNoImg = position => {
+  const sendDataNoImg = () => {
     console.log('sendDataNoImg', '3');
     setLoading(true);
     console.log('ssdddddddd', loading);
@@ -326,8 +326,8 @@ const Absence = ({navigation, route}) => {
         {name: 'type', data: route.params.type.toString()},
         {name: 'queue', data: route.params.queue.toString()},
         {name: 'staff_id', data: STAFF_ID.toString()},
-        {name: 'lat', data: position.latitude.toString()},
-        {name: 'lng', data: position.longitude.toString()},
+        {name: 'lat', data: form.lat.toString()},
+        {name: 'lng', data: form.lng.toString()},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
         {name: 'status', data: '0'},
@@ -356,7 +356,7 @@ const Absence = ({navigation, route}) => {
       });
   };
 
-  const sendData = position => {
+  const sendData = () => {
     console.log('senddata', '3');
     // setLoading(true);
     RNFetchBlob.fetch(
@@ -379,8 +379,8 @@ const Absence = ({navigation, route}) => {
         {name: 'type', data: route.params.type.toString()},
         {name: 'queue', data: route.params.queue.toString()},
         {name: 'staff_id', data: STAFF_ID.toString()},
-        {name: 'lat', data: position.latitude.toString()},
-        {name: 'lng', data: position.longitude.toString()},
+        {name: 'lat', data: form.lat.toString()},
+        {name: 'lng', data: form.lng.toString()},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
         {name: 'status', data: '0'},
@@ -460,89 +460,91 @@ const Absence = ({navigation, route}) => {
         // setLoading(true);
         if (res[1]) {
           //check gps
-          myFunctions
-            .checkGps(route.params.highAccuracy)
-            .then(function (gps) {
-              if (!gps.status) {
-                Alert.alert(
-                  'Gagal Mengirim Data',
-                  'Tolong cek kembali lokasi anda',
-                );
-                setLoading(false);
-                console.log('checkGps useeffect', 'false');
-              } else {
-                console.log('position', gps.data);
-                //get distance
-                const j = getDistance(gps.data, {
-                  latitude: parseFloat(latref),
-                  longitude: parseFloat(lngref),
-                });
-                console.log('distance', j);
+          // myFunctions
+          //   .checkGps(route.params.highAccuracy)
+          //   .then(function (gps) {
+          // if (!gps.status) {
+          //   Alert.alert(
+          //     'Gagal Mengirim Data',
+          //     'Tolong cek kembali lokasi anda',
+          //   );
+          //   setLoading(false);
+          //   console.log('checkGps useeffect', 'false');
+          // } else {
+          // console.log('position', gps.data);
+          // //get distance
+          // const j = getDistance(gps.data, {
+          //   latitude: parseFloat(latref),
+          //   longitude: parseFloat(lngref),
+          // });
+          // console.log('distance', j);
 
-                setTest(j);
-                if (j > route.params.radius) {
-                  if (j - j1 < 20) {
-                    if (route.params.selfie == 'OFF') {
-                      sendDataNoImg(gps.data);
-                    } else if (route.params.image == null) {
-                      Alert.alert('Pilih Gambar Terlebih dahulu');
-                      setLoading(false);
-                    } else if (
-                      form.lat != '' &&
-                      form.lng != '' &&
-                      route.params.image.filename != '' &&
-                      route.params.image.filename != null
-                    ) {
-                      sendData(gps.data);
-                    } else {
-                      console.log('data : ', form);
-                      Alert.alert('Lengkapi data terlebih dahulu');
-                      setLoading(false);
-                    }
-                  } else {
-                    setJarak('1');
-                    Alert.alert('diluar area');
-                  }
-                } else {
-                  setJarak('2');
-                  console.log(form.lat, form.lng);
+          // setTest(j);
+          // if (j > route.params.radius) {
+          //   if (j - j1 < 20) {
+          //     if (route.params.selfie == 'OFF') {
+          //       sendDataNoImg(gps.data);
+          //     } else if (route.params.image == null) {
+          //       Alert.alert('Pilih Gambar Terlebih dahulu');
+          //       setLoading(false);
+          //     } else if (
+          //       form.lat != '' &&
+          //       form.lng != '' &&
+          //       route.params.image.filename != '' &&
+          //       route.params.image.filename != null
+          //     ) {
+          //       sendData(gps.data);
+          //     } else {
+          //       console.log('data : ', form);
+          //       Alert.alert('Lengkapi data terlebih dahulu');
+          //       setLoading(false);
+          //     }
+          //   } else {
+          //     setJarak('1');
+          //     Alert.alert('diluar area');
+          //     setLoading(false);
+          //   }
+          // }
+          // else {
+          // setJarak('2');
+          console.log(form.lat, form.lng);
 
-                  if (route.params.selfie == 'OFF') {
-                    sendDataNoImg(gps.data);
-                  } else if (route.params.image == null) {
-                    Alert.alert('Pilih Gambar Terlebih dahulu');
-                    setLoading(false);
-                  } else if (
-                    form.lat != '' &&
-                    form.lng != '' &&
-                    route.params.image.filename != '' &&
-                    route.params.image.filename != null
-                  ) {
-                    sendData(gps.data);
-                  } else {
-                    console.log('data : ', form);
-                    Alert.alert('Lengkapi data terlebih dahulu');
-                    setLoading(false);
-                  }
-                }
+          if (route.params.selfie == 'OFF') {
+            sendDataNoImg();
+          } else if (route.params.image == null) {
+            Alert.alert('Pilih Gambar Terlebih dahulu');
+            setLoading(false);
+          } else if (
+            form.lat != '' &&
+            form.lng != '' &&
+            route.params.image.filename != '' &&
+            route.params.image.filename != null
+          ) {
+            sendData();
+          } else {
+            // console.log('data : ', form);
+            Alert.alert('Lengkapi data terlebih dahulu');
+            setLoading(false);
+          }
+          // }
 
-                // positionNew = position
-                console.log(
-                  'posisiisii ',
-                  gps.data.latitude,
-                  gps.data.longitude,
-                );
-                setForm({
-                  ...form,
-                  lat: gps.data.latitude,
-                  lng: gps.data.longitude,
-                });
-              }
-            })
-            .catch(error => {
-              console.log('err checkGps handleaction', error.message);
-              setLoading(false);
-            });
+          // positionNew = position
+          // console.log(
+          //   'posisiisii ',
+          //   gps.data.latitude,
+          //   gps.data.longitude,
+          // );
+          // setForm({
+          //   ...form,
+          //   lat: gps.data.latitude,
+          //   lng: gps.data.longitude,
+          // });
+          // }
+          // })
+          // .catch(error => {
+          //   console.log('err checkGps handleaction', error.message);
+          //   setLoading(false);
+          // });
         } else {
           Alert.alert(
             'Location Permission',

@@ -105,6 +105,14 @@ const Requests = ({navigation, route}) => {
         }}>
         <Text style={styles.btnText}>Titik Lokasi Absen</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.listMenu, {backgroundColor: '#a8bc15'}]}
+        onPress={() => {
+          navigation.navigate('Dispense');
+        }}>
+        <Text style={styles.btnText}>Dispense</Text>
+      </TouchableOpacity>
     </View>
   );
 };

@@ -217,7 +217,7 @@ const ListAbsence = ({navigation, route}) => {
         }>
         {!loading && (
           <View>
-            <View></View>
+            <View>{/* <Text>{form ? 'aktif' : 'tidak aktif'}</Text> */}</View>
 
             {console.log('ggg', data.menu.geolocationOff)}
             {console.log('ggghhh', form)}
