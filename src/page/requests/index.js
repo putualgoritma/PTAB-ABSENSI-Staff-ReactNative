@@ -111,7 +111,7 @@ const Requests = ({navigation, route}) => {
         onPress={() => {
           navigation.navigate('Dispense');
         }}>
-        <Text style={styles.btnText}>Dispense</Text>
+        <Text style={styles.btnText}>Dispensasi</Text>
       </TouchableOpacity>
     </View>
   );

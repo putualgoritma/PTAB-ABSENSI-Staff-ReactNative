@@ -209,7 +209,7 @@ const Dispense = ({navigation}) => {
               fontSize: 20,
               color: '#000000',
             }}>
-            Input Data Dispense
+            Input Data Dispensasi
           </Text>
 
           <Text style={styles.title}>

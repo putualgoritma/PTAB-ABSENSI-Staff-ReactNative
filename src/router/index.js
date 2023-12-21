@@ -736,7 +736,7 @@ const Router = () => {
           headerTitleStyle: {
             fontWeight: 'bold',
           },
-          title: 'Dispense',
+          title: 'Dispensasi',
         }}
       />
     </Stack.Navigator>

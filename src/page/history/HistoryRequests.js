@@ -278,7 +278,7 @@ const HistoryRequest = ({navigation}) => {
             : item.category == 'AdditionalTime'
             ? 'Additional Time'
             : item.category == 'dispense'
-            ? 'Dispen'
+            ? 'Dispensasi'
             : ''}
           <Text
             style={[
