@@ -27,21 +27,25 @@ const ListAbsence = ({navigation, route}) => {
   const STAFF_ID = useSelector(state => state.UserReducer.staff_id);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [form, setForm] = useState(true);
+  const [subLoading, setSubLoading] = useState(true);
+  const [form, setForm] = useState(false);
   // console.log(STAFF_ID)
   const [refreshing, setRefreshing] = React.useState(false);
   const isFocused = useIsFocused();
+  const [nextAbsence, setNextAbsence] = useState([]);
 
-  useEffect(() => {
-    myFunctions
-      .checkGps(false)
-      .then(res => {
-        // Alert.alert('GPS', 'GPS Hidup');
-      })
-      .catch(e => {
-        // Alert.alert('GPS', 'GPS Mati');
-      });
-  }, []);
+  // khusus IOS
+
+  // useEffect(() => {
+  //   myFunctions
+  //     .checkGps(false)
+  //     .then(res => {
+  //       // Alert.alert('GPS', 'GPS Hidup');
+  //     })
+  //     .catch(e => {
+  //       // Alert.alert('GPS', 'GPS Mati');
+  //     });
+  // }, []);
 
   // Api start
   const handleAction = id => {
@@ -123,6 +127,8 @@ const ListAbsence = ({navigation, route}) => {
     setRefreshing(true);
     getMenu();
 
+    getNextAbsence();
+
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -133,67 +139,44 @@ const ListAbsence = ({navigation, route}) => {
 
   const getMenu = () => {
     setLoading(true);
-    API.absence(STAFF_ID, TOKEN).then(result => {
-      // alert('2');
-      if (result) {
-        // alert('3');
-        console.log(result);
-        setData(result);
-        console.log(result.lat);
-        myFunctions
-          .permissionLocation()
-          .then(res => {
-            if (res) {
-              myFunctions
-                .checkGps(false)
-                .then(function (gps) {
-                  if (!gps.status) {
-                    // alert('gps gagal');
-                    setLoading(false);
-                    console.log('checkGps useeffect', 'false');
-                  } else {
-                    // alert('gps berhasil');
-                    console.log(
-                      'You are ',
-                      getDistance(gps.data, {
-                        latitude: parseFloat(result.lat),
-                        longitude: parseFloat(result.lng),
-                      }),
-                      'meters away from 51.525, 7.4575',
-                    );
-                    const j = getDistance(gps.data, {
-                      latitude: parseFloat(result.lat),
-                      longitude: parseFloat(result.lng),
-                    });
+    API.absence(STAFF_ID, TOKEN)
+      .then(result => {
+        // alert('2');
+        if (result) {
+          // alert('3');
+          console.log(result);
+          setData(result);
+          console.log(result.lat);
+          setLoading(false);
+        } else {
+          Alert.alert(result.message);
+        }
+      })
+      .catch(e => {
+        alert('error');
+        console.log(e);
+        setLoading(false);
+      });
+  };
 
-                    // setTest(j);
-                    if (j > result.radius) {
-                      setForm(true);
-                      // alert('true' + j + ' ' + gps.data.latitude);
-                      console.log('true');
-                      setLoading(false);
-                    } else {
-                      setForm(false);
-                      // alert('true' + j + ' ' + gps.data.latitude);
-                      console.log('false');
-                      setLoading(false);
-                    }
-                  }
-                })
-                .catch(error => {
-                  console.log('err checkGps useeffect', error.message);
-                  setLoading(false);
-                });
-            }
-          })
-          .catch(e => {
-            console.log(e);
-            setLoading(false);
-          });
-      } else {
-        Alert.alert(result.message);
-      }
-    });
+  const getNextAbsence = () => {
+    setSubLoading(true);
+    API.nextAbsence(STAFF_ID, TOKEN)
+      .then(result => {
+        // alert('2');
+        if (result) {
+          setNextAbsence(result);
+          setSubLoading(false);
+          false;
+        } else {
+          Alert.alert(result.message);
+        }
+      })
+      .catch(e => {
+        alert('error');
+        console.log(e);
+        setLoading(false);
+      });
   };
 
   // end api
@@ -202,6 +185,7 @@ const ListAbsence = ({navigation, route}) => {
     // requestLocationPermission();
     if (isFocused) {
       getMenu();
+      getNextAbsence();
     }
   }, [isFocused]);
   console.log(route.params);
@@ -234,32 +218,36 @@ const ListAbsence = ({navigation, route}) => {
               List Absen
             </Text>
 
-            {/* <View style={{ flexDirection : 'row' }}>
-      <RadioButton
-        value="false"
-        status={ form === false? 'checked' : 'unchecked' }
-        onPress={() => setForm(false)}
-      />
-      <Text style={{ marginTop : 10 }}>Jika GPS Lemah (lebih cepat dan kurang akurat)(rekomendasi)</Text>
-      </View>
-      <View style={{ flexDirection : 'row' }}>
-      <RadioButton
-        value = "true"
-        status={ form === true ? 'checked' : 'unchecked' }
-        onPress={() => setForm(true) }
-      />
-         <Text style={{ marginTop : 10 }}>Jika GPS Kuat (lebih lama dan akurat)</Text>
-    </View> */}
+            {/* <View style={{flexDirection: 'row'}}>
+              <RadioButton
+                value="false"
+                status={form === false ? 'checked' : 'unchecked'}
+                onPress={() => setForm(false)}
+              />
+              <Text style={{marginTop: 10}}>
+                Jika GPS Lemah (lebih cepat dan kurang akurat)(rekomendasi)
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <RadioButton
+                value="true"
+                status={form === true ? 'checked' : 'unchecked'}
+                onPress={() => setForm(true)}
+              />
+              <Text style={{marginTop: 10}}>
+                Jika GPS Kuat (lebih lama dan akurat)
+              </Text>
+            </View> */}
             {(data.menu.menuVisit == 'ON' && data.absenceOut != null) ||
             (data.menu.menuVisit == 'ACTIVE' && data.absenceOut != null) ||
             (data.menu.menuBreak == 'ON' && data.absenceOut != null) ||
             (data.menu.menuExcuse == 'ON' && data.absenceOut != null) ||
             (data.menu.menuReguler == 'OFF' && data.absenceOut != null) ? (
-              <View style={styles.message}>
-                <Text style={styles.messageText}>Absen Out Pada Jam :</Text>
+              <View>
+                {/* <Text style={styles.messageText}>Absen Out Pada Jam :</Text>
                 <Text style={styles.messageText}>
                   {data.absenceOut.start_date} - {data.absenceOut.expired_date}
-                </Text>
+                </Text> */}
               </View>
             ) : (
               <View></View>
@@ -760,6 +748,33 @@ const ListAbsence = ({navigation, route}) => {
             {data.menu.menuWaiting == 'ON' && (
               <View style={styles.message}>
                 <Text style={styles.messageText}>{data.waitingMessage}</Text>
+              </View>
+            )}
+
+            {!subLoading ? (
+              <View>
+                {nextAbsence && nextAbsence.length > 0 && (
+                  <View style={styles.message}>
+                    {nextAbsence.map(data => {
+                      return (
+                        <View>
+                          <Text
+                            style={[styles.messageText, {fontWeight: 'bold'}]}>
+                            {data.title}
+                          </Text>
+                          <Text
+                            style={[styles.messageText, {marginBottom: 10}]}>
+                            {data.start} - {data.end}
+                          </Text>
+                        </View>
+                      );
+                    })}
+                  </View>
+                )}
+              </View>
+            ) : (
+              <View>
+                <Text style={{textAlign: 'center'}}>tunggu...</Text>
               </View>
             )}
           </View>

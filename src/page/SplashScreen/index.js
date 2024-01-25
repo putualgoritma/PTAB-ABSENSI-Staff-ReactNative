@@ -15,6 +15,7 @@ import {
   SET_DATA_PERMISSION,
   SET_DATA_TOKEN,
   SET_DATA_USER,
+  SET_DATA_HIGHTACCURACY,
 } from '../../redux/action';
 import API from '../../service';
 import ScreenLoading from '../loading/ScreenLoading';
@@ -26,7 +27,12 @@ const SplashScreen = ({navigation}) => {
 
   const refresh = () => {
     setLoading(true);
-    Promise.all([getDataUser(), getDataToken(), getDataPermission()])
+    Promise.all([
+      getDataUser(),
+      getDataToken(),
+      getDataPermission(),
+      getDataHightAccuracy(),
+    ])
       .then(response => {
         console.log('sudah login 1');
         if (response[0] !== null && response !== response[1]) {
@@ -47,6 +53,11 @@ const SplashScreen = ({navigation}) => {
                 dispatch(SET_DATA_PERMISSION(result.permission));
                 storeDataToken(result.token);
                 storeDataUser(result.data);
+
+                if (response[3]) {
+                  dispatch(SET_DATA_HIGHTACCURACY(response[3]));
+                }
+
                 storeDataPermission(result.permission);
                 navigation.replace('Home');
               } else {
@@ -89,7 +100,12 @@ const SplashScreen = ({navigation}) => {
     console.log('ini di splashscreen');
     let isAmounted = false;
     if (!isAmounted) {
-      Promise.all([getDataUser(), getDataToken(), getDataPermission()])
+      Promise.all([
+        getDataUser(),
+        getDataToken(),
+        getDataPermission(),
+        getDataHightAccuracy(),
+      ])
         .then(response => {
           console.log('sudah login 1');
           if (response[0] !== null && response !== response[1]) {
@@ -108,6 +124,11 @@ const SplashScreen = ({navigation}) => {
                   dispatch(SET_DATA_USER(result.data));
                   dispatch(SET_DATA_TOKEN(result.token));
                   dispatch(SET_DATA_PERMISSION(result.permission));
+
+                  if (response[3]) {
+                    dispatch(SET_DATA_HIGHTACCURACY(response[3]));
+                  }
+
                   storeDataToken(result.token);
                   storeDataUser(result.data);
                   storeDataPermission(result.permission);
@@ -152,6 +173,16 @@ const SplashScreen = ({navigation}) => {
   const getDataUser = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem('@LocalUser');
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+      // console.log('local user',jsonValue);
+    } catch (e) {
+      // error reading value
+    }
+  };
+
+  const getDataHightAccuracy = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('@LocalHightAccuracy');
       return jsonValue != null ? JSON.parse(jsonValue) : null;
       // console.log('local user',jsonValue);
     } catch (e) {

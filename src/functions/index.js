@@ -108,7 +108,7 @@ const checkGps = async accuracy => {
   const opt = {
     // enableHighAccuracy: accuracy,
     enableHighAccuracy: accuracy,
-    timeout: 15000,
+    timeout: 20000,
     // timeout: 30000,
     // maximumAge: 10000,
     maximumAge: 0,

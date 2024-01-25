@@ -90,13 +90,13 @@ const Requests = ({navigation, route}) => {
         <Text style={styles.btnText}>Additional Time</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={[styles.listMenu, {backgroundColor: '#e6bc15'}]}
         onPress={() => {
           navigation.navigate('Forget');
         }}>
         <Text style={styles.btnText}>Lupa Absen</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       <TouchableOpacity
         style={[styles.listMenu, {backgroundColor: '#443cf4'}]}
