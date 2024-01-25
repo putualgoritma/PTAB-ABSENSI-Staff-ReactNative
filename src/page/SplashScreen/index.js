@@ -61,7 +61,9 @@ const SplashScreen = ({navigation}) => {
                 storeDataPermission(result.permission);
                 navigation.replace('Home');
               } else {
-                navigation.replace('Login');
+                setTimeout(() => {
+                  navigation.replace('Login');
+                }, 2000);
               }
             })
             .catch(e => {
