@@ -50,8 +50,8 @@ const AbsenceExtra = ({navigation, route}) => {
   const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
   const [time, setTime] = React.useState(30);
   const [form, setForm] = useState({
-    lat: '',
-    lng: '',
+    lat: 0,
+    lng: 0,
     customer_id: '',
     memo: '',
     type: '',
@@ -121,6 +121,7 @@ const AbsenceExtra = ({navigation, route}) => {
   };
 
   useEffect(() => {
+    // alert(route.params.lat + route.params.lng);
     console.log(route.params);
     setLoading(true);
     fakeGps();
@@ -363,7 +364,7 @@ const AbsenceExtra = ({navigation, route}) => {
       });
   };
 
-  const sendDataNoImg = position => {
+  const sendDataNoImg = () => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
@@ -380,8 +381,8 @@ const AbsenceExtra = ({navigation, route}) => {
         {name: 'type', data: route.params.type.toString()},
         {name: 'queue', data: route.params.queue.toString()},
         {name: 'staff_id', data: STAFF_ID.toString()},
-        {name: 'lat', data: position.latitude.toString()},
-        {name: 'lng', data: position.longitude.toString()},
+        {name: 'lat', data: form.lat.toString()},
+        {name: 'lng', data: form.lng.toString()},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
         {name: 'status', data: '0'},
@@ -407,7 +408,7 @@ const AbsenceExtra = ({navigation, route}) => {
       });
   };
 
-  const sendData = position => {
+  const sendData = () => {
     setLoading(true);
     RNFetchBlob.fetch(
       'POST',
@@ -429,8 +430,8 @@ const AbsenceExtra = ({navigation, route}) => {
         {name: 'type', data: route.params.type.toString()},
         {name: 'queue', data: route.params.queue.toString()},
         {name: 'staff_id', data: STAFF_ID.toString()},
-        {name: 'lat', data: position.latitude.toString()},
-        {name: 'lng', data: position.longitude.toString()},
+        {name: 'lat', data: form.lat.toString()},
+        {name: 'lng', data: form.lng.toString()},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
         {name: 'status', data: '0'},
@@ -478,104 +479,104 @@ const AbsenceExtra = ({navigation, route}) => {
         //if perrmission loc
         if (res[2]) {
           //check gps
-          myFunctions
-            .checkGps(route.params.highAccuracy)
-            .then(function (gps) {
-              if (!gps.status) {
-                Alert.alert(
-                  'Gagal Mengirim Data',
-                  'Tolong cek kembali lokasi anda',
-                );
-                setLoading(false);
-                console.log('checkGps useeffect', 'false');
-              } else {
-                console.log('position', gps.data);
-                console.log(
-                  'You are ',
-                  getDistance(gps.data, {
-                    latitude: parseFloat(route.params.lat),
-                    longitude: parseFloat(route.params.lng),
-                  }),
-                  'meters away from 51.525, 7.4575',
-                );
+          // myFunctions
+          //   .checkGps(route.params.highAccuracy)
+          //   .then(function (gps) {
+          // if (!gps.status) {
+          //   Alert.alert(
+          //     'Gagal Mengirim Data',
+          //     'Tolong cek kembali lokasi anda',
+          //   );
+          //   setLoading(false);
+          //   console.log('checkGps useeffect', 'false');
+          // } else {
+          // console.log('position', gps.data);
+          // console.log(
+          //   'You are ',
+          //   getDistance(gps.data, {
+          //     latitude: parseFloat(route.params.lat),
+          //     longitude: parseFloat(route.params.lng),
+          //   }),
+          //   'meters away from 51.525, 7.4575',
+          // );
 
-                // tesss1
+          // tesss1
 
-                // start input
-                const j = getDistance(gps.data, {
-                  latitude: parseFloat(route.params.lat),
-                  longitude: parseFloat(route.params.lng),
-                });
-                // Working with W3C Geolocation API
+          // start input
+          // const j = getDistance(gps.data, {
+          //   latitude: parseFloat(route.params.lat),
+          //   longitude: parseFloat(route.params.lng),
+          // });
+          // Working with W3C Geolocation API
 
-                setTest(j);
-                if (j > route.params.radius) {
-                  setJarak('1');
-                  if (j - j1 < 20) {
-                    if (route.params.selfie == 'OFF') {
-                      sendDataNoImg(gps.data);
-                    } else if (route.params.image == null) {
-                      Alert.alert('Pilih Gambar Terlebih dahulu');
-                      setLoading(false);
-                    } else if (
-                      form.lat != '' &&
-                      form.lng != '' &&
-                      route.params.image.filename != '' &&
-                      route.params.image.filename != null
-                    ) {
-                      sendData(gps.data);
-                    } else {
-                      Alert.alert('Lengkapi data terlebih dahulu');
-                      setLoading(false);
-                    }
-                  }
-                  Alert.alert('diluar area');
-                } else {
-                  setJarak('2');
+          // setTest(j);
+          // if (j > route.params.radius) {
+          //   setJarak('1');
+          //   if (j - j1 < 20) {
+          //     if (route.params.selfie == 'OFF') {
+          //       sendDataNoImg(gps.data);
+          //     } else if (route.params.image == null) {
+          //       Alert.alert('Pilih Gambar Terlebih dahulu');
+          //       setLoading(false);
+          //     } else if (
+          //       form.lat != '' &&
+          //       form.lng != '' &&
+          //       route.params.image.filename != '' &&
+          //       route.params.image.filename != null
+          //     ) {
+          //       sendData(gps.data);
+          //     } else {
+          //       Alert.alert('Lengkapi data terlebih dahulu');
+          //       setLoading(false);
+          //     }
+          //   }
+          //   Alert.alert('diluar area');
+          // } else {
+          // setJarak('2');
 
-                  console.log(form.lat, form.lng);
-                  if (route.params.selfie == 'OFF') {
-                    sendDataNoImg(gps.data);
-                  } else if (route.params.image == null) {
-                    Alert.alert('Pilih Gambar Terlebih dahulu');
-                    setLoading(false);
-                  } else if (
-                    form.lat != '' &&
-                    form.lng != '' &&
-                    route.params.image.filename != '' &&
-                    route.params.image.filename != null
-                  ) {
-                    sendData(gps.data);
-                  } else {
-                    Alert.alert('Lengkapi data terlebih dahulu');
-                    setLoading(false);
-                  }
-                }
-                // end input
+          // console.log(form.lat, form.lng);
+          if (route.params.selfie == 'OFF') {
+            sendDataNoImg();
+          } else if (route.params.image == null) {
+            Alert.alert('Pilih Gambar Terlebih dahulu');
+            setLoading(false);
+          } else if (
+            form.lat != '' &&
+            form.lng != '' &&
+            route.params.image.filename != '' &&
+            route.params.image.filename != null
+          ) {
+            sendData();
+          } else {
+            Alert.alert('Lengkapi data terlebih dahulu');
+            setLoading(false);
+          }
+          // }
+          // end input
 
-                // console.log('posisi',position);
-                // defaultLoc = {
-                //     latitude: gps.data.latitude,
-                //     longitude: gps.data.longitude,
-                // }
-                // positionNew = position
-                console.log(
-                  'posisiisii ',
-                  gps.data.latitude,
-                  gps.data.longitude,
-                );
-                setForm({
-                  ...form,
-                  lat: gps.data.latitude,
-                  lng: gps.data.longitude,
-                });
-                // setLoading(false);
-              }
-            })
-            .catch(error => {
-              console.log('err checkGps useeffect', error.message);
-              setLoading(false);
-            });
+          // console.log('posisi',position);
+          // defaultLoc = {
+          //     latitude: gps.data.latitude,
+          //     longitude: gps.data.longitude,
+          // }
+          // positionNew = position
+          // console.log(
+          //   'posisiisii ',
+          //   gps.data.latitude,
+          //   gps.data.longitude,
+          // );
+          // setForm({
+          //   ...form,
+          //   lat: gps.data.latitude,
+          //   lng: gps.data.longitude,
+          // });
+          // setLoading(false);
+          // }
+          // })
+          // .catch(error => {
+          //   console.log('err checkGps useeffect', error.message);
+          //   setLoading(false);
+          // });
         } else {
           Alert.alert(
             'Location Permission',
@@ -677,6 +678,9 @@ const AbsenceExtra = ({navigation, route}) => {
                   </Callout>
                 </Marker>
               </MapView>
+              {/* <Text>
+                {form.lat}, {form.lng}
+              </Text> */}
             </View>
 
             {/* <View style={styles.mapS}>

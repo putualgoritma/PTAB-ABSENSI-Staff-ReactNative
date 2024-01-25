@@ -161,6 +161,24 @@ const deleteImage = (id, token) =>
 //  UPLOAD FILE
 const visitEtc = (data, TOKEN) => FileUpload(Config.visitEtc, data, TOKEN);
 
+const report = (STAFF_ID, type, date, date2, TOKEN) =>
+  Get(
+    Config.report +
+      '=' +
+      STAFF_ID +
+      '&type=' +
+      type +
+      '&from=' +
+      date +
+      '&to=' +
+      date2,
+    false,
+    TOKEN,
+  );
+
+const nextAbsence = (STAFF_ID, TOKEN) =>
+  Get(Config.nextAbsence + '=' + STAFF_ID, false, TOKEN);
+
 const API = {
   login,
   scanCode,
@@ -196,6 +214,8 @@ const API = {
   visitEtc,
   getLocation,
   closeLocation,
+  report,
+  nextAbsence,
 };
 
 export default API;

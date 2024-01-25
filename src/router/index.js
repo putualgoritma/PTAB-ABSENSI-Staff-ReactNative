@@ -32,6 +32,7 @@ import ROvertime from '../page/requests/Overtime';
 import RPermit from '../page/requests/Permit';
 
 import History from '../page/history';
+import Report from '../page/history/Reports';
 import HistoryRequest from '../page/history/HistoryRequests';
 import Shift from '../page/shift';
 import ChangeShift from '../page/shift/ChangeShift';
@@ -57,6 +58,7 @@ import Location from '../page/requests/Location';
 import AdditionalTime from '../page/requests/AdditionalTime';
 
 import VisitEtc from '../page/VisitEtc';
+import Dispense from '../page/requests/Dispense';
 
 const Stack = createStackNavigator();
 
@@ -585,6 +587,22 @@ const Router = () => {
           title: 'Histori Absen',
         }}
       />
+
+      <Stack.Screen
+        name="Report"
+        component={Report}
+        options={{
+          headerStyle: {
+            backgroundColor: '#16D5FF',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          title: 'Report',
+        }}
+      />
+
       <Stack.Screen
         name="HistoryExtra"
         component={HistoryExtra}
@@ -722,6 +740,20 @@ const Router = () => {
             fontWeight: 'bold',
           },
           title: 'History Pertukaran Shift',
+        }}
+      />
+      <Stack.Screen
+        name="Dispense"
+        component={Dispense}
+        options={{
+          headerStyle: {
+            backgroundColor: '#16D5FF',
+          },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          title: 'Dispensasi',
         }}
       />
     </Stack.Navigator>

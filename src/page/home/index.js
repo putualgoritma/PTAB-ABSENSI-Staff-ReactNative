@@ -117,7 +117,7 @@ const Home = ({navigation}) => {
     });
   };
 
-  if (JailMonkey.isJailBroken()) {
+  if (!JailMonkey.isJailBroken()) {
     // Alternative behaviour for jail-broken/rooted devices.
     return (
       <View>
@@ -381,7 +381,7 @@ const Home = ({navigation}) => {
                 <View style={styles.month3}>
                   <TouchableOpacity
                     onPress={() =>
-                      navigation.navigate('History', {
+                      navigation.navigate('Report', {
                         start: data2.start3,
                         end: data2.end3,
                         type: data.staff.type,
@@ -409,7 +409,7 @@ const Home = ({navigation}) => {
                 <View style={styles.month2}>
                   <TouchableOpacity
                     onPress={() =>
-                      navigation.navigate('History', {
+                      navigation.navigate('Report', {
                         start: data2.start2,
                         end: data2.end2,
                         type: data.staff.type,
@@ -437,7 +437,7 @@ const Home = ({navigation}) => {
                 <View style={styles.month1}>
                   <TouchableOpacity
                     onPress={() =>
-                      navigation.navigate('History', {
+                      navigation.navigate('Report', {
                         start: data2.start1,
                         end: data2.end1,
                         type: data.staff.type,

@@ -28,6 +28,8 @@ import {
   MockLocationDetectorErrorCode,
 } from 'react-native-turbo-mock-location-detector';
 import Config from 'react-native-config';
+import Textarea from 'react-native-textarea';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Absence = ({navigation, route}) => {
   const TOKEN = useSelector(state => state.TokenReducer);
@@ -60,6 +62,9 @@ const Absence = ({navigation, route}) => {
     // staff_id : USER_ID,
     todo: '',
   });
+  const [highAccuracy, setHighAccuracy] = useState(
+    useSelector(state => state.HightAccuracyReducer),
+  );
   const [loading, setLoading] = useState(true);
   const latref = route.params.lat; // 37.78537398105849
   const lngref = route.params.lng; // -122.40441607671049
@@ -143,7 +148,7 @@ const Absence = ({navigation, route}) => {
         if (res[2]) {
           //check gps
           myFunctions
-            .checkGps(route.params.highAccuracy)
+            .checkGps(highAccuracy)
             .then(function (gps) {
               if (!gps.status) {
                 setLoading(false);
@@ -168,6 +173,24 @@ const Absence = ({navigation, route}) => {
                         ', tolong kalibrasi GPS atau pakai Internet yang lebih kuat.',
                     );
                   }
+
+                  Alert.alert(
+                    'Anda Berada Diluar',
+                    'Apa Anda mau mengganti accuracy GPS anda',
+                    [
+                      {
+                        text: 'Ya',
+                        onPress: () => {
+                          gpsChange(!highAccuracy);
+                        },
+                      },
+                      {
+                        text: 'TIdak',
+                        onPress: () => console.log('OK Pressed'),
+                        style: 'cancel',
+                      },
+                    ],
+                  );
                 } else {
                   setJarak('2');
                 }
@@ -197,8 +220,8 @@ const Absence = ({navigation, route}) => {
             'Location Permission',
             'Location Permission tidak diizinkan.',
           );
+          setLoading(false);
         }
-        setLoading(false);
       })
       .catch(e => {
         console.log('err promise all', e);
@@ -229,7 +252,7 @@ const Absence = ({navigation, route}) => {
         if (res[2]) {
           //check gps
           myFunctions
-            .checkGps(route.params.highAccuracy)
+            .checkGps(highAccuracy)
             .then(function (gps) {
               if (!gps.status) {
                 console.log('checkGps useeffect', 'false');
@@ -254,6 +277,23 @@ const Absence = ({navigation, route}) => {
                         ', tolong kalibrasi GPS atau pakai Internet yang lebih kuat.',
                     );
                   }
+                  Alert.alert(
+                    'Anda Berada Diluar',
+                    'Apa Anda mau mengganti accuracy GPS anda',
+                    [
+                      {
+                        text: 'Ya',
+                        onPress: () => {
+                          gpsChange(!highAccuracy);
+                        },
+                      },
+                      {
+                        text: 'TIdak',
+                        onPress: () => console.log('OK Pressed'),
+                        style: 'cancel',
+                      },
+                    ],
+                  );
                 } else {
                   setJarak('2');
                 }
@@ -281,8 +321,9 @@ const Absence = ({navigation, route}) => {
             'Location Permission',
             'Location Permission tidak diizinkan.',
           );
+
+          setLoading(false);
         }
-        setLoading(false);
       })
       .catch(e => {
         console.log('err promise all', e);
@@ -307,7 +348,125 @@ const Absence = ({navigation, route}) => {
     from: 'api',
   });
 
-  const sendDataNoImg = position => {
+  const gpsChange = data => {
+    setLoading(true);
+    setHighAccuracy(data);
+    storeDataHightAccuracy(data);
+
+    fakeGps();
+    // myFunctions.fakeGps();
+    Promise.all([
+      myFunctions.checkFingerprint(),
+      myFunctions.permissionCamera(),
+      myFunctions.permissionLocation(),
+      // myFunctions.fakeGps(),
+      // ,
+    ])
+      .then(res => {
+        console.log('rpromise all', res);
+        setLoading(true);
+        //if fingerprint off
+        console.log('kdjdkclcorf :', res[3]);
+        if (!res[0]) {
+          setFinger('OFF');
+        }
+        //if perrmission loc
+        if (res[2]) {
+          //check gps
+          myFunctions
+            .checkGps(data)
+            .then(function (gps) {
+              if (!gps.status) {
+                setLoading(false);
+                console.log('checkGps useeffect', 'false');
+              } else {
+                console.log('position', gps.data);
+                //get distance
+                const j = getDistance(gps.data, {
+                  latitude: parseFloat(latref),
+                  longitude: parseFloat(lngref),
+                });
+                console.log('distance', j);
+                setTest(j);
+                if (j > route.params.radius) {
+                  setJarak('1');
+                  setJ1(j);
+                  if (gps.data.accuracy > 40) {
+                    Alert.alert(
+                      'Peringatan',
+                      'Anda berada di luar jangkauan, akurasi GPS: ' +
+                        gps.data.accuracy +
+                        ', tolong kalibrasi GPS atau pakai Internet yang lebih kuat.',
+                    );
+                  }
+
+                  Alert.alert(
+                    'Anda Berada Diluar',
+                    'Apa Anda mau mengganti accuracy GPS anda',
+                    [
+                      {
+                        text: 'Ya',
+                        onPress: () => {
+                          gpsChange(!highAccuracy);
+                        },
+                      },
+                      {
+                        text: 'TIdak',
+                        onPress: () => console.log('OK Pressed'),
+                        style: 'cancel',
+                      },
+                    ],
+                  );
+                } else {
+                  setJarak('2');
+                }
+
+                // positionNew = position
+                console.log(
+                  'posisiisii ',
+                  gps.data.latitude,
+                  gps.data.longitude,
+                );
+                setForm({
+                  ...form,
+                  lat: gps.data.latitude,
+                  lng: gps.data.longitude,
+                  accuracy: gps.data.accuracy,
+                  distance: j,
+                });
+                setLoading(false);
+              }
+            })
+            .catch(error => {
+              console.log('err checkGps useeffect', error.message);
+              setLoading(false);
+            });
+        } else {
+          Alert.alert(
+            'Location Permission',
+            'Location Permission tidak diizinkan.',
+          );
+          setLoading(false);
+        }
+      })
+      .catch(e => {
+        console.log('err promise all', e);
+        setLoading(false);
+      });
+
+    // setLoading(false);
+  };
+
+  const storeDataHightAccuracy = async value => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem('@LocalHightAccuracy', jsonValue);
+    } catch (e) {
+      console.log('no save');
+    }
+  };
+
+  const sendDataNoImg = () => {
     console.log('sendDataNoImg', '3');
     setLoading(true);
     console.log('ssdddddddd', loading);
@@ -326,11 +485,11 @@ const Absence = ({navigation, route}) => {
         {name: 'type', data: route.params.type.toString()},
         {name: 'queue', data: route.params.queue.toString()},
         {name: 'staff_id', data: STAFF_ID.toString()},
-        {name: 'lat', data: position.latitude.toString()},
-        {name: 'lng', data: position.longitude.toString()},
+        {name: 'lat', data: form.lat.toString()},
+        {name: 'lng', data: form.lng.toString()},
         {name: 'accuracy', data: form.accuracy.toString()},
         {name: 'distance', data: form.distance.toString()},
-        {name: 'status', data: '0'},
+        {name: 'status', data: highAccuracy ? '1111' : '2222'},
       ],
     )
       .then(result => {
@@ -356,7 +515,7 @@ const Absence = ({navigation, route}) => {
       });
   };
 
-  const sendData = position => {
+  const sendData = () => {
     console.log('senddata', '3');
     // setLoading(true);
     RNFetchBlob.fetch(
@@ -379,10 +538,10 @@ const Absence = ({navigation, route}) => {
         {name: 'type', data: route.params.type.toString()},
         {name: 'queue', data: route.params.queue.toString()},
         {name: 'staff_id', data: STAFF_ID.toString()},
-        {name: 'lat', data: position.latitude.toString()},
-        {name: 'lng', data: position.longitude.toString()},
+        {name: 'lat', data: form.lat.toString()},
+        {name: 'lng', data: form.lng.toString()},
         {name: 'accuracy', data: form.accuracy.toString()},
-        {name: 'distance', data: form.distance.toString()},
+        {name: 'distance', data: highAccuracy ? '1111' : '2222'},
         {name: 'status', data: '0'},
       ],
     )
@@ -460,89 +619,91 @@ const Absence = ({navigation, route}) => {
         // setLoading(true);
         if (res[1]) {
           //check gps
-          myFunctions
-            .checkGps(route.params.highAccuracy)
-            .then(function (gps) {
-              if (!gps.status) {
-                Alert.alert(
-                  'Gagal Mengirim Data',
-                  'Tolong cek kembali lokasi anda',
-                );
-                setLoading(false);
-                console.log('checkGps useeffect', 'false');
-              } else {
-                console.log('position', gps.data);
-                //get distance
-                const j = getDistance(gps.data, {
-                  latitude: parseFloat(latref),
-                  longitude: parseFloat(lngref),
-                });
-                console.log('distance', j);
+          // myFunctions
+          //   .checkGps(route.params.highAccuracy)
+          //   .then(function (gps) {
+          // if (!gps.status) {
+          //   Alert.alert(
+          //     'Gagal Mengirim Data',
+          //     'Tolong cek kembali lokasi anda',
+          //   );
+          //   setLoading(false);
+          //   console.log('checkGps useeffect', 'false');
+          // } else {
+          // console.log('position', gps.data);
+          // //get distance
+          // const j = getDistance(gps.data, {
+          //   latitude: parseFloat(latref),
+          //   longitude: parseFloat(lngref),
+          // });
+          // console.log('distance', j);
 
-                setTest(j);
-                if (j > route.params.radius) {
-                  if (j - j1 < 20) {
-                    if (route.params.selfie == 'OFF') {
-                      sendDataNoImg(gps.data);
-                    } else if (route.params.image == null) {
-                      Alert.alert('Pilih Gambar Terlebih dahulu');
-                      setLoading(false);
-                    } else if (
-                      form.lat != '' &&
-                      form.lng != '' &&
-                      route.params.image.filename != '' &&
-                      route.params.image.filename != null
-                    ) {
-                      sendData(gps.data);
-                    } else {
-                      console.log('data : ', form);
-                      Alert.alert('Lengkapi data terlebih dahulu');
-                      setLoading(false);
-                    }
-                  } else {
-                    setJarak('1');
-                    Alert.alert('diluar area');
-                  }
-                } else {
-                  setJarak('2');
-                  console.log(form.lat, form.lng);
+          // setTest(j);
+          // if (j > route.params.radius) {
+          //   if (j - j1 < 20) {
+          //     if (route.params.selfie == 'OFF') {
+          //       sendDataNoImg(gps.data);
+          //     } else if (route.params.image == null) {
+          //       Alert.alert('Pilih Gambar Terlebih dahulu');
+          //       setLoading(false);
+          //     } else if (
+          //       form.lat != '' &&
+          //       form.lng != '' &&
+          //       route.params.image.filename != '' &&
+          //       route.params.image.filename != null
+          //     ) {
+          //       sendData(gps.data);
+          //     } else {
+          //       console.log('data : ', form);
+          //       Alert.alert('Lengkapi data terlebih dahulu');
+          //       setLoading(false);
+          //     }
+          //   } else {
+          //     setJarak('1');
+          //     Alert.alert('diluar area');
+          //     setLoading(false);
+          //   }
+          // }
+          // else {
+          // setJarak('2');
+          console.log(form.lat, form.lng);
 
-                  if (route.params.selfie == 'OFF') {
-                    sendDataNoImg(gps.data);
-                  } else if (route.params.image == null) {
-                    Alert.alert('Pilih Gambar Terlebih dahulu');
-                    setLoading(false);
-                  } else if (
-                    form.lat != '' &&
-                    form.lng != '' &&
-                    route.params.image.filename != '' &&
-                    route.params.image.filename != null
-                  ) {
-                    sendData(gps.data);
-                  } else {
-                    console.log('data : ', form);
-                    Alert.alert('Lengkapi data terlebih dahulu');
-                    setLoading(false);
-                  }
-                }
+          if (route.params.selfie == 'OFF') {
+            sendDataNoImg();
+          } else if (route.params.image == null) {
+            Alert.alert('Pilih Gambar Terlebih dahulu');
+            setLoading(false);
+          } else if (
+            form.lat != '' &&
+            form.lng != '' &&
+            route.params.image.filename != '' &&
+            route.params.image.filename != null
+          ) {
+            sendData();
+          } else {
+            // console.log('data : ', form);
+            Alert.alert('Lengkapi data terlebih dahulu');
+            setLoading(false);
+          }
+          // }
 
-                // positionNew = position
-                console.log(
-                  'posisiisii ',
-                  gps.data.latitude,
-                  gps.data.longitude,
-                );
-                setForm({
-                  ...form,
-                  lat: gps.data.latitude,
-                  lng: gps.data.longitude,
-                });
-              }
-            })
-            .catch(error => {
-              console.log('err checkGps handleaction', error.message);
-              setLoading(false);
-            });
+          // positionNew = position
+          // console.log(
+          //   'posisiisii ',
+          //   gps.data.latitude,
+          //   gps.data.longitude,
+          // );
+          // setForm({
+          //   ...form,
+          //   lat: gps.data.latitude,
+          //   lng: gps.data.longitude,
+          // });
+          // }
+          // })
+          // .catch(error => {
+          //   console.log('err checkGps handleaction', error.message);
+          //   setLoading(false);
+          // });
         } else {
           Alert.alert(
             'Location Permission',
@@ -585,6 +746,10 @@ const Absence = ({navigation, route}) => {
               ]}>
               anda berada di{' '}
               {jarak == '1' ? 'Diluar Jangkauan' : 'Dalam Jangkauan'}
+            </Text>
+            <Text>
+              Note : Anda menggunakan akurasi{' '}
+              {highAccuracy ? 'tinggi' : 'rendah'}
             </Text>
 
             <Text style={[{marginVertical: windowHeight * 0.05, fontSize: 24}]}>
@@ -647,6 +812,7 @@ const Absence = ({navigation, route}) => {
             {/* <View style={styles.mapS}>
 
         </View> */}
+
             <Text>Map</Text>
 
             {/* untuk gambar start */}
@@ -735,6 +901,19 @@ const Absence = ({navigation, route}) => {
               </View>
             )}
             {/* untuk gambar end */}
+
+            {route.params.type == 'break' && (
+              <Textarea
+                containerStyle={styles.textareaContainer}
+                style={styles.textarea}
+                placeholder="Tuliskan Memo"
+                editable={true}
+                maxLength={255}
+                value={form.memo}
+                onChangeText={value =>
+                  setForm({...form, memo: value})
+                }></Textarea>
+            )}
           </View>
         </ScrollView>
         {jarak != 1 && finger == 'ON' && route.params.fingerfrint == 'ON' && (
@@ -809,5 +988,20 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  textareaContainer: {
+    width: windowWidht * 0.7,
+    height: 120,
+    borderRadius: 10,
+    padding: 5,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    marginRight: 'auto',
+    marginLeft: 'auto',
+  },
+  textarea: {
+    textAlignVertical: 'top',
+    fontSize: 14,
+    color: '#696969',
   },
 });

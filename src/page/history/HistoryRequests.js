@@ -277,6 +277,8 @@ const HistoryRequest = ({navigation}) => {
             ? 'Pindah Lokasi'
             : item.category == 'AdditionalTime'
             ? 'Additional Time'
+            : item.category == 'dispense'
+            ? 'Dispensasi'
             : ''}
           <Text
             style={[
