@@ -30,6 +30,13 @@ import {
 import Config from 'react-native-config';
 import Textarea from 'react-native-textarea';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch} from 'react-redux';
+import {
+  SET_DATA_PERMISSION,
+  SET_DATA_TOKEN,
+  SET_DATA_USER,
+  SET_DATA_HIGHTACCURACY,
+} from '../../redux/action';
 
 const Absence = ({navigation, route}) => {
   const TOKEN = useSelector(state => state.TokenReducer);
@@ -68,6 +75,7 @@ const Absence = ({navigation, route}) => {
   const [loading, setLoading] = useState(true);
   const latref = route.params.lat; // 37.78537398105849
   const lngref = route.params.lng; // -122.40441607671049
+  const dispatch = useDispatch();
 
   const fakeGps = async () => {
     console.log('Fake GPS');
@@ -464,6 +472,7 @@ const Absence = ({navigation, route}) => {
     } catch (e) {
       console.log('no save');
     }
+    dispatch(SET_DATA_HIGHTACCURACY(value));
   };
 
   const sendDataNoImg = () => {
@@ -488,8 +497,8 @@ const Absence = ({navigation, route}) => {
         {name: 'lat', data: form.lat.toString()},
         {name: 'lng', data: form.lng.toString()},
         {name: 'accuracy', data: form.accuracy.toString()},
-        {name: 'distance', data: form.distance.toString()},
-        {name: 'status', data: highAccuracy ? '1111' : '2222'},
+        {name: 'distance', data: highAccuracy ? '1111' : '2222'},
+        {name: 'status', data: '0'},
       ],
     )
       .then(result => {

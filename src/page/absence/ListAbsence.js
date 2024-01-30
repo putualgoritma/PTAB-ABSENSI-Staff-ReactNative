@@ -28,7 +28,10 @@ const ListAbsence = ({navigation, route}) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [subLoading, setSubLoading] = useState(true);
-  const [form, setForm] = useState(false);
+  // const [form, setForm] = useState(false);
+  const [form, setForm] = useState(
+    useSelector(state => state.HightAccuracyReducer),
+  );
   // console.log(STAFF_ID)
   const [refreshing, setRefreshing] = React.useState(false);
   const isFocused = useIsFocused();
