@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {Footer} from '../../component';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -18,11 +18,26 @@ import API from '../../service';
 import {useState} from 'react';
 import {useEffect} from 'react';
 import myFunctions from '../../functions';
+import {useDispatch} from 'react-redux';
+import {RadioButton} from 'react-native-paper';
+import {
+  SET_DATA_PERMISSION,
+  SET_DATA_TOKEN,
+  SET_DATA_USER,
+  SET_DATA_HIGHTACCURACY,
+} from '../../redux/action';
 
 const User = ({navigation}) => {
   const TOKEN = useSelector(state => state.TokenReducer);
   const USER = useSelector(state => state.UserReducer);
   const [data, setData] = useState({staff: [], messageM: ''});
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [test, setTest] = useState('');
+  // const [form, setForm] = useState(false);
+  const [form, setForm] = useState(
+    useSelector(state => state.HightAccuracyReducer),
+  );
   // console.log(USER)
 
   const getData = () => {
@@ -39,6 +54,7 @@ const User = ({navigation}) => {
 
   useEffect(() => {
     getData();
+    getDataHightAccuracy();
   }, []);
 
   const getImageGalery = () => {
@@ -175,6 +191,34 @@ const User = ({navigation}) => {
       },
     ]);
   };
+
+  const changeAccuracy = async value => {
+    setLoading(true);
+    dispatch(SET_DATA_HIGHTACCURACY(value));
+    setForm(value);
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem('@LocalHightAccuracy', jsonValue);
+      alert('berhasil dirubah');
+      setLoading(false);
+    } catch (e) {
+      console.log('no save');
+      alert(JSON.stringify(e));
+      setLoading(false);
+    }
+  };
+
+  const getDataHightAccuracy = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('@LocalHightAccuracy');
+      setTest(jsonValue);
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+      // console.log('local user',jsonValue);
+    } catch (e) {
+      // error reading value
+    }
+  };
+
   return (
     <View style={{flex: 1}}>
       <View
@@ -216,12 +260,41 @@ const User = ({navigation}) => {
             </Text>
           </View>
           <View style={{flexDirection: 'row'}}>
-            <Text style={styles.title}>Email</Text>
+            <Text style={styles.title}>Email {test}</Text>
             <Text style={styles.data}>
               {data.staff.email ? data.staff.email : 'Loading...'}
             </Text>
           </View>
         </View>
+
+        {loading ? (
+          <View>
+            <Text
+              style={{marginTop: 10, marginLeft: 'auto', marginRight: 'auto'}}>
+              {' '}
+              tunggu...
+            </Text>
+          </View>
+        ) : (
+          <View>
+            <View style={{flexDirection: 'row'}}>
+              <RadioButton
+                value="false"
+                status={form === false ? 'checked' : 'unchecked'}
+                onPress={() => changeAccuracy(false)}
+              />
+              <Text style={{marginTop: 10}}>Akurasi GPS rendah</Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <RadioButton
+                value="true"
+                status={form === true ? 'checked' : 'unchecked'}
+                onPress={() => changeAccuracy(true)}
+              />
+              <Text style={{marginTop: 10}}>Akurasi GPS tinggi</Text>
+            </View>
+          </View>
+        )}
       </View>
       <Footer focus="User" navigation={navigation} />
     </View>

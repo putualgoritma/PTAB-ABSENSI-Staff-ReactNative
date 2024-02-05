@@ -33,7 +33,10 @@ const PermissionReducer = (state = Permission, action) => {
   return state;
 };
 
+// untuk android
 const HightAccuracy = false;
+// untuk ios
+// const HightAccuracy = true;
 
 const HightAccuracyReducer = (state = HightAccuracy, action) => {
   if (action.type === 'SET_DATA_HIGHTACCURACY') {
