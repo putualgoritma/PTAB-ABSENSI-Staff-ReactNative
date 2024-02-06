@@ -98,8 +98,8 @@ android {
         applicationId "com.perumdatab.absence"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 13
-        versionName "2.3"
+        versionCode 14
+        versionName "2.4"
         missingDimensionStrategy 'react-native-camera', 'general'
     }
 
