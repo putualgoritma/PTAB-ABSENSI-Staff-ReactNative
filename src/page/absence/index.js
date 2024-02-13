@@ -911,7 +911,7 @@ const Absence = ({navigation, route}) => {
             )}
             {/* untuk gambar end */}
 
-            {route.params.type == 'break' && (
+            {/* {route.params.type == 'break' && (
               <Textarea
                 containerStyle={styles.textareaContainer}
                 style={styles.textarea}
@@ -922,7 +922,7 @@ const Absence = ({navigation, route}) => {
                 onChangeText={value =>
                   setForm({...form, memo: value})
                 }></Textarea>
-            )}
+            )} */}
           </View>
         </ScrollView>
         {jarak != 1 && finger == 'ON' && route.params.fingerfrint == 'ON' && (
