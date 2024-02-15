@@ -132,24 +132,31 @@ const Reports = ({navigation, route}) => {
             </Text>
           </View>
           <View style={styles.header}>
-            <Text style={[styles.tr, {width: windowWidth * 0.08}]}> 10</Text>
+            <Text style={[styles.tr, {width: windowWidth * 0.08}]}> 9</Text>
+            <Text style={[styles.tr, {width: windowWidth * 0.6}]}> Sakit</Text>
+            <Text style={[styles.tr, {width: windowWidth * 0.2}]}>
+              {' ' + data.jumlah_sakit}
+            </Text>
+          </View>
+          <View style={styles.header}>
+            <Text style={[styles.tr, {width: windowWidth * 0.08}]}> 11</Text>
             <Text style={[styles.tr, {width: windowWidth * 0.6}]}> Dispen</Text>
             <Text style={[styles.tr, {width: windowWidth * 0.2}]}>
               {' ' + data.jumlah_dispen}
             </Text>
           </View>
           <View style={styles.header}>
-            <Text style={[styles.tr, {width: windowWidth * 0.08}]}> 11</Text>
+            <Text style={[styles.tr, {width: windowWidth * 0.08}]}> 12</Text>
             <Text style={[styles.tr, {width: windowWidth * 0.6}]}>
               {' '}
-              Tidak Hadir
+              {data.tidakHadir}
             </Text>
             <Text style={[styles.tr, {width: windowWidth * 0.2}]}>
               {' ' + data.alpha}
             </Text>
           </View>
           <View style={styles.header}>
-            <Text style={[styles.tr, {width: windowWidth * 0.08}]}> 12</Text>
+            <Text style={[styles.tr, {width: windowWidth * 0.08}]}> 13</Text>
             <Text style={[styles.tr, {width: windowWidth * 0.6}]}>
               {' '}
               Hari Kerja
