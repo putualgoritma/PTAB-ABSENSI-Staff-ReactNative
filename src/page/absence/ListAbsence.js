@@ -467,6 +467,7 @@ const ListAbsence = ({navigation, route}) => {
                         id: data.excuse.id,
                         queue: data.excuse.queue,
                         absence_id: data.excuse.absence_id,
+                        absence_request_id: data.excuse.absence_request_id,
                         type: data.excuse.absence_category_type,
                         image: null,
                       });
